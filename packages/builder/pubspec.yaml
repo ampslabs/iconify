@@ -4,9 +4,9 @@ description: >
   Code generator and build_runner builder for Iconify SDK. Generates type-safe
   Dart constants for icon sets defined in iconify.yaml.
 version: 0.1.0
-repository: https://github.com/ampslabs/iconify_sdk/tree/main/packages/iconify_sdk_builder
-issue_tracker: https://github.com/ampslabs/iconify_sdk/issues
-homepage: https://github.com/ampslabs/iconify_sdk
+repository: https://github.com/ampslabs/iconify/tree/main/packages/iconify_sdk_builder
+issue_tracker: https://github.com/ampslabs/iconify/issues
+homepage: https://github.com/ampslabs/iconify
 
 environment:
   sdk: '>=3.5.0 <4.0.0'

@@ -5,7 +5,7 @@ The pure Dart engine for Iconify icons. This package provides the core infrastru
 ## Features
 
 - **Iconify Name Parsing**: Validates and parses `prefix:icon` identifiers.
-- **Iconify JSON Support**: Full support for the official Iconify JSON format.
+- **Iconify JSON Support**: Full support forIconify JSON format.
 - **Alias Resolution**: Handles recursive aliases with circular dependency protection.
 - **Flexible Providers**: Resolve icons from Memory, HTTP, File System, or Asset Bundles.
 - **High Performance Caching**: LRU (Least Recently Used) in-memory cache.

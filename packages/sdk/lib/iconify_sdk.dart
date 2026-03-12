@@ -1,4 +1,4 @@
-/// The official Flutter package for Iconify icons.
+/// The Flutter package for Iconify icons.
 ///
 /// This package provides the [IconifyIcon] widget, which allows you to render
 /// any icon from over 200 open-source icon sets with a single widget.

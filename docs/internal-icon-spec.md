@@ -1,6 +1,6 @@
 # Internal Icon Schema Definition
 
-This document defines the normalized internal schema used by `iconify_sdk_core` to represent icon collections and individual icons. This schema is a subset of the official Iconify JSON format, optimized for the Dart SDK.
+This document defines the normalized internal schema used by `iconify_sdk_core` to represent icon collections and individual icons. This schema is a subset ofIconify JSON format, optimized for the Dart SDK.
 
 ## Collection Object
 

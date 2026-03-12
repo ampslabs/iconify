@@ -20,7 +20,7 @@ We will use the **string-based `prefix:name` pattern** as the primary identity f
 ## Consequences
 - **Pros**: 
     - Infinite scalability: Any Iconify icon works immediately without waiting for a library update.
-    - Consistency: Matches the official Iconify documentation and API.
+    - Consistency: MatchesIconify documentation and API.
     - Performance: No massive generated classes for unneeded icons.
 - **Cons**: 
     - No autocompletion for icon names in basic string mode (mitigated by IDE plugins and code generation in Phase 3).
