@@ -20,7 +20,7 @@ melos:
 
 dev_dependencies:
   melos: ^7.4.0
-
+  lints: any
 dependency_overrides:
   test: 1.25.13
   test_api: 0.7.10
