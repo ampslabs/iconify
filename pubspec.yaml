@@ -10,6 +10,7 @@ workspace:
   - packages/builder
   - packages/cli
   - tools
+  - examples/gallery
 
 # Melos configuration
 # Melos is used for monorepo management (versioning, publishing, and scripts)
