@@ -1,7 +1,7 @@
 // This example shows basic usage of the iconify_sdk_core package.
 // ignore_for_file: avoid_print
 
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import '../lib/iconify_sdk_core.dart';
 
 void main() async {
   // 1. Setup a provider (In-memory for this simple example)

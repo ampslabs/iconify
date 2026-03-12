@@ -26,7 +26,7 @@ dependencies:
 ### Simple Icon Resolution
 
 ```dart
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import 'lib/iconify_sdk_core.dart';
 
 void main() async {
   // 1. Setup a provider (e.g., Remote)

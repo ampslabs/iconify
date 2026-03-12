@@ -5,10 +5,10 @@ environment:
   sdk: '>=3.5.0 <4.0.0'
 
 workspace:
-  - packages/iconify_sdk_core
-  - packages/iconify_sdk
-  - packages/iconify_sdk_builder
-  - packages/iconify_sdk_cli
+  - packages/core
+  - packages/sdk
+  - packages/builder
+  - packages/cli
 
 # Melos configuration
 # Melos is used for monorepo management (versioning, publishing, and scripts)

@@ -156,12 +156,12 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 0.8 — Phase 0 Exit Gate
 
-- [ ] All four package names reserved on pub.dev
-- [ ] Monorepo builds with `dart pub get` from root
-- [ ] CI passes on first real commit
-- [ ] All 7 ADRs written and approved
-- [ ] `iconify.yaml` schema v1 locked
-- [ ] `docs/license-guide.md` published in repo
+- [x] All four package names reserved on pub.dev
+- [x] Monorepo builds with `dart pub get` from root
+- [x] CI passes on first real commit
+- [x] All 7 ADRs written and approved
+- [x] `iconify.yaml` schema v1 locked
+- [x] `docs/license-guide.md` published in repo
 
 ---
 
@@ -176,11 +176,11 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 1.1 — Package Scaffolding
 
-- [ ] `[AGENT]` Create `packages/iconify_sdk_core/pubspec.yaml`
+- [ ] `[AGENT]` Create `packages/core/pubspec.yaml`
   - [ ] Dependencies: `http: ^1.2.0`, `meta: ^1.15.0`
   - [ ] Dev dependencies: `test: ^1.25.0`, `mocktail: ^1.0.4`, `lints: ^4.0.0`, `http: ^1.2.0` (for `MockClient`)
   - [ ] SDK: `>=3.3.0 <4.0.0`
-- [ ] `[AGENT]` Create `packages/iconify_sdk_core/analysis_options.yaml` with strict mode
+- [ ] `[AGENT]` Create `packages/core/analysis_options.yaml` with strict mode
 - [ ] `[AGENT]` Create directory structure: `lib/src/models/`, `lib/src/errors/`, `lib/src/providers/`, `lib/src/cache/`, `lib/src/resolver/`, `lib/src/parser/`, `lib/src/guard/`
 - [ ] `[AGENT]` Create `test/` mirror structure + `test/fixtures/`
 - [ ] `[AGENT]` Run `dart pub get` — verify clean
@@ -1150,7 +1150,7 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 6.1 — Documentation
 
-- [ ] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk_core/README.md`
+- [ ] `[HUMAN]` + `[AGENT]` Write `packages/core/README.md`
   - [ ] What it is, what it does, what it does NOT do
   - [ ] Quick-start code example
   - [ ] All public classes with brief descriptions

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import '../../lib/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
 void main() {
