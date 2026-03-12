@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Iconify SDK Configuration",
+  "type": "object",
+  "properties": {
+    "sets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Icon identifier or pattern (e.g. 'mdi:home' or 'lucide:*')"
+      },
+      "default": []
+    },
+    "output": {
+      "type": "string",
+      "default": "lib/icons.g.dart",
+      "description": "Output path for the generated Dart file"
+    },
+    "data_dir": {
+      "type": "string",
+      "default": "assets/iconify",
+      "description": "Local directory for icon data snapshots"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["auto", "offline", "generated", "remoteAllowed"],
+      "default": "auto"
+    },
+    "license_policy": {
+      "type": "string",
+      "enum": ["permissive", "warn", "strict"],
+      "default": "warn"
+    },
+    "custom_sets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "fail_on_missing": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
