@@ -28,13 +28,13 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   @override
   Future<IconifyIconData?> getIcon(IconifyName name) async {
     try {
-      final jsonString =
-          await loadAssetString('$assetPrefix/${name.prefix}.json');
-      return IconifyJsonParser.extractIcon(
-        IconifyJsonParser.parseCollectionString(jsonString).info.raw,
-        name.iconName,
-      );
-    } catch (_) {
+      final path = '$assetPrefix/${name.prefix}.json';
+      final jsonString = await loadAssetString(path);
+      return IconifyJsonParser.parseCollectionString(jsonString)
+          .getIcon(name.iconName);
+    } catch (e) {
+      // ignore: avoid_print
+      print('Iconify SDK: Failed to load asset for ${name.prefix}: $e');
       return null;
     }
   }
@@ -42,9 +42,12 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   @override
   Future<IconifyCollectionInfo?> getCollection(String prefix) async {
     try {
-      final jsonString = await loadAssetString('$assetPrefix/$prefix.json');
+      final path = '$assetPrefix/$prefix.json';
+      final jsonString = await loadAssetString(path);
       return IconifyJsonParser.parseCollectionString(jsonString).info;
-    } catch (_) {
+    } catch (e) {
+      // ignore: avoid_print
+      print('Iconify SDK: Failed to load collection asset for $prefix: $e');
       return null;
     }
   }

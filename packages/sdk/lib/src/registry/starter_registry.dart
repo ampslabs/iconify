@@ -1,5 +1,3 @@
-import 'package:iconify_sdk/iconify_sdk.dart' show IconifyApp;
-import 'package:iconify_sdk/src/widget/iconify_app.dart' show IconifyApp;
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import '../config/provider_chain_builder.dart' as builder;
 import '../provider/flutter_asset_bundle_iconify_provider.dart';
@@ -22,13 +20,17 @@ class StarterRegistry {
   void initialize() {
     if (_initialized) return;
 
+    const prefix = 'packages/iconify_sdk/assets/iconify/starter';
     _provider = FlutterAssetBundleIconifyProvider(
-      // The prefix matches the directory registered in pubspec.yaml
-      assetPrefix: 'packages/iconify_sdk/assets/iconify/starter',
+      assetPrefix: prefix,
     );
 
     builder.setStarterProvider(_provider);
     _initialized = true;
+    
+    if (kDebugMode) {
+      print('Iconify SDK: StarterRegistry initialized with prefix: $prefix');
+    }
   }
 
   /// Returns the underlying provider for the starter icons.

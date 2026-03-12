@@ -88,6 +88,14 @@ class _IconifyIconState extends State<IconifyIcon> {
   void _resolveIcon() {
     final provider = IconifyScope.of(context);
     _iconFuture = provider.getIcon(widget.name);
+    
+    if (kDebugMode) {
+      _iconFuture!.then((data) {
+        if (data == null) {
+          print('Iconify SDK: Icon not found: ${widget.name}');
+        }
+      });
+    }
   }
 
   @override
@@ -158,15 +166,11 @@ class _IconifyIconState extends State<IconifyIcon> {
 
     // Default: svgDirect
     return SvgPicture.string(
-      data.body,
+      data.toSvgString(
+        color: widget.color != null ? _colorToHex(widget.color!) : null,
+      ),
       width: effectiveSize,
       height: effectiveSize,
-      colorFilter: widget.color != null
-          ? ColorFilter.mode(
-              widget.color!.withValues(alpha: widget.opacity ?? 1.0),
-              BlendMode.srcIn,
-            )
-          : null,
       semanticsLabel: widget.semanticLabel,
     );
   }
