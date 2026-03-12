@@ -60,5 +60,16 @@ void main() {
       final result = await provider.getCollection('mdi');
       expect(result?.prefix, 'mdi');
     });
+
+    test('hasCollection returns true for present collection', () async {
+      const info = IconifyCollectionInfo(
+          prefix: 'mdi', name: 'Material Design Icons', totalIcons: 100);
+      provider.putCollection(info);
+      expect(await provider.hasCollection('mdi'), isTrue);
+    });
+
+    test('hasCollection returns false for absent collection', () async {
+      expect(await provider.hasCollection('none'), isFalse);
+    });
   });
 }

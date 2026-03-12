@@ -93,6 +93,22 @@ void main() {
       expect(result?.width, 32);
     });
 
+    test('applies rotate, hFlip, vFlip overrides from alias', () {
+      final aliases = {
+        'flipped': const AliasEntry(parent: 'base', rotate: 1, hFlip: true, vFlip: true),
+      };
+      final result = resolver.resolve(
+        iconName: 'flipped',
+        icons: icons,
+        aliases: aliases,
+        defaultWidth: 24,
+        defaultHeight: 24,
+      );
+      expect(result?.rotate, 1);
+      expect(result?.hFlip, isTrue);
+      expect(result?.vFlip, isTrue);
+    });
+
     test('throws CircularAliasException on cycle', () {
       final aliases = {
         'a': const AliasEntry(parent: 'b'),

@@ -16,6 +16,7 @@ void main() {
         'icons': {
           'home': {'body': '<path d="home"/>'}
         },
+        'total': 1,
         'width': 24,
         'height': 24
       }));
@@ -30,6 +31,12 @@ void main() {
       final icon = await provider.getIcon(const IconifyName('mdi', 'home'));
       expect(icon, isNotNull);
       expect(icon!.body, contains('home'));
+    });
+
+    test('getCollection returns info from file', () async {
+      final collection = await provider.getCollection('mdi');
+      expect(collection?.prefix, 'mdi');
+      expect(collection?.totalIcons, 1);
     });
 
     test('returns null for missing collection', () async {

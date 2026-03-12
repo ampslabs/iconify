@@ -67,5 +67,42 @@ void main() {
       expect(provider.hits, 0);
       expect(provider.misses, 0);
     });
+
+    test('getCollection delegates to inner without caching', () async {
+      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      when(() => inner.getCollection('mdi')).thenAnswer((_) async => info);
+
+      final result = await provider.getCollection('mdi');
+      expect(result?.prefix, 'mdi');
+      verify(() => inner.getCollection('mdi')).called(1);
+    });
+
+    test('hasIcon checks cache before delegating', () async {
+      when(() => inner.getIcon(home)).thenAnswer((_) async => homeData);
+      await provider.getIcon(home); // Populates cache
+
+      final has = await provider.hasIcon(home);
+      expect(has, isTrue);
+      verifyNever(() => inner.hasIcon(home));
+    });
+
+    test('hasIcon delegates to inner on cache miss', () async {
+      when(() => inner.hasIcon(home)).thenAnswer((_) async => true);
+      final has = await provider.hasIcon(home);
+      expect(has, isTrue);
+      verify(() => inner.hasIcon(home)).called(1);
+    });
+
+    test('hasCollection delegates to inner', () async {
+      when(() => inner.hasCollection('mdi')).thenAnswer((_) async => true);
+      expect(await provider.hasCollection('mdi'), isTrue);
+      verify(() => inner.hasCollection('mdi')).called(1);
+    });
+
+    test('dispose disposes inner and clears cache', () async {
+      when(() => inner.dispose()).thenAnswer((_) async => {});
+      await provider.dispose();
+      verify(() => inner.dispose()).called(1);
+    });
   });
 }

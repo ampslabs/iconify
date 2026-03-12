@@ -94,5 +94,11 @@ void main() {
       expect(cache.stats.maxSize, 3);
       expect(cache.stats.fillRatio, closeTo(1 / 3, 0.01));
     });
+
+    test('stats toString is informative', () async {
+      await cache.put(const IconifyName('mdi', 'a'), homeData);
+      expect(cache.stats.toString(), contains('1/3'));
+      expect(cache.stats.toString(), contains('33.3% full'));
+    });
   });
 }

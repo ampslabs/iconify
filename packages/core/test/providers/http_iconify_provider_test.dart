@@ -68,6 +68,42 @@ void main() {
       await provider.dispose();
     });
 
+    test('getCollection returns info on 200', () async {
+      final responseJson = {
+        'info': {
+          'name': 'Material Design Icons',
+          'total': 7446,
+        }
+      };
+      final client =
+          MockClient((_) async => http.Response(jsonEncode(responseJson), 200));
+      final provider = RemoteIconifyProvider(httpClient: client);
+
+      final result = await provider.getCollection('mdi');
+      expect(result?.name, 'Material Design Icons');
+      await provider.dispose();
+    });
+
+    test('hasIcon returns true on success', () async {
+      final client = MockClient((_) async => http.Response(jsonEncode(validIconJson), 200));
+      final provider = RemoteIconifyProvider(httpClient: client);
+
+      expect(await provider.hasIcon(const IconifyName('mdi', 'home')), isTrue);
+      await provider.dispose();
+    });
+
+    test('hasCollection returns true on success', () async {
+      final responseJson = {
+        'info': {'name': 'MDI'}
+      };
+      final client =
+          MockClient((_) async => http.Response(jsonEncode(responseJson), 200));
+      final provider = RemoteIconifyProvider(httpClient: client);
+
+      expect(await provider.hasCollection('mdi'), isTrue);
+      await provider.dispose();
+    });
+
     test('throws StateError after dispose', () async {
       final provider = RemoteIconifyProvider(
         httpClient: MockClient((_) async => http.Response('{}', 200)),

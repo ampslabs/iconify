@@ -127,6 +127,42 @@ void main() {
         final collection = IconifyJsonParser.parseCollectionString(json);
         expect(collection.getIcon('does-not-exist'), isNull);
       });
+
+      test('allNames returns icons and aliases', () {
+        final collection = IconifyJsonParser.parseCollectionString(json);
+        expect(collection.allNames, containsAll(['home', 'home-alias']));
+        expect(collection.iconCount, 1);
+        expect(collection.aliasCount, 1);
+      });
+    });
+
+    group('extractIcon', () {
+      const json = {
+        'prefix': 'test',
+        'width': 24,
+        'height': 24,
+        'icons': {
+          'home': {'body': '<path d="home"/>'}
+        },
+        'aliases': {
+          'home-alias': {'parent': 'home'}
+        }
+      };
+
+      test('extracts direct icon', () {
+        final result = IconifyJsonParser.extractIcon(json, 'home');
+        expect(result?.body, contains('home'));
+      });
+
+      test('extracts via alias', () {
+        final result = IconifyJsonParser.extractIcon(json, 'home-alias');
+        expect(result?.body, contains('home'));
+      });
+
+      test('returns null for missing icon', () {
+        final result = IconifyJsonParser.extractIcon(json, 'missing');
+        expect(result, isNull);
+      });
     });
 
     group('fixture files', () {

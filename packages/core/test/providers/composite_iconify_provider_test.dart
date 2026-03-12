@@ -42,5 +42,31 @@ void main() {
       final composite = CompositeIconifyProvider([first, second]);
       expect(await composite.hasIcon(home), isTrue);
     });
+
+    test('getCollection returns first match', () async {
+      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      final first = MemoryIconifyProvider();
+      final second = MemoryIconifyProvider()..putCollection(info);
+
+      final composite = CompositeIconifyProvider([first, second]);
+      final result = await composite.getCollection('mdi');
+      expect(result?.name, 'MDI');
+    });
+
+    test('hasCollection returns true if any provider has it', () async {
+      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      final first = MemoryIconifyProvider();
+      final second = MemoryIconifyProvider()..putCollection(info);
+
+      final composite = CompositeIconifyProvider([first, second]);
+      expect(await composite.hasCollection('mdi'), isTrue);
+    });
+
+    test('dispose disposes all providers', () async {
+      final first = RemoteIconifyProvider(); // Has dispose side effect (disposed flag)
+      final composite = CompositeIconifyProvider([first]);
+      await composite.dispose();
+      expect(() => first.getIcon(home), throwsStateError);
+    });
   });
 }
