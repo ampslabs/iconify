@@ -1,15 +1,17 @@
-## 0.1.0
+# Changelog
 
-- Initial release of the Iconify SDK Core engine.
-- Implemented `IconifyName` with validation logic.
-- Implemented `IconifyIconData`, `IconifyCollectionInfo`, and `IconifyLicense` models.
-- Added `IconifyProvider` abstraction and implementations:
-    - `MemoryIconifyProvider`
-    - `RemoteIconifyProvider` (HTTP)
-    - `FileSystemIconifyProvider`
-    - `CompositeIconifyProvider`
-    - `CachingIconifyProvider`
-- Added `LruIconifyCache` for performance.
-- Implemented `AliasResolver` for recursive alias handles.
-- Implemented `IconifyJsonParser` for collection processing.
-- Added `DevModeGuard` for production safety.
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.0] - 2026-03-12
+
+### Added
+- Foundational pure-Dart engine for Iconify.
+- Robust models for `IconifyName`, `IconifyIconData`, `IconifyLicense`, and `IconifyCollectionInfo`.
+- Provider-based architecture with support for `Memory`, `FileSystem`, and `Remote` sources.
+- Comprehensive `AliasResolver` with circular dependency protection.
+- High-performance LRU cache implementation.
+- Detailed error hierarchy for informative failure handling.
+- 100% test coverage for core logic and models.

@@ -1,0 +1,28 @@
+name: bundled_example
+description: An example of using iconify_sdk with offline bundling.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  iconify_sdk:
+    path: ../../packages/sdk
+  flutter_svg: ^2.0.10+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  iconify_sdk_builder:
+    path: ../../packages/builder
+  build_runner: ^2.4.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/iconify/

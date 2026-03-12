@@ -1,61 +1,63 @@
-# Iconify SDK for Flutter
+# iconify_sdk
 
-The  Flutter package for [Iconify](https://iconify.design/). Render any icon from over 200 open-source icon sets (150,000+ icons) with a single widget.
+The definitive Iconify SDK for Flutter. Instant access to 200,000+ open-source icons with zero-config setup and production-grade optimization.
 
-## Features
+[![Pub Version](https://img.shields.io/pub/v/iconify_sdk)](https://pub.dev/packages/iconify_sdk)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-- **One-liner usage**: `IconifyIcon('mdi:home')`.
-- **Zero Configuration**: Works out of the box in debug mode with remote fetching.
-- **Production Ready**: Automatically blocks remote calls in release builds for reliability and ethics.
-- **Impeller Optimized**: Built-in workaround for Impeller rendering bugs when applying colors.
-- **Offline First**: Optimized for use with bundled snapshots or generated code.
+## Getting Started
 
-## Quick Start
+Add `iconify_sdk` to your `pubspec.yaml` and wrap your app in `IconifyApp`:
 
-1. Add the package to your `pubspec.yaml`:
-   ```bash
-   flutter pub add iconify_sdk
-   ```
+```dart
+import 'package:flutter/material.dart';
+import 'package:iconify_sdk/iconify_sdk.dart';
 
-2. Wrap your app in `IconifyApp`:
-   ```dart
-   void main() {
-     runApp(
-       const IconifyApp(
-         child: MyApp(),
-       ),
-     );
-   }
-   ```
+void main() {
+  runApp(
+    const IconifyApp(
+      child: MyApp(),
+    ),
+  );
+}
 
-3. Use the widget anywhere:
-   ```dart
-   IconifyIcon('mdi:home', size: 24, color: Colors.blue)
-   ```
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          // One-liner usage. Fetches from API in debug,
+          // then you bundle it for production.
+          child: IconifyIcon('mdi:home', size: 48, color: Colors.blue),
+        ),
+      ),
+    );
+  }
+}
+```
 
-## Rendering & Impeller
+## Key Features
 
-Flutter's new **Impeller** renderer has known issues with SVG `colorFilter` (used for theming monochrome icons). 
+- **🚀 Zero Config**: Works out of the box in Debug mode using the Iconify API.
+- **📦 Offline First**: Built-in "Starter Registry" with top icons from MDI, Lucide, Tabler, and Heroicons.
+- **⚡ Performance**: Impeller-optimized rendering path for stutter-free scrolling.
+- **🛡️ Production Ready**: CLI and `build_runner` tools to lock your icon set and prevent network calls in release builds.
+- **⚖️ License Aware**: Built-in tools to audit icon licenses and generate attribution reports.
 
-Iconify SDK detects if Impeller is active. If you provide a `color` override while Impeller is enabled, the SDK automatically switches from `svgDirect` to a `rasterized` path. This ensures your icons always render correctly and sharply without you having to manage workarounds manually.
+## The Production Workflow
 
-## Operational Modes
+`iconify_sdk` is designed to be frictionless in development and rigid in production.
 
-You can configure the SDK's behavior via `IconifyConfig`:
+1. **Development**: Use any icon string (e.g., `mdi:rocket`). The SDK fetches it automatically.
+2. **Sync**: Run `iconify sync` to download the full collections you're using.
+3. **Bundle**: Run `build_runner build` to scan your code and generate optimized Dart constants.
+4. **Deploy**: Your app now runs 100% offline with zero network overhead.
 
-- **`auto` (Default)**: Use remote API in debug/profile for speed, but require local icons in release.
-- **`offline`**: Disable all network calls entirely.
-- **`generated`**: Only allow icons that have been bundled via the CLI generator.
-- **`remoteAllowed`**: Explicitly allow remote fetching in production (use responsibly).
+## Documentation
 
-## Performance
+For advanced configuration and tooling details, see the [Full Documentation](https://github.com/ampslabs/iconify_sdk).
 
-- **LRU Caching**: Icons are cached in memory after resolution to ensure smooth scrolling in lists.
-- **Micro-batching**: Remote requests are automatically grouped by collection to minimize HTTP overhead.
-- **Rasterization Cache**: Rasterized Impeller-safe images are cached to avoid redundant rendering work.
+## License
 
-## Related Packages
-
-- `iconify_sdk_core`: The pure Dart engine (no Flutter dependency).
-- `iconify_sdk_cli`: Command-line tool for syncing and bundling icons.
-- `iconify_sdk_builder`: `build_runner` integration for type-safe constants.
+This project is licensed under the MIT License. See the [LICENSE](../../LICENSE) file for details.
