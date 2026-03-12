@@ -5,6 +5,9 @@ import '../models/iconify_name.dart';
 ///
 /// The cache is a pure key-value store for [IconifyIconData].
 /// It does not validate data — that is the provider's responsibility.
+///
+/// Implementations of this interface should document their eviction
+/// policy (e.g., LRU, FIFO, or no eviction).
 abstract interface class IconifyCache {
   /// Retrieves cached icon data for [name], or null if not cached.
   Future<IconifyIconData?> get(IconifyName name);

@@ -43,8 +43,8 @@ void main() {
       final client = MockClient((_) async => http.Response('error', 500));
       final provider = RemoteIconifyProvider(httpClient: client);
 
-      expect(
-        () => provider.getIcon(const IconifyName('mdi', 'home')),
+      await expectLater(
+        provider.getIcon(const IconifyName('mdi', 'home')),
         throwsA(isA<IconifyNetworkException>()),
       );
       await provider.dispose();
@@ -115,6 +115,96 @@ void main() {
         () => provider.getIcon(const IconifyName('mdi', 'home')),
         throwsA(isA<StateError>()),
       );
+    });
+
+    group('batching', () {
+      test('batches multiple concurrent requests into one HTTP call', () async {
+        var callCount = 0;
+        final client = MockClient((request) async {
+          callCount++;
+          // Verify URL contains both icons
+          expect(request.url.queryParameters['icons'], contains('home'));
+          expect(request.url.queryParameters['icons'], contains('settings'));
+
+          return http.Response(
+              jsonEncode({
+                'prefix': 'mdi',
+                'icons': {
+                  'home': {'body': '<path d="home"/>'},
+                  'settings': {'body': '<path d="settings"/>'},
+                },
+                'width': 24,
+                'height': 24,
+              }),
+              200);
+        });
+
+        final provider = RemoteIconifyProvider(
+          httpClient: client,
+          batchWindow: const Duration(milliseconds: 10),
+        );
+
+        // Trigger two concurrent requests
+        final future1 = provider.getIcon(const IconifyName('mdi', 'home'));
+        final future2 = provider.getIcon(const IconifyName('mdi', 'settings'));
+
+        final results = await Future.wait([future1, future2]);
+
+        expect(results[0]?.body, contains('home'));
+        expect(results[1]?.body, contains('settings'));
+        expect(callCount, 1, reason: 'Should have only made one HTTP call');
+
+        await provider.dispose();
+      });
+
+      test('handles partial batch success (some icons missing)', () async {
+        final client = MockClient((request) async {
+          return http.Response(
+              jsonEncode({
+                'prefix': 'mdi',
+                'icons': {
+                  'home': {'body': '<path d="home"/>'},
+                  // 'settings' is missing from response
+                },
+              }),
+              200);
+        });
+
+        final provider = RemoteIconifyProvider(
+          httpClient: client,
+          batchWindow: const Duration(milliseconds: 10),
+        );
+
+        final future1 = provider.getIcon(const IconifyName('mdi', 'home'));
+        final future2 = provider.getIcon(const IconifyName('mdi', 'settings'));
+
+        final results = await Future.wait([future1, future2]);
+
+        expect(results[0], isNotNull);
+        expect(results[1], isNull,
+            reason: 'Missing icon in batch should return null');
+
+        await provider.dispose();
+      });
+
+      test('fails all requests in batch if HTTP call fails', () async {
+        final client = MockClient((request) async {
+          return http.Response('Internal Server Error', 500);
+        });
+
+        final provider = RemoteIconifyProvider(
+          httpClient: client,
+          batchWindow: const Duration(milliseconds: 10),
+        );
+
+        final future1 = provider.getIcon(const IconifyName('mdi', 'home'));
+        final future2 = provider.getIcon(const IconifyName('mdi', 'settings'));
+
+        await expectLater(future1, throwsA(isA<IconifyNetworkException>()));
+        await expectLater(future2, throwsA(isA<IconifyNetworkException>()));
+
+        await provider.dispose();
+      });
     });
   });
 }

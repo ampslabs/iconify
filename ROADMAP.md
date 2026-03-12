@@ -569,7 +569,7 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 - [ ] `[AGENT]` Create `packages/iconify_sdk/pubspec.yaml`
   - [ ] Flutter SDK dependency
-  - [ ] Dependencies: `iconify_sdk_core`, `flutter_svg: ^2.0.0`, `meta: ^1.15.0`
+  - [ ] Dependencies: `iconify_sdk_core`, `flutter_svg`, `meta`
   - [ ] Dev: `flutter_test`, `mocktail`, `alchemist` (golden testing)
 - [ ] `[AGENT]` Create directory structure: `lib/src/widget/`, `lib/src/provider/`, `lib/src/config/`, `lib/src/registry/`, `lib/src/render/`
 - [ ] `[AGENT]` Create `assets/iconify/starter/` directory for bundled registry files
