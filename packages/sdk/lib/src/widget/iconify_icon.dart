@@ -103,6 +103,9 @@ class _IconifyIconState extends State<IconifyIcon> {
 
   @override
   Widget build(BuildContext context) {
+    final iconTheme = IconTheme.of(context);
+    final effectiveColor = widget.color ?? iconTheme.color;
+
     return FutureBuilder<IconifyIconData?>(
       future: _iconFuture,
       builder: (context, snapshot) {
@@ -131,15 +134,15 @@ class _IconifyIconState extends State<IconifyIcon> {
                   name: widget.name, error: error, size: widget.size);
         }
 
-        return _buildIcon(context, data);
+        return _buildIcon(context, data, effectiveColor);
       },
     );
   }
 
-  Widget _buildIcon(BuildContext context, IconifyIconData data) {
+  Widget _buildIcon(BuildContext context, IconifyIconData data, Color? color) {
     final effectiveStrategy = resolveRenderStrategy(
       strategy: widget.renderStrategy,
-      color: widget.color,
+      color: color,
     );
 
     final double effectiveSize = widget.size ?? data.width;
@@ -147,12 +150,12 @@ class _IconifyIconState extends State<IconifyIcon> {
     if (effectiveStrategy == RenderStrategy.rasterized) {
       final pixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0;
       final cacheKey =
-          '${widget.name}:${widget.color?.toARGB32()}:$effectiveSize:$pixelRatio';
+          '${widget.name}:${color?.toARGB32()}:$effectiveSize:$pixelRatio';
 
       return Image(
         image: RasterizedIconifyImageProvider(
           svgString: data.toSvgString(
-            color: widget.color != null ? _colorToHex(widget.color!) : null,
+            color: color != null ? _colorToHex(color) : null,
           ),
           size: effectiveSize,
           pixelRatio: pixelRatio,
@@ -170,7 +173,7 @@ class _IconifyIconState extends State<IconifyIcon> {
     // Default: svgDirect
     return SvgPicture.string(
       data.toSvgString(
-        color: widget.color != null ? _colorToHex(widget.color!) : null,
+        color: color != null ? _colorToHex(color) : null,
       ),
       width: effectiveSize,
       height: effectiveSize,
@@ -179,6 +182,10 @@ class _IconifyIconState extends State<IconifyIcon> {
   }
 
   String _colorToHex(Color color) {
-    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
+    if (color.opacity == 1.0) {
+      return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
+    } else {
+      return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity.toStringAsFixed(3)})';
+    }
   }
 }
