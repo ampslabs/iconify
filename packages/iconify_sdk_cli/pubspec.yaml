@@ -1,8 +1,12 @@
 name: iconify_sdk_cli
 resolution: workspace
-description: Command line interface for Iconify SDK.
+description: >
+  Command-line tool for the Iconify SDK. Downloads icon sets and generates
+  Dart code from your iconify.yaml configuration.
 version: 0.1.0
-publish_to: none
+repository: https://github.com/ampslabs/iconify_sdk/tree/main/packages/iconify_sdk_cli
+issue_tracker: https://github.com/ampslabs/iconify_sdk/issues
+homepage: https://github.com/ampslabs/iconify_sdk
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -10,8 +14,7 @@ environment:
 dependencies:
   args: ^2.5.0
   cli_util: ^0.4.1
-  iconify_sdk_core:
-    path: ../iconify_sdk_core
+  iconify_sdk_core: ^0.1.0
 
 dev_dependencies:
   lints: ^6.1.0
