@@ -40,7 +40,7 @@ Builder and CLI are siblings; either can be built after `iconify_sdk` is stable.
 | Phase | Name | Packages Touched | Duration (part-time) | Exit Gate |
 |---|---|---|---|---|
 | 0 | Design Lock | All (setup only) | 1–2 weeks | ADRs signed, monorepo green, names reserved |
-| 1 | Core Engine | `iconify_sdk_core` | 3–4 weeks | All tests pass, publishable dry-run OK |
+| 1 | Core Engine | `iconify_sdk_core` | 3–4 weeks | ✅ All tests pass, publishable dry-run OK |
 | 2 | Flutter Package | `iconify_sdk` | 2–3 weeks | One-liner widget works, release mode blocks remote |
 | 3 | build_runner Builder | `iconify_sdk_builder` | 2–3 weeks | `build_runner build` generates correct Dart code |
 | 4 | CLI MVP | `iconify_sdk_cli` | 4–5 weeks | Full offline workflow end-to-end |
@@ -289,33 +289,33 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 1.4 — Provider Interface
 
-- [ ] `[AGENT]` Create `lib/src/providers/iconify_provider.dart`
-  - [ ] `abstract interface class IconifyProvider`
-  - [ ] `Future<IconifyIconData?> getIcon(IconifyName name)`
-  - [ ] `Future<IconifyCollectionInfo?> getCollection(String prefix)`
-  - [ ] `Future<bool> hasIcon(IconifyName name)`
-  - [ ] `Future<bool> hasCollection(String prefix)`
-  - [ ] `Future<void> dispose()` — default no-op implementation
-  - [ ] Dartdoc: null = not found, throw only on unexpected failure
+- [x] `[AGENT]` Create `lib/src/providers/iconify_provider.dart`
+  - [x] `abstract interface class IconifyProvider`
+  - [x] `Future<IconifyIconData?> getIcon(IconifyName name)`
+  - [x] `Future<IconifyCollectionInfo?> getCollection(String prefix)`
+  - [x] `Future<bool> hasIcon(IconifyName name)`
+  - [x] `Future<bool> hasCollection(String prefix)`
+  - [x] `Future<void> dispose()` — default no-op implementation
+  - [x] Dartdoc: null = not found, throw only on unexpected failure
 
 ---
 
 ## 1.5 — MemoryIconifyProvider
 
-- [ ] `[AGENT]` Create `lib/src/providers/memory_iconify_provider.dart`
-  - [ ] Backed by `Map<IconifyName, IconifyIconData>` and `Map<String, IconifyCollectionInfo>`
-  - [ ] `putIcon(name, data)` — public write method
-  - [ ] `putCollection(info)` — public write method
-  - [ ] `removeIcon(name)`
-  - [ ] `clear()`
-  - [ ] `iconCount` getter
-- [ ] `[AGENT]` Write `test/providers/memory_iconify_provider_test.dart`
-  - [ ] put + get round-trip
-  - [ ] returns null for missing key
-  - [ ] hasIcon true/false
-  - [ ] removeIcon deletes
-  - [ ] clear empties everything
-  - [ ] iconCount reflects state
+- [x] `[AGENT]` Create `lib/src/providers/memory_iconify_provider.dart`
+  - [x] Backed by `Map<IconifyName, IconifyIconData>` and `Map<String, IconifyCollectionInfo>`
+  - [x] `putIcon(name, data)` — public write method
+  - [x] `putCollection(info)` — public write method
+  - [x] `removeIcon(name)`
+  - [x] `clear()`
+  - [x] `iconCount` getter
+- [x] `[AGENT]` Write `test/providers/memory_iconify_provider_test.dart`
+  - [x] put + get round-trip
+  - [x] returns null for missing key
+  - [x] hasIcon true/false
+  - [x] removeIcon deletes
+  - [x] clear empties everything
+  - [x] iconCount reflects state
 
 ---
 
@@ -323,61 +323,61 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ### 1.6.1 — Cache Interface
 
-- [ ] `[AGENT]` Create `lib/src/cache/iconify_cache.dart`
-  - [ ] `abstract interface class IconifyCache`
-  - [ ] `get`, `put`, `remove`, `clear`, `size`, `contains`
+- [x] `[AGENT]` Create `lib/src/cache/iconify_cache.dart`
+  - [x] `abstract interface class IconifyCache`
+  - [x] `get`, `put`, `remove`, `clear`, `size`, `contains`
 
 ### 1.6.2 — LRU Cache
 
-- [ ] `[AGENT]` Create `lib/src/cache/lru_iconify_cache.dart`
-  - [ ] `LinkedHashMap`-based LRU (remove + re-insert on access = move to end)
-  - [ ] `maxEntries` constructor param, default 500
-  - [ ] Evicts least-recently-used entry when at capacity
-  - [ ] `LruCacheStats` class: `currentSize`, `maxSize`, `fillRatio`
-  - [ ] `stats` getter
-- [ ] `[AGENT]` Write `test/cache/lru_iconify_cache_test.dart`
-  - [ ] put + get
-  - [ ] null for missing
-  - [ ] contains true/false
-  - [ ] remove
-  - [ ] clear
-  - [ ] size
-  - [ ] evicts LRU when at capacity (access pattern matters)
-  - [ ] accessed entry is not evicted over never-accessed entry
-  - [ ] stats fill ratio
+- [x] `[AGENT]` Create `lib/src/cache/lru_iconify_cache.dart`
+  - [x] `LinkedHashMap`-based LRU (remove + re-insert on access = move to end)
+  - [x] `maxEntries` constructor param, default 500
+  - [x] Evicts least-recently-used entry when at capacity
+  - [x] `LruCacheStats` class: `currentSize`, `maxSize`, `fillRatio`
+  - [x] `stats` getter
+- [x] `[AGENT]` Write `test/cache/lru_iconify_cache_test.dart`
+  - [x] put + get
+  - [x] null for missing
+  - [x] contains true/false
+  - [x] remove
+  - [x] clear
+  - [x] size
+  - [x] evicts LRU when at capacity (access pattern matters)
+  - [x] accessed entry is not evicted over never-accessed entry
+  - [x] stats fill ratio
 
 ---
 
 ## 1.7 — CachingIconifyProvider
 
-- [ ] `[AGENT]` Create `lib/src/providers/caching_iconify_provider.dart`
-  - [ ] Decorator wrapping any `IconifyProvider`
-  - [ ] Default cache: `LruIconifyCache()`
-  - [ ] Tracks `hits` and `misses`
-  - [ ] `resetStats()`
-  - [ ] Does NOT cache null results (prevents caching "not found")
-- [ ] `[AGENT]` Write `test/providers/caching_iconify_provider_test.dart` with `mocktail`
-  - [ ] Cache miss delegates to inner
-  - [ ] Cache hit does NOT call inner second time
-  - [ ] hit/miss counters increment correctly
-  - [ ] null results not cached
-  - [ ] resetStats works
-  - [ ] dispose clears cache and disposes inner
+- [x] `[AGENT]` Create `lib/src/providers/caching_iconify_provider.dart`
+  - [x] Decorator wrapping any `IconifyProvider`
+  - [x] Default cache: `LruIconifyCache()`
+  - [x] Tracks `hits` and `misses`
+  - [x] `resetStats()`
+  - [x] Does NOT cache null results (prevents caching "not found")
+- [x] `[AGENT]` Write `test/providers/caching_iconify_provider_test.dart` with `mocktail`
+  - [x] Cache miss delegates to inner
+  - [x] Cache hit does NOT call inner second time
+  - [x] hit/miss counters increment correctly
+  - [x] null results not cached
+  - [x] resetStats works
+  - [x] dispose clears cache and disposes inner
 
 ---
 
 ## 1.8 — CompositeIconifyProvider
 
-- [ ] `[AGENT]` Create `lib/src/providers/composite_iconify_provider.dart`
-  - [ ] Tries providers in order, returns first non-null
-  - [ ] Throws if `providers` is empty
-  - [ ] Propagates exceptions from providers (does not swallow)
-  - [ ] `dispose()` disposes all providers
-- [ ] `[AGENT]` Write `test/providers/composite_iconify_provider_test.dart`
-  - [ ] First provider wins over second when both have icon
-  - [ ] Falls through to second when first returns null
-  - [ ] Returns null when all return null
-  - [ ] hasIcon true if any provider has it
+- [x] `[AGENT]` Create `lib/src/providers/composite_iconify_provider.dart`
+  - [x] Tries providers in order, returns first non-null
+  - [x] Throws if `providers` is empty
+  - [x] Propagates exceptions from providers (does not swallow)
+  - [x] `dispose()` disposes all providers
+- [x] `[AGENT]` Write `test/providers/composite_iconify_provider_test.dart`
+  - [x] First provider wins over second when both have icon
+  - [x] Falls through to second when first returns null
+  - [x] Returns null when all return null
+  - [x] hasIcon true if any provider has it
 
 ---
 
@@ -385,174 +385,174 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 > ⚠️ **Renamed from `HttpIconifyProvider`**. This is a dev/debug escape hatch only. Not the production data path.
 
-- [ ] `[AGENT]` Create `lib/src/providers/remote_iconify_provider.dart`
-  - [ ] Class-level dartdoc: opens with WARNING — not for production use, self-host for production
-  - [ ] Default `apiBase`: `https://api.iconify.design`
-  - [ ] `allowInRelease` constructor param — default `false`
-  - [ ] Gated by `DevModeGuard.isRemoteAllowedInCurrentBuild()` — returns null if blocked
-  - [ ] `User-Agent` header: `iconify_sdk_core/{version} (Dart)`
-  - [ ] On 404: return null
-  - [ ] On non-200: throw `IconifyNetworkException` with status + uri
-  - [ ] On network error: throw `IconifyNetworkException`
-  - [ ] Applies collection-level width/height defaults to per-icon data
-  - [ ] `dispose()` closes http client + sets disposed flag
-  - [ ] `StateError` if called after dispose
-- [ ] `[AGENT]` Write `test/providers/remote_iconify_provider_test.dart` — **mocked client only, no real network calls**
-  - [ ] Returns icon data on 200 response
-  - [ ] Returns null on 404
-  - [ ] Throws `IconifyNetworkException` on 500
-  - [ ] Returns null for icon name not in response
-  - [ ] `StateError` after dispose
-  - [ ] Returns null when DevModeGuard blocks (simulate release mode via `allowInRelease: false`)
+- [x] `[AGENT]` Create `lib/src/providers/remote_iconify_provider.dart`
+  - [x] Class-level dartdoc: opens with WARNING — not for production use, self-host for production
+  - [x] Default `apiBase`: `https://api.iconify.design`
+  - [x] `allowInRelease` constructor param — default `false`
+  - [x] Gated by `DevModeGuard.isRemoteAllowedInCurrentBuild()` — returns null if blocked
+  - [x] `User-Agent` header: `iconify_sdk_core/{version} (Dart)`
+  - [x] On 404: return null
+  - [x] On non-200: throw `IconifyNetworkException` with status + uri
+  - [x] On network error: throw `IconifyNetworkException`
+  - [x] Applies collection-level width/height defaults to per-icon data
+  - [x] `dispose()` closes http client + sets disposed flag
+  - [x] `StateError` if called after dispose
+- [x] `[AGENT]` Write `test/providers/remote_iconify_provider_test.dart` — **mocked client only, no real network calls**
+  - [x] Returns icon data on 200 response
+  - [x] Returns null on 404
+  - [x] Throws `IconifyNetworkException` on 500
+  - [x] Returns null for icon name not in response
+  - [x] `StateError` after dispose
+  - [x] Returns null when DevModeGuard blocks (simulate release mode via `allowInRelease: false`)
 
 ---
 
 ## 1.10 — FileSystemIconifyProvider
 
-- [ ] `[AGENT]` Create `lib/src/providers/file_system_iconify_provider.dart`
-  - [ ] Constructor: `root` directory path, optional `preload` flag
-  - [ ] Reads `{root}/{prefix}.json` files
-  - [ ] Lazy load per-collection (cache parsed JSON in memory after first read)
-  - [ ] `preload: true` loads all JSON files in the directory at construction
-  - [ ] `IconifyParseException` on malformed JSON
-- [ ] `[AGENT]` Write `test/providers/file_system_iconify_provider_test.dart`
-  - [ ] Returns null for missing collection
-  - [ ] Reads and parses valid JSON file
-  - [ ] Returns correct icon from parsed file
-  - [ ] Returns null for missing icon in valid collection
-  - [ ] Throws `IconifyParseException` for malformed JSON file
+- [x] `[AGENT]` Create `lib/src/providers/file_system_iconify_provider.dart`
+  - [x] Constructor: `root` directory path, optional `preload` flag
+  - [x] Reads `{root}/{prefix}.json` files
+  - [x] Lazy load per-collection (cache parsed JSON in memory after first read)
+  - [x] `preload: true` loads all JSON files in the directory at construction
+  - [x] `IconifyParseException` on malformed JSON
+- [x] `[AGENT]` Write `test/providers/file_system_iconify_provider_test.dart`
+  - [x] Returns null for missing collection
+  - [x] Reads and parses valid JSON file
+  - [x] Returns correct icon from parsed file
+  - [x] Returns null for missing icon in valid collection
+  - [x] Throws `IconifyParseException` for malformed JSON file
 
 ---
 
 ## 1.11 — AssetBundleIconifyProvider (abstract stub)
 
-- [ ] `[AGENT]` Create `lib/src/providers/asset_bundle_iconify_provider.dart`
-  - [ ] `abstract class AssetBundleIconifyProvider implements IconifyProvider`
-  - [ ] `assetPrefix` field
-  - [ ] `Future<String> loadAssetString(String path)` — abstract, implemented in `iconify_sdk`
-  - [ ] Default implementations of `hasIcon` and `hasCollection`
-  - [ ] Dartdoc: "concrete implementation in `iconify_sdk` package"
+- [x] `[AGENT]` Create `lib/src/providers/asset_bundle_iconify_provider.dart`
+  - [x] `abstract class AssetBundleIconifyProvider implements IconifyProvider`
+  - [x] `assetPrefix` field
+  - [x] `Future<String> loadAssetString(String path)` — abstract, implemented in `iconify_sdk`
+  - [x] Default implementations of `hasIcon` and `hasCollection`
+  - [x] Dartdoc: "concrete implementation in `iconify_sdk` package"
 
 ---
 
 ## 1.12 — DevModeGuard
 
-- [ ] `[AGENT]` Create `lib/src/guard/dev_mode_guard.dart`
-  - [ ] `abstract final class DevModeGuard` (non-instantiable)
-  - [ ] `isRemoteAllowedInCurrentBuild()` — uses `assert()` trick to detect debug mode
-  - [ ] `allowRemoteInRelease()` — explicit opt-in override
-  - [ ] `resetOverride()` — for tests only
-  - [ ] Dartdoc: explains why this exists (API ethics, reliability)
-- [ ] `[AGENT]` Write `test/guard/dev_mode_guard_test.dart`
-  - [ ] Returns true in test/debug mode
-  - [ ] `allowRemoteInRelease` forces true
-  - [ ] `resetOverride` restores default behavior
-  - [ ] tearDown always calls `resetOverride`
+- [x] `[AGENT]` Create `lib/src/guard/dev_mode_guard.dart`
+  - [x] `abstract final class DevModeGuard` (non-instantiable)
+  - [x] `isRemoteAllowedInCurrentBuild()` — uses `assert()` trick to detect debug mode
+  - [x] `allowRemoteInRelease()` — explicit opt-in override
+  - [x] `resetOverride()` — for tests only
+  - [x] Dartdoc: explains why this exists (API ethics, reliability)
+- [x] `[AGENT]` Write `test/guard/dev_mode_guard_test.dart`
+  - [x] Returns true in test/debug mode
+  - [x] `allowRemoteInRelease` forces true
+  - [x] `resetOverride` restores default behavior
+  - [x] tearDown always calls `resetOverride`
 
 ---
 
 ## 1.13 — Alias Resolver
 
-- [ ] `[AGENT]` Create `lib/src/resolver/alias_resolver.dart`
-  - [ ] `final class AliasResolver` with `maxChainDepth` (default 10)
-  - [ ] `resolve({iconName, icons, aliases, defaultWidth, defaultHeight})` — returns `IconifyIconData?`
-  - [ ] Direct icon match: no alias lookup
-  - [ ] Alias resolution: follow `parent` chain
-  - [ ] Collect overrides: nearest alias wins (width, height, rotate, hFlip, vFlip)
-  - [ ] Circular detection: check `chain.contains(parentName)` before adding
-  - [ ] Depth limit: throw `CircularAliasException` when chain > `maxChainDepth`
-  - [ ] `final class AliasEntry` with `parent`, optional override fields, `fromJson`
-- [ ] `[AGENT]` Write `test/resolver/alias_resolver_test.dart`
-  - [ ] Returns direct icon with no alias
-  - [ ] Returns null for unknown icon and no alias
-  - [ ] Resolves depth-1 alias
-  - [ ] Resolves depth-2 alias chain
-  - [ ] Resolves depth-3 alias chain
-  - [ ] Applies width/height override from alias
-  - [ ] Nearest alias wins when multiple overrides in chain
-  - [ ] `CircularAliasException` on two-node cycle
-  - [ ] `CircularAliasException` includes full chain in exception
-  - [ ] `CircularAliasException` on chain exceeding maxChainDepth
+- [x] `[AGENT]` Create `lib/src/resolver/alias_resolver.dart`
+  - [x] `final class AliasResolver` with `maxChainDepth` (default 10)
+  - [x] `resolve({iconName, icons, aliases, defaultWidth, defaultHeight})` — returns `IconifyIconData?`
+  - [x] Direct icon match: no alias lookup
+  - [x] Alias resolution: follow `parent` chain
+  - [x] Collect overrides: nearest alias wins (width, height, rotate, hFlip, vFlip)
+  - [x] Circular detection: check `chain.contains(parentName)` before adding
+  - [x] Depth limit: throw `CircularAliasException` when chain > `maxChainDepth`
+  - [x] `final class AliasEntry` with `parent`, optional override fields, `fromJson`
+- [x] `[AGENT]` Write `test/resolver/alias_resolver_test.dart`
+  - [x] Returns direct icon with no alias
+  - [x] Returns null for unknown icon and no alias
+  - [x] Resolves depth-1 alias
+  - [x] Resolves depth-2 alias chain
+  - [x] Resolves depth-3 alias chain
+  - [x] Applies width/height override from alias
+  - [x] Nearest alias wins when multiple overrides in chain
+  - [x] `CircularAliasException` on two-node cycle
+  - [x] `CircularAliasException` includes full chain in exception
+  - [x] `CircularAliasException` on chain exceeding maxChainDepth
 
 ---
 
 ## 1.14 — Iconify JSON Parser
 
-- [ ] `[AGENT]` Create `lib/src/parser/iconify_json_parser.dart`
-  - [ ] `final class IconifyJsonParser` (no instances)
-  - [ ] `static ParsedCollection parseCollectionString(String jsonString)` — parses raw JSON string
-  - [ ] `static ParsedCollection parseCollection(Map<String, dynamic> json)` — parses decoded map
-  - [ ] `static IconifyIconData? extractIcon(Map<String, dynamic> collectionJson, String iconName)` — single-icon extraction with alias resolution
-  - [ ] Applies collection-level `width`/`height` defaults to icons missing those fields
-  - [ ] Skips malformed alias entries (non-fatal, logs warning)
-  - [ ] Throws `IconifyParseException` on: missing `prefix`, missing `icons`, invalid JSON
-  - [ ] `final class ParsedCollection` with `prefix`, `info`, `icons`, `aliases`, `defaultWidth`, `defaultHeight`
-  - [ ] `ParsedCollection.getIcon(iconName)` — resolves aliases
-  - [ ] `ParsedCollection.allNames` — all icon + alias names
-  - [ ] `ParsedCollection.iconCount` / `aliasCount`
-- [ ] `[AGENT]` Write `test/parser/iconify_json_parser_test.dart`
-  - [ ] Parses minimal valid collection
-  - [ ] Inherits default width/height for icons missing those fields
-  - [ ] Icon-level width/height overrides collection default
-  - [ ] Parses aliases map
-  - [ ] `getIcon` finds direct icon
-  - [ ] `getIcon` resolves alias to parent
-  - [ ] `getIcon` returns null for unknown name
-  - [ ] Throws `IconifyParseException` on missing `prefix`
-  - [ ] Throws `IconifyParseException` on missing `icons`
-  - [ ] Throws `IconifyParseException` on invalid JSON string
-  - [ ] Parses `mdi_fixture.json` from disk
-  - [ ] Parses `alias_chain_fixture.json` — verifies chain resolution + circular detection
+- [x] `[AGENT]` Create `lib/src/parser/iconify_json_parser.dart`
+  - [x] `final class IconifyJsonParser` (no instances)
+  - [x] `static ParsedCollection parseCollectionString(String jsonString)` — parses raw JSON string
+  - [x] `static ParsedCollection parseCollection(Map<String, dynamic> json)` — parses decoded map
+  - [x] `static IconifyIconData? extractIcon(Map<String, dynamic> collectionJson, String iconName)` — single-icon extraction with alias resolution
+  - [x] Applies collection-level `width`/`height` defaults to icons missing those fields
+  - [x] Skips malformed alias entries (non-fatal, logs warning)
+  - [x] Throws `IconifyParseException` on: missing `prefix`, missing `icons`, invalid JSON
+  - [x] `final class ParsedCollection` with `prefix`, `info`, `icons`, `aliases`, `defaultWidth`, `defaultHeight`
+  - [x] `ParsedCollection.getIcon(iconName)` — resolves aliases
+  - [x] `ParsedCollection.allNames` — all icon + alias names
+  - [x] `ParsedCollection.iconCount` / `aliasCount`
+- [x] `[AGENT]` Write `test/parser/iconify_json_parser_test.dart`
+  - [x] Parses minimal valid collection
+  - [x] Inherits default width/height for icons missing those fields
+  - [x] Icon-level width/height overrides collection default
+  - [x] Parses aliases map
+  - [x] `getIcon` finds direct icon
+  - [x] `getIcon` resolves alias to parent
+  - [x] `getIcon` returns null for unknown name
+  - [x] Throws `IconifyParseException` on missing `prefix`
+  - [x] Throws `IconifyParseException` on missing `icons`
+  - [x] Throws `IconifyParseException` on invalid JSON string
+  - [x] Parses `mdi_fixture.json` from disk
+  - [x] Parses `alias_chain_fixture.json` — verifies chain resolution + circular detection
 
 ---
 
 ## 1.15 — Test Fixtures
 
-- [ ] `[HUMAN]` Download real collection JSON files from GitHub raw (NOT the Iconify API):
+- [x] `[HUMAN]` Download real collection JSON files from GitHub raw (NOT the Iconify API):
   ```bash
   # Full collections — trim to needed icons after download
   curl "https://raw.githubusercontent.com/iconify/icon-sets/master/json/mdi.json" -o /tmp/mdi_full.json
   curl "https://raw.githubusercontent.com/iconify/icon-sets/master/json/lucide.json" -o /tmp/lucide_full.json
   curl "https://raw.githubusercontent.com/iconify/icon-sets/master/json/tabler.json" -o /tmp/tabler_full.json
   ```
-- [ ] `[AGENT]` Create `test/fixtures/mdi_fixture.json` — hand-trimmed to 10 icons + 3 aliases from downloaded MDI
-- [ ] `[AGENT]` Create `test/fixtures/lucide_fixture.json` — hand-trimmed to 5 icons
-- [ ] `[AGENT]` Create `test/fixtures/alias_chain_fixture.json` — custom file with: direct icon, depth-1 alias, depth-2 alias, depth-3 alias with override, circular pair
-- [ ] `[AGENT]` Create `test/fixtures/malformed_fixture.json` — missing `body` field on one icon, missing `prefix`
+- [x] `[AGENT]` Create `test/fixtures/mdi_fixture.json` — hand-trimmed to 10 icons + 3 aliases from downloaded MDI
+- [x] `[AGENT]` Create `test/fixtures/lucide_fixture.json` — hand-trimmed to 5 icons
+- [x] `[AGENT]` Create `test/fixtures/alias_chain_fixture.json` — custom file with: direct icon, depth-1 alias, depth-2 alias, depth-3 alias with override, circular pair
+- [x] `[AGENT]` Create `test/fixtures/malformed_fixture.json` — missing `body` field on one icon, missing `prefix`
 
 ---
 
 ## 1.16 — Barrel Export
 
-- [ ] `[AGENT]` Create `lib/iconify_sdk_core.dart`
-  - [ ] Export all public types from all modules
-  - [ ] No `src/` internals exposed directly
-  - [ ] Library-level dartdoc with quick-start example
+- [x] `[AGENT]` Create `lib/iconify_sdk_core.dart`
+  - [x] Export all public types from all modules
+  - [x] No `src/` internals exposed directly
+  - [x] Library-level dartdoc with quick-start example
 
 ---
 
 ## 1.17 — Smoke Test
 
-- [ ] `[AGENT]` Create `example/smoke_test.dart`
-  - [ ] Covers: name parsing, invalid name error, memory provider round-trip, LRU eviction, alias resolution, circular alias, JSON parsing with alias, caching provider hit/miss counts, SVG string generation, DevModeGuard behavior
-  - [ ] Outputs `✅` / `❌` per check
-  - [ ] **NO live network calls** — all provider tests use local fixtures
-  - [ ] Exits non-zero if any check fails
-- [ ] `[HUMAN]` Run `dart run example/smoke_test.dart` — all checks green
+- [x] `[AGENT]` Create `example/smoke_test.dart`
+  - [x] Covers: name parsing, invalid name error, memory provider round-trip, LRU eviction, alias resolution, circular alias, JSON parsing with alias, caching provider hit/miss counts, SVG string generation, DevModeGuard behavior
+  - [x] Outputs `✅` / `❌` per check
+  - [x] **NO live network calls** — all provider tests use local fixtures
+  - [x] Exits non-zero if any check fails
+- [x] `[HUMAN]` Run `dart run example/smoke_test.dart` — all checks green
 
 ---
 
 ## 1.18 — Phase 1 Exit Gate
 
-- [ ] `dart analyze` — zero issues
-- [ ] `dart format lib/ test/ --set-exit-if-changed` — exits 0
-- [ ] `dart test` — 100% passing, no skipped tests
-- [ ] `dart run example/smoke_test.dart` — all checks green
-- [ ] `dart pub publish --dry-run` — exits 0
-- [ ] All public APIs have `///` dartdoc
-- [ ] Zero `TODO` / `FIXME` / `HACK` in `lib/`
-- [ ] `DevModeGuard.resetOverride()` called in tearDown of every relevant test
-- [ ] No import of `package:flutter/*` anywhere in the package
+- [x] `dart analyze` — zero issues
+- [x] `dart format lib/ test/ --set-exit-if-changed` — exits 0
+- [x] `dart test` — 100% passing, no skipped tests
+- [x] `dart run example/smoke_test.dart` — all checks green
+- [x] `dart pub publish --dry-run` — exits 0
+- [x] All public APIs have `///` dartdoc
+- [x] Zero `TODO` / `FIXME` / `HACK` in `lib/`
+- [x] `DevModeGuard.resetOverride()` called in tearDown of every relevant test
+- [x] No import of `package:flutter/*` anywhere in the package
 
 ---
 
