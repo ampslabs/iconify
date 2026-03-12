@@ -1,0 +1,4 @@
+sets:
+  - mdi:*
+output: lib/icons.g.dart
+data_dir: assets/iconify

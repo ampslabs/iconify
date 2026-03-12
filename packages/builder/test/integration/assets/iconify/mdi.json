@@ -1,0 +1,8 @@
+{
+  "prefix": "mdi",
+  "icons": {
+    "home": { "body": "<path d='home'/>", "width": 24, "height": 24 }
+  },
+  "width": 24,
+  "height": 24
+}

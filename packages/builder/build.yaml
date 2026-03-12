@@ -1,0 +1,7 @@
+builders:
+  iconify:
+    import: "package:iconify_sdk_builder/builder.dart"
+    builder_factories: ["iconifyBuilder"]
+    build_extensions: { "$lib$": ["icons.g.dart"] }
+    auto_apply: root_package
+    build_to: source
