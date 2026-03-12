@@ -41,7 +41,7 @@ Builder and CLI are siblings; either can be built after `iconify_sdk` is stable.
 |---|---|---|---|---|
 | 0 | Design Lock | All (setup only) | 1–2 weeks | ADRs signed, monorepo green, names reserved |
 | 1 | Core Engine | `iconify_sdk_core` | 3–4 weeks | ✅ All tests pass, publishable dry-run OK |
-| 2 | Flutter Package | `iconify_sdk` | 2–3 weeks | One-liner widget works, release mode blocks remote |
+| 2 | Flutter Package | `iconify_sdk` | 2–3 weeks | ✅ One-liner widget works, release mode blocks remote |
 | 3 | build_runner Builder | `iconify_sdk_builder` | 2–3 weeks | `build_runner build` generates correct Dart code |
 | 4 | CLI MVP | `iconify_sdk_cli` | 4–5 weeks | Full offline workflow end-to-end |
 | 5 | Correctness | All | 2–3 weeks | Impeller golden tests pass on real devices |
@@ -567,24 +567,24 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 2.1 — Package Scaffolding
 
-- [ ] `[AGENT]` Create `packages/iconify_sdk/pubspec.yaml`
-  - [ ] Flutter SDK dependency
-  - [ ] Dependencies: `iconify_sdk_core`, `flutter_svg`, `meta`
-  - [ ] Dev: `flutter_test`, `mocktail`, `alchemist` (golden testing)
-- [ ] `[AGENT]` Create directory structure: `lib/src/widget/`, `lib/src/provider/`, `lib/src/config/`, `lib/src/registry/`, `lib/src/render/`
-- [ ] `[AGENT]` Create `assets/iconify/starter/` directory for bundled registry files
-- [ ] `[AGENT]` Register assets in `pubspec.yaml`: `assets/iconify/starter/`
+- [x] `[AGENT]` Create `packages/iconify_sdk/pubspec.yaml`
+  - [x] Flutter SDK dependency
+  - [x] Dependencies: `iconify_sdk_core`, `flutter_svg`, `meta`
+  - [x] Dev: `flutter_test`, `mocktail`, `alchemist` (golden testing)
+- [x] `[AGENT]` Create directory structure: `lib/src/widget/`, `lib/src/provider/`, `lib/src/config/`, `lib/src/registry/`, `lib/src/render/`
+- [x] `[AGENT]` Create `assets/iconify/starter/` directory for bundled registry files
+- [x] `[AGENT]` Register assets in `pubspec.yaml`: `assets/iconify/starter/`
 
 ---
 
 ## 2.2 — Flutter Asset Bundle Provider
 
-- [ ] `[AGENT]` Create `lib/src/provider/flutter_asset_bundle_iconify_provider.dart`
-  - [ ] Extends `AssetBundleIconifyProvider` from core
-  - [ ] Implements `loadAssetString(path)` using Flutter's `rootBundle` or injected `AssetBundle`
-  - [ ] Caches parsed JSON in memory after first load
-  - [ ] Uses `IconifyJsonParser.parseCollection` internally
-- [ ] `[AGENT]` Write widget tests for asset bundle provider using Flutter test `TestAssetBundle`
+- [x] `[AGENT]` Create `lib/src/provider/flutter_asset_bundle_iconify_provider.dart`
+  - [x] Extends `AssetBundleIconifyProvider` from core
+  - [x] Implements `loadAssetString(path)` using Flutter's `rootBundle` or injected `AssetBundle`
+  - [x] Caches parsed JSON in memory after first load
+  - [x] Uses `IconifyJsonParser.parseCollection` internally
+- [x] `[AGENT]` Write widget tests for asset bundle provider using Flutter test `TestAssetBundle`
 
 ---
 
@@ -607,47 +607,47 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 2.4 — IconifyMode & Configuration
 
-- [ ] `[AGENT]` Create `lib/src/config/iconify_mode.dart`
+- [x] `[AGENT]` Create `lib/src/config/iconify_mode.dart`
   ```dart
   enum IconifyMode { auto, offline, generated, remoteAllowed }
   ```
-- [ ] `[AGENT]` Create `lib/src/config/iconify_config.dart`
-  - [ ] Fields: `mode`, `customProviders`, `cacheMaxEntries`, `remoteApiBase`
-  - [ ] `IconifyConfig.defaults()` factory
-- [ ] `[AGENT]` Create `lib/src/config/iconify_inherited_widget.dart`
-  - [ ] `class IconifyScope extends InheritedWidget`
-  - [ ] Holds resolved `CompositeIconifyProvider` based on mode + build type
-  - [ ] `IconifyScope.of(context)` static accessor
-  - [ ] `IconifyScope.maybeOf(context)` static accessor
+- [x] `[AGENT]` Create `lib/src/config/iconify_config.dart`
+  - [x] Fields: `mode`, `customProviders`, `cacheMaxEntries`, `remoteApiBase`
+  - [x] `IconifyConfig.defaults()` factory
+- [x] `[AGENT]` Create `lib/src/config/iconify_inherited_widget.dart`
+  - [x] `class IconifyScope extends InheritedWidget`
+  - [x] Holds resolved `CompositeIconifyProvider` based on mode + build type
+  - [x] `IconifyScope.of(context)` static accessor
+  - [x] `IconifyScope.maybeOf(context)` static accessor
 
 ---
 
 ## 2.5 — Mode-Based Provider Chain
 
-- [ ] `[AGENT]` Create `lib/src/config/provider_chain_builder.dart`
-  - [ ] `buildProviderChain(IconifyConfig config, BuildMode buildMode)` — returns `CompositeIconifyProvider`
-  - [ ] `auto` mode in debug: `[memory, starterRegistry, generatedIfPresent, remoteIfDebug]`
-  - [ ] `auto` mode in release: `[memory, starterRegistry, generatedIfPresent]` — NO remote
-  - [ ] `offline` mode: `[memory, generatedIfPresent, starterRegistry]` — NO remote ever
-  - [ ] `generated` mode: `[generatedIfPresent]` — strict, fails loudly if generated not present
-  - [ ] `remoteAllowed` mode: same as auto but remote allowed in all build modes
-- [ ] `[AGENT]` Write unit tests for provider chain builder
+- [x] `[AGENT]` Create `lib/src/config/provider_chain_builder.dart`
+  - [x] `buildProviderChain(IconifyConfig config, BuildMode buildMode)` — returns `CompositeIconifyProvider`
+  - [x] `auto` mode in debug: `[memory, starterRegistry, generatedIfPresent, remoteIfDebug]`
+  - [x] `auto` mode in release: `[memory, starterRegistry, generatedIfPresent]` — NO remote
+  - [x] `offline` mode: `[memory, generatedIfPresent, starterRegistry]` — NO remote ever
+  - [x] `generated` mode: `[generatedIfPresent]` — strict, fails loudly if generated not present
+  - [x] `remoteAllowed` mode: same as auto but remote allowed in all build modes
+- [x] `[AGENT]` Write unit tests for provider chain builder
 
 ---
 
 ## 2.6 — IconifyApp Widget
 
-- [ ] `[AGENT]` Create `lib/src/widget/iconify_app.dart`
-  - [ ] `class IconifyApp extends StatefulWidget`
-  - [ ] Constructor: `child` (required), `config` (optional, defaults to `IconifyConfig.defaults()`)
-  - [ ] Initializes provider chain based on config + detected build mode
-  - [ ] Provides `IconifyScope` to widget tree
-  - [ ] Exposes `IconifyApp.configure(mode: ...)` static convenience method
-  - [ ] Dartdoc: show before/after upgrade example (from auto to generated mode)
-- [ ] `[AGENT]` Write widget tests for `IconifyApp`
-  - [ ] Children can access `IconifyScope.of(context)`
-  - [ ] Default config uses auto mode
-  - [ ] Dispose cleans up provider chain
+- [x] `[AGENT]` Create `lib/src/widget/iconify_app.dart`
+  - [x] `class IconifyApp extends StatefulWidget`
+  - [x] Constructor: `child` (required), `config` (optional, defaults to `IconifyConfig.defaults()`)
+  - [x] Initializes provider chain based on config + detected build mode
+  - [x] Provides `IconifyScope` to widget tree
+  - [x] Exposes `IconifyApp.configure(mode: ...)` static convenience method
+  - [x] Dartdoc: show before/after upgrade example (from auto to generated mode)
+- [x] `[AGENT]` Write widget tests for `IconifyApp`
+  - [x] Children can access `IconifyScope.of(context)`
+  - [x] Default config uses auto mode
+  - [x] Dispose cleans up provider chain
 
 ---
 
