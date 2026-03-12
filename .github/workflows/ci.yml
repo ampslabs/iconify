@@ -7,16 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-
   verify:
     runs-on: ubuntu-latest
     strategy:
@@ -28,7 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.sdk }}
-      
+
       - name: Install Melos
         run: |
           dart pub global activate melos
@@ -36,6 +26,11 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Verify formatting
+        # Run per-package so each package's analysis_options.yaml can resolve
+        # package:lints/recommended.yaml via its own package config.
+        run: melos exec -- "dart format --output=none --set-exit-if-changed ."
 
       - name: Analyze project
         run: melos exec -- "flutter analyze --fatal-infos --fatal-warnings"
