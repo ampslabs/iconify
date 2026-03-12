@@ -30,4 +30,4 @@ dev_dependencies:
   mocktail: ^1.0.4
 
 executables:
-  iconify: iconify_sdk_cli
+  iconify: iconify

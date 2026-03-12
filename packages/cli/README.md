@@ -16,39 +16,41 @@ dev_dependencies:
 
 ## Commands
 
+Run these via `dart run iconify_sdk_cli:iconify <command>` or globally via `iconify <command>`.
+
 ### `init`
 Initialize an `iconify.yaml` configuration file in your project.
 
 ```bash
-dart run iconify_sdk_cli init
+dart run iconify_sdk_cli:iconify init
 ```
 
 ### `sync`
 Download full icon collections from GitHub Raw source to your local data directory.
 
 ```bash
-dart run iconify_sdk_cli sync
+dart run iconify_sdk_cli:iconify sync
 ```
 
 ### `doctor`
 Check the health of your Iconify setup, including missing snapshots and attribution warnings.
 
 ```bash
-dart run iconify_sdk_cli doctor
+dart run iconify_sdk_cli:iconify doctor
 ```
 
 ### `generate`
 Manually trigger the icon bundling process (same logic as the `build_runner` builder).
 
 ```bash
-dart run iconify_sdk_cli generate
+dart run iconify_sdk_cli:iconify generate
 ```
 
 ### `licenses`
 Generate a comprehensive license and attribution report for the icons used in your app.
 
 ```bash
-dart run iconify_sdk_cli licenses --format=markdown > ICON_LICENSES.md
+dart run iconify_sdk_cli:iconify licenses --format=markdown > ICON_LICENSES.md
 ```
 
 ## Configuration

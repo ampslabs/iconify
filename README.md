@@ -37,10 +37,10 @@ This is a monorepo managed with [Melos](https://melos.invert.dev/).
 ```bash
 # Get dependencies
 dart pub get
-melos bootstrap
+dart run melos bootstrap
 
 # Run tests across all packages
-melos run test
+dart run melos run test
 ```
 
 ## ⚖️ License

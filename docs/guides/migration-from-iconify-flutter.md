@@ -54,8 +54,8 @@ IconifyIcon.name(IconsMdi.home, color: Colors.blue)
 
 Instead of manually maintaining massive icon data classes, use the new bundling workflow:
 
-1.  Run `dart run iconify_sdk_cli init`
-2.  Run `dart run iconify_sdk_cli sync`
+1.  Run `dart run iconify_sdk_cli:iconify init`
+2.  Run `dart run iconify_sdk_cli:iconify sync`
 3.  Add `iconify_sdk_builder` to `dev_dependencies`
 4.  Run `dart run build_runner build`
 

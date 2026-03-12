@@ -32,4 +32,4 @@ We recommend avoiding collections with **GPL** or **Non-Commercial (NC)** licens
 
 ---
 
-**Tip**: Use the `dart run iconify_sdk_cli licenses` command to generate a full report of all icon sets used in your specific application.
+**Tip**: Use the `dart run iconify_sdk_cli:iconify licenses` command to generate a full report of all icon sets used in your specific application.

@@ -18,8 +18,8 @@ IconifyIcon('mdi:rocket')
 
 Once you've decided which icon sets you're using (e.g., Material Design Icons and Lucide), synchronize the full collections to your local machine.
 
-1.  **Initialize**: Run `dart run iconify_sdk_cli init` to create your `iconify.yaml`.
-2.  **Sync**: Run `dart run iconify_sdk_cli sync`.
+1.  **Initialize**: Run `dart run iconify_sdk_cli:iconify init` to create your `iconify.yaml`.
+2.  **Sync**: Run `dart run iconify_sdk_cli:iconify sync`.
 
 This downloads the JSON snapshots to your `assets/iconify` directory. **You should commit these snapshots to your Git repository.**
 
