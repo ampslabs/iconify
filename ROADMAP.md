@@ -176,14 +176,14 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 1.1 — Package Scaffolding
 
-- [ ] `[AGENT]` Create `packages/core/pubspec.yaml`
-  - [ ] Dependencies: `http: ^1.2.0`, `meta: ^1.15.0`
-  - [ ] Dev dependencies: `test: ^1.25.0`, `mocktail: ^1.0.4`, `lints: ^4.0.0`, `http: ^1.2.0` (for `MockClient`)
-  - [ ] SDK: `>=3.3.0 <4.0.0`
-- [ ] `[AGENT]` Create `packages/core/analysis_options.yaml` with strict mode
-- [ ] `[AGENT]` Create directory structure: `lib/src/models/`, `lib/src/errors/`, `lib/src/providers/`, `lib/src/cache/`, `lib/src/resolver/`, `lib/src/parser/`, `lib/src/guard/`
-- [ ] `[AGENT]` Create `test/` mirror structure + `test/fixtures/`
-- [ ] `[AGENT]` Run `dart pub get` — verify clean
+- [x] `[AGENT]` Create `packages/core/pubspec.yaml`
+  - [x] Dependencies: `http: ^1.2.0`, `meta: ^1.15.0`
+  - [x] Dev dependencies: `test: ^1.25.0`, `mocktail: ^1.0.4`, `lints: ^4.0.0`, `http: ^1.2.0` (for `MockClient`)
+  - [x] SDK: `>=3.3.0 <4.0.0`
+- [x] `[AGENT]` Create `packages/core/analysis_options.yaml` with strict mode
+- [x] `[AGENT]` Create directory structure: `lib/src/models/`, `lib/src/errors/`, `lib/src/providers/`, `lib/src/cache/`, `lib/src/resolver/`, `lib/src/parser/`, `lib/src/guard/`
+- [x] `[AGENT]` Create `test/` mirror structure + `test/fixtures/`
+- [x] `[AGENT]` Run `dart pub get` — verify clean
 
 ---
 
