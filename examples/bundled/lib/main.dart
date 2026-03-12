@@ -42,7 +42,7 @@ class BundledExample extends StatelessWidget {
             const SizedBox(height: 20),
 
             // This is loading from lib/icons.g.dart
-            const IconifyIcon('mdi:account', size: 80, color: Colors.blue),
+            IconifyIcon('mdi:account', size: 80, color: Colors.blue),
 
             const SizedBox(height: 20),
 

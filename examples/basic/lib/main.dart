@@ -29,13 +29,13 @@ class BasicExample extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Default size and color
-            const IconifyIcon('mdi:home'),
+            IconifyIcon('mdi:home'),
 
             const SizedBox(height: 20),
 
             // Custom size and color
-            const IconifyIcon(
-              'lucide:rocket',
+            const IconifyIcon.name(
+              IconifyName('lucide', 'rocket'),
               size: 64,
               color: Colors.deepPurple,
             ),
@@ -43,16 +43,13 @@ class BasicExample extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Multi-color icon
-            const IconifyIcon(
-              'logos:flutter',
-              size: 48,
-            ),
+            IconifyIcon('logos:flutter', size: 48),
 
             const SizedBox(height: 40),
 
             ElevatedButton.icon(
               onPressed: () {},
-              icon: const IconifyIcon('tabler:settings', size: 20),
+              icon: IconifyIcon('tabler:settings', size: 20),
               label: const Text('Settings'),
             ),
           ],
