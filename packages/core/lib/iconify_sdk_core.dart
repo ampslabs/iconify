@@ -30,6 +30,7 @@ export 'src/models/iconify_icon_data.dart';
 export 'src/models/iconify_license.dart';
 export 'src/models/iconify_name.dart';
 export 'src/models/iconify_search_result.dart';
+export 'src/models/render_strategy.dart';
 
 // Parser
 export 'src/parser/iconify_json_parser.dart';
