@@ -41,4 +41,4 @@ jobs:
         run: melos exec -- "flutter analyze --fatal-infos --fatal-warnings"
 
       - name: Run tests
-        run: melos exec -- "flutter test"
+        run: melos exec --dir-exists=test -- "flutter test"

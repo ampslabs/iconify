@@ -19,7 +19,7 @@ melos:
     - packages/*
 
 dev_dependencies:
-  melos: ^6.0.0
+  melos: ^7.4.0
 
 dependency_overrides:
   test: 1.25.13

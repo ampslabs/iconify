@@ -23,7 +23,7 @@ void main() {
       });
 
       final provider = RemoteIconifyProvider(httpClient: client);
-      final result = await provider.getIcon(IconifyName('mdi', 'home'));
+      final result = await provider.getIcon(const IconifyName('mdi', 'home'));
 
       expect(result, isNotNull);
       expect(result!.body, contains('M10 20'));
@@ -34,7 +34,8 @@ void main() {
       final client = MockClient((_) async => http.Response('not found', 404));
       final provider = RemoteIconifyProvider(httpClient: client);
 
-      expect(await provider.getIcon(IconifyName('mdi', 'nonexistent')), isNull);
+      expect(await provider.getIcon(const IconifyName('mdi', 'nonexistent')),
+          isNull);
       await provider.dispose();
     });
 
@@ -43,7 +44,7 @@ void main() {
       final provider = RemoteIconifyProvider(httpClient: client);
 
       expect(
-        () => provider.getIcon(IconifyName('mdi', 'home')),
+        () => provider.getIcon(const IconifyName('mdi', 'home')),
         throwsA(isA<IconifyNetworkException>()),
       );
       await provider.dispose();
@@ -63,7 +64,7 @@ void main() {
       final provider = RemoteIconifyProvider(httpClient: client);
 
       // Request 'home' but response only has 'settings'
-      expect(await provider.getIcon(IconifyName('mdi', 'home')), isNull);
+      expect(await provider.getIcon(const IconifyName('mdi', 'home')), isNull);
       await provider.dispose();
     });
 
@@ -74,7 +75,7 @@ void main() {
       await provider.dispose();
 
       expect(
-        () => provider.getIcon(IconifyName('mdi', 'home')),
+        () => provider.getIcon(const IconifyName('mdi', 'home')),
         throwsA(isA<StateError>()),
       );
     });

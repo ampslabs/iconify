@@ -3,9 +3,12 @@ import 'package:test/test.dart';
 
 void main() {
   final baseIcon =
-      IconifyIconData(body: '<path d="M0 0"/>', width: 24, height: 24);
+      const IconifyIconData(body: '<path d="M0 0"/>', width: 24, height: 24);
 
-  final icons = {'base': baseIcon, 'other': IconifyIconData(body: '<rect/>')};
+  final icons = {
+    'base': baseIcon,
+    'other': const IconifyIconData(body: '<rect/>')
+  };
 
   group('AliasResolver', () {
     const resolver = AliasResolver();
@@ -34,7 +37,7 @@ void main() {
     });
 
     test('resolves depth-1 alias', () {
-      final aliases = {'base-alias': AliasEntry(parent: 'base')};
+      final aliases = {'base-alias': const AliasEntry(parent: 'base')};
       final result = resolver.resolve(
         iconName: 'base-alias',
         icons: icons,
@@ -47,8 +50,8 @@ void main() {
 
     test('resolves depth-2 alias chain', () {
       final aliases = {
-        'level1': AliasEntry(parent: 'base'),
-        'level2': AliasEntry(parent: 'level1'),
+        'level1': const AliasEntry(parent: 'base'),
+        'level2': const AliasEntry(parent: 'level1'),
       };
       final result = resolver.resolve(
         iconName: 'level2',
@@ -62,7 +65,7 @@ void main() {
 
     test('applies width/height overrides from alias', () {
       final aliases = {
-        'big-base': AliasEntry(parent: 'base', width: 48, height: 48),
+        'big-base': const AliasEntry(parent: 'base', width: 48, height: 48),
       };
       final result = resolver.resolve(
         iconName: 'big-base',
@@ -77,8 +80,8 @@ void main() {
 
     test('nearest override wins in chain', () {
       final aliases = {
-        'level1': AliasEntry(parent: 'base', width: 48),
-        'level2': AliasEntry(parent: 'level1', width: 32),
+        'level1': const AliasEntry(parent: 'base', width: 48),
+        'level2': const AliasEntry(parent: 'level1', width: 32),
       };
       final result = resolver.resolve(
         iconName: 'level2',
@@ -92,8 +95,8 @@ void main() {
 
     test('throws CircularAliasException on cycle', () {
       final aliases = {
-        'a': AliasEntry(parent: 'b'),
-        'b': AliasEntry(parent: 'a'),
+        'a': const AliasEntry(parent: 'b'),
+        'b': const AliasEntry(parent: 'a'),
       };
       expect(
         () => resolver.resolve(
@@ -109,8 +112,8 @@ void main() {
 
     test('CircularAliasException includes the full chain', () {
       final aliases = {
-        'a': AliasEntry(parent: 'b'),
-        'b': AliasEntry(parent: 'a'),
+        'a': const AliasEntry(parent: 'b'),
+        'b': const AliasEntry(parent: 'a'),
       };
       try {
         resolver.resolve(

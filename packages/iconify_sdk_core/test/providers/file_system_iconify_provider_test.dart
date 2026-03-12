@@ -27,23 +27,23 @@ void main() {
     });
 
     test('loads icon from file', () async {
-      final icon = await provider.getIcon(IconifyName('mdi', 'home'));
+      final icon = await provider.getIcon(const IconifyName('mdi', 'home'));
       expect(icon, isNotNull);
       expect(icon!.body, contains('home'));
     });
 
     test('returns null for missing collection', () async {
-      final icon = await provider.getIcon(IconifyName('ghost', 'home'));
+      final icon = await provider.getIcon(const IconifyName('ghost', 'home'));
       expect(icon, isNull);
     });
 
     test('returns null for missing icon in existing collection', () async {
-      final icon = await provider.getIcon(IconifyName('mdi', 'ghost'));
+      final icon = await provider.getIcon(const IconifyName('mdi', 'ghost'));
       expect(icon, isNull);
     });
 
     test('hasIcon returns true for existing icon', () async {
-      expect(await provider.hasIcon(IconifyName('mdi', 'home')), isTrue);
+      expect(await provider.hasIcon(const IconifyName('mdi', 'home')), isTrue);
     });
 
     test('hasCollection returns true for existing file', () async {
@@ -58,7 +58,8 @@ void main() {
       final preloadedProvider =
           FileSystemIconifyProvider(root: tempDir.path, preload: true);
       // We can't easily check private cache, but we can verify it works instantly
-      final icon = await preloadedProvider.getIcon(IconifyName('mdi', 'home'));
+      final icon =
+          await preloadedProvider.getIcon(const IconifyName('mdi', 'home'));
       expect(icon, isNotNull);
     });
   });

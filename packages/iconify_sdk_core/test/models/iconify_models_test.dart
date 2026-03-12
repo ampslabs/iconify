@@ -7,7 +7,7 @@ void main() {
     const monoBody = '<path d="M10 20" fill="currentColor"/>';
 
     test('toJson and fromJson round-trip', () {
-      final original = IconifyIconData(
+      final original = const IconifyIconData(
         body: body,
         width: 32,
         height: 32,
@@ -25,12 +25,12 @@ void main() {
     });
 
     test('isMonochrome detects currentColor', () {
-      expect(IconifyIconData(body: monoBody).isMonochrome, isTrue);
-      expect(IconifyIconData(body: body).isMonochrome, isFalse);
+      expect(const IconifyIconData(body: monoBody).isMonochrome, isTrue);
+      expect(const IconifyIconData(body: body).isMonochrome, isFalse);
     });
 
     test('toSvgString generates valid SVG', () {
-      final data = IconifyIconData(body: body, width: 24, height: 24);
+      final data = const IconifyIconData(body: body, width: 24, height: 24);
       final svg = data.toSvgString(size: 48);
       expect(svg, contains('viewBox="0 0 24.0 24.0"'));
       expect(svg, contains('width="48.0"'));
@@ -39,14 +39,14 @@ void main() {
     });
 
     test('toSvgString applies color to monochrome icons', () {
-      final data = IconifyIconData(body: monoBody);
+      final data = const IconifyIconData(body: monoBody);
       final svg = data.toSvgString(color: '#FF0000');
       expect(svg, contains('#FF0000'));
       expect(svg, isNot(contains('currentColor')));
     });
 
     test('copyWith works', () {
-      final data = IconifyIconData(body: body);
+      final data = const IconifyIconData(body: body);
       final copy = data.copyWith(width: 48);
       expect(copy.body, data.body);
       expect(copy.width, 48);
@@ -66,12 +66,12 @@ void main() {
     });
 
     test('toJson and fromJson round-trip', () {
-      final original = IconifyCollectionInfo(
+      final original = const IconifyCollectionInfo(
         prefix: 'mdi',
         name: 'Material Design Icons',
         totalIcons: 7446,
         author: 'Austin Andrews',
-        license: const IconifyLicense(title: 'Apache 2.0', spdx: 'Apache-2.0'),
+        license: IconifyLicense(title: 'Apache 2.0', spdx: 'Apache-2.0'),
       );
       final json = original.toJson();
       // fromJson expects the inner part or the whole map?
@@ -88,7 +88,7 @@ void main() {
 
   group('IconifySearchResult', () {
     test('stores search data', () {
-      final name = IconifyName('mdi', 'home');
+      final name = const IconifyName('mdi', 'home');
       final result =
           IconifySearchResult(name: name, score: 0.95, matchedOn: 'exact');
       expect(result.name, name);

@@ -12,7 +12,7 @@
 /// final icon = await provider.getIcon(name);
 /// print(icon?.toSvgString());
 /// ```
-library iconify_sdk_core;
+library;
 
 // Cache
 export 'src/cache/iconify_cache.dart';

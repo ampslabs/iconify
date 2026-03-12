@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print // Smoke test needs to output results to the console.
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 Future<void> main() async {
@@ -37,54 +37,56 @@ Future<void> main() async {
   });
 
   await check('IconifyName equality', () async {
-    assert(IconifyName('mdi', 'home') == IconifyName('mdi', 'home'));
-    assert(IconifyName('mdi', 'home') != IconifyName('mdi', 'settings'));
+    assert(
+        const IconifyName('mdi', 'home') == const IconifyName('mdi', 'home'));
+    assert(const IconifyName('mdi', 'home') !=
+        const IconifyName('mdi', 'settings'));
   });
 
   await check('IconifyName as Map key', () async {
-    final map = {IconifyName('mdi', 'home'): 42};
-    assert(map[IconifyName('mdi', 'home')] == 42);
+    final map = {const IconifyName('mdi', 'home'): 42};
+    assert(map[const IconifyName('mdi', 'home')] == 42);
   });
 
   print('\n[ Memory Provider ]');
 
   await check('MemoryIconifyProvider put and get', () async {
     final provider = MemoryIconifyProvider();
-    final data = IconifyIconData(body: '<path/>');
-    provider.putIcon(IconifyName('mdi', 'home'), data);
-    final result = await provider.getIcon(IconifyName('mdi', 'home'));
+    final data = const IconifyIconData(body: '<path/>');
+    provider.putIcon(const IconifyName('mdi', 'home'), data);
+    final result = await provider.getIcon(const IconifyName('mdi', 'home'));
     assert(result != null);
   });
 
   await check('MemoryIconifyProvider returns null for missing', () async {
     final provider = MemoryIconifyProvider();
-    assert(await provider.getIcon(IconifyName('mdi', 'ghost')) == null);
+    assert(await provider.getIcon(const IconifyName('mdi', 'ghost')) == null);
   });
 
   print('\n[ LRU Cache ]');
 
   await check('LRU cache put/get round-trip', () async {
     final cache = LruIconifyCache(maxEntries: 10);
-    final data = IconifyIconData(body: '<path/>');
-    await cache.put(IconifyName('mdi', 'home'), data);
-    assert(await cache.get(IconifyName('mdi', 'home')) != null);
+    final data = const IconifyIconData(body: '<path/>');
+    await cache.put(const IconifyName('mdi', 'home'), data);
+    assert(await cache.get(const IconifyName('mdi', 'home')) != null);
   });
 
   await check('LRU eviction at capacity', () async {
     final cache = LruIconifyCache(maxEntries: 2);
-    final data = IconifyIconData(body: '<path/>');
-    await cache.put(IconifyName('mdi', 'a'), data);
-    await cache.put(IconifyName('mdi', 'b'), data);
-    await cache.put(IconifyName('mdi', 'c'), data); // evicts 'a'
-    assert(await cache.contains(IconifyName('mdi', 'a')) == false);
-    assert(await cache.contains(IconifyName('mdi', 'c')) == true);
+    final data = const IconifyIconData(body: '<path/>');
+    await cache.put(const IconifyName('mdi', 'a'), data);
+    await cache.put(const IconifyName('mdi', 'b'), data);
+    await cache.put(const IconifyName('mdi', 'c'), data); // evicts 'a'
+    assert(await cache.contains(const IconifyName('mdi', 'a')) == false);
+    assert(await cache.contains(const IconifyName('mdi', 'c')) == true);
   });
 
   print('\n[ Alias Resolver ]');
 
   await check('Resolves direct icon', () async {
     const resolver = AliasResolver();
-    final icons = {'home': IconifyIconData(body: '<path d="home"/>')};
+    final icons = {'home': const IconifyIconData(body: '<path d="home"/>')};
     final result = resolver.resolve(
       iconName: 'home',
       icons: icons,
@@ -97,11 +99,11 @@ Future<void> main() async {
 
   await check('Resolves 3-level alias chain', () async {
     const resolver = AliasResolver();
-    final icons = {'base': IconifyIconData(body: '<path/>')};
+    final icons = {'base': const IconifyIconData(body: '<path/>')};
     final aliases = {
-      'l1': AliasEntry(parent: 'base'),
-      'l2': AliasEntry(parent: 'l1'),
-      'l3': AliasEntry(parent: 'l2'),
+      'l1': const AliasEntry(parent: 'base'),
+      'l2': const AliasEntry(parent: 'l1'),
+      'l3': const AliasEntry(parent: 'l2'),
     };
     final result = resolver.resolve(
       iconName: 'l3',
@@ -116,8 +118,8 @@ Future<void> main() async {
   await check('Throws on circular alias', () async {
     const resolver = AliasResolver();
     final aliases = {
-      'a': AliasEntry(parent: 'b'),
-      'b': AliasEntry(parent: 'a'),
+      'a': const AliasEntry(parent: 'b'),
+      'b': const AliasEntry(parent: 'a'),
     };
     try {
       resolver.resolve(
@@ -174,13 +176,13 @@ Future<void> main() async {
   await check('CachingIconifyProvider caches on second call', () async {
     final underlying = MemoryIconifyProvider();
     underlying.putIcon(
-      IconifyName('mdi', 'home'),
-      IconifyIconData(body: '<path/>'),
+      const IconifyName('mdi', 'home'),
+      const IconifyIconData(body: '<path/>'),
     );
     final provider = CachingIconifyProvider(inner: underlying);
 
-    await provider.getIcon(IconifyName('mdi', 'home')); // miss
-    await provider.getIcon(IconifyName('mdi', 'home')); // hit
+    await provider.getIcon(const IconifyName('mdi', 'home')); // miss
+    await provider.getIcon(const IconifyName('mdi', 'home')); // hit
 
     assert(provider.hits == 1);
     assert(provider.misses == 1);
@@ -201,7 +203,7 @@ Future<void> main() async {
   print('\n[ SVG Generation ]');
 
   await check('toSvgString wraps body correctly', () async {
-    final data = IconifyIconData(
+    final data = const IconifyIconData(
       body: '<path d="M0 0" fill="currentColor"/>',
       width: 24,
       height: 24,
@@ -214,8 +216,8 @@ Future<void> main() async {
   });
 
   await check('isMonochrome detects currentColor', () async {
-    final mono = IconifyIconData(body: '<path fill="currentColor"/>');
-    final multi = IconifyIconData(body: '<path fill="#FF0000"/>');
+    final mono = const IconifyIconData(body: '<path fill="currentColor"/>');
+    final multi = const IconifyIconData(body: '<path fill="#FF0000"/>');
     assert(mono.isMonochrome == true);
     assert(multi.isMonochrome == false);
   });

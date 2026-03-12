@@ -5,8 +5,8 @@ import 'package:test/test.dart';
 class MockProvider extends Mock implements IconifyProvider {}
 
 void main() {
-  final home = IconifyName('mdi', 'home');
-  final homeData = IconifyIconData(body: '<path/>');
+  final home = const IconifyName('mdi', 'home');
+  final homeData = const IconifyIconData(body: '<path/>');
 
   setUpAll(() {
     registerFallbackValue(home);

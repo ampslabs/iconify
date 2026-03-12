@@ -107,39 +107,43 @@ void main() {
     group('equality and hashing', () {
       test('equal for same prefix and name', () {
         expect(
-          IconifyName('mdi', 'home'),
-          equals(IconifyName('mdi', 'home')),
+          const IconifyName('mdi', 'home'),
+          equals(const IconifyName('mdi', 'home')),
         );
       });
 
       test('not equal for different prefix', () {
         expect(
-          IconifyName('mdi', 'home'),
-          isNot(equals(IconifyName('lucide', 'home'))),
+          const IconifyName('mdi', 'home'),
+          isNot(equals(const IconifyName('lucide', 'home'))),
         );
       });
 
       test('not equal for different name', () {
         expect(
-          IconifyName('mdi', 'home'),
-          isNot(equals(IconifyName('mdi', 'settings'))),
+          const IconifyName('mdi', 'home'),
+          isNot(equals(const IconifyName('mdi', 'settings'))),
         );
       });
 
       test('same hashCode for equal names', () {
         expect(
-          IconifyName('mdi', 'home').hashCode,
-          equals(IconifyName('mdi', 'home').hashCode),
+          const IconifyName('mdi', 'home').hashCode,
+          equals(const IconifyName('mdi', 'home').hashCode),
         );
       });
 
       test('can be used as Map key', () {
-        final map = {IconifyName('mdi', 'home'): 'value'};
-        expect(map[IconifyName('mdi', 'home')], 'value');
+        final map = {const IconifyName('mdi', 'home'): 'value'};
+        expect(map[const IconifyName('mdi', 'home')], 'value');
       });
 
       test('can be used in Set', () {
-        final set = {IconifyName('mdi', 'home'), IconifyName('mdi', 'home')};
+        final set = {
+          const IconifyName('mdi', 'home'),
+        };
+        // Add another identical instance to test deduplication
+        set.add(const IconifyName('mdi', 'home'));
         expect(set.length, 1);
       });
     });

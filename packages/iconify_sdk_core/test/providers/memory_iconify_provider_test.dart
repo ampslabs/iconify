@@ -2,11 +2,11 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final home = IconifyName('mdi', 'home');
-  final settings = IconifyName('mdi', 'settings');
-  final homeData =
-      IconifyIconData(body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>');
-  final settingsData = IconifyIconData(body: '<path d="M19.14 12.94"/>');
+  final home = const IconifyName('mdi', 'home');
+  final settings = const IconifyName('mdi', 'settings');
+  final homeData = const IconifyIconData(
+      body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>');
+  final settingsData = const IconifyIconData(body: '<path d="M19.14 12.94"/>');
 
   group('MemoryIconifyProvider', () {
     late MemoryIconifyProvider provider;
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('putCollection and getCollection round-trip', () async {
-      final info = IconifyCollectionInfo(
+      final info = const IconifyCollectionInfo(
         prefix: 'mdi',
         name: 'Material Design Icons',
         totalIcons: 7446,

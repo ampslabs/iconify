@@ -2,8 +2,8 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final home = IconifyName('mdi', 'home');
-  final homeData = IconifyIconData(body: '<path/>');
+  final home = const IconifyName('mdi', 'home');
+  final homeData = const IconifyIconData(body: '<path/>');
 
   group('CompositeIconifyProvider', () {
     test('returns result from first provider that has the icon', () async {
@@ -24,8 +24,8 @@ void main() {
     });
 
     test('first provider wins over second', () async {
-      final firstData = IconifyIconData(body: '<path d="first"/>');
-      final secondData = IconifyIconData(body: '<path d="second"/>');
+      final firstData = const IconifyIconData(body: '<path d="first"/>');
+      final secondData = const IconifyIconData(body: '<path d="second"/>');
 
       final first = MemoryIconifyProvider()..putIcon(home, firstData);
       final second = MemoryIconifyProvider()..putIcon(home, secondData);

@@ -66,16 +66,21 @@ final class AliasResolver {
       }
 
       // Collect overrides from this alias level (do not overwrite higher-level overrides)
-      if (alias.width != null)
+      if (alias.width != null) {
         overrides.putIfAbsent('width', () => alias.width);
-      if (alias.height != null)
+      }
+      if (alias.height != null) {
         overrides.putIfAbsent('height', () => alias.height);
-      if (alias.rotate != null)
+      }
+      if (alias.rotate != null) {
         overrides.putIfAbsent('rotate', () => alias.rotate);
-      if (alias.hFlip != null)
+      }
+      if (alias.hFlip != null) {
         overrides.putIfAbsent('hFlip', () => alias.hFlip);
-      if (alias.vFlip != null)
+      }
+      if (alias.vFlip != null) {
         overrides.putIfAbsent('vFlip', () => alias.vFlip);
+      }
 
       final parentName = alias.parent;
 
