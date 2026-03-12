@@ -2,58 +2,50 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
-  verify:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+  analyze:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        flutter:
-          - label: stable
-            channel: stable
-          - label: beta
-            channel: beta
-          # Update these pinned versions when new Flutter stable releases ship
-          - label: stable-3.38.0
-            channel: stable
-            version: 3.38.0
-          - label: stable-3.35.0
-            channel: stable
-            version: 3.35.0
-    name: Verify (${{ matrix.flutter.label }})
-
+        sdk: [stable, beta]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.flutter.channel }}
-          flutter-version: ${{ matrix.flutter.version }}
-
+          channel: ${{ matrix.sdk }}
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Analyze
+      - name: Analyze project
         run: flutter analyze --fatal-infos --fatal-warnings
 
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk: [stable, beta]
+    steps:
+      - uses: actions/checkout@v4
+      # We use flutter-action because iconify_sdk depends on Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.sdk }}
+      - name: Install dependencies
+        run: flutter pub get
       - name: Run tests
         run: flutter test
-
-      - name: Clean environment for publish
-        if: matrix.flutter.label == 'stable'
-        run: |
-          git checkout example/ios/Flutter/flutter_export_environment.sh || true
-          git status
-
-      - name: Package publish dry-run
-        if: matrix.flutter.label == 'stable'
-        run: dart pub publish --dry-run
