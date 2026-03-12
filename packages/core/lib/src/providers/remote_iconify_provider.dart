@@ -83,7 +83,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
       final requests = entry.value;
       final iconNames = requests.map((r) => r.iconName).toSet().toList();
 
-      final uri = Uri.parse('$_apiBase/$prefix.json?icons=${iconNames.join(',')}');
+      final uri =
+          Uri.parse('$_apiBase/$prefix.json?icons=${iconNames.join(',')}');
 
       try {
         final response =
@@ -110,7 +111,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final icons = json['icons'] as Map<String, dynamic>? ?? {};
-        
+
         final defaultWidth = (json['width'] as num?)?.toDouble() ?? 24.0;
         final defaultHeight = (json['height'] as num?)?.toDouble() ?? 24.0;
 
