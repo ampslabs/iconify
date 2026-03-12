@@ -49,6 +49,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
   /// Cached collections fetched from GitHub.
   final _collectionCache = <String, ParsedCollection>{};
 
+  /// Tracks active GitHub loading operations to prevent redundant requests.
+  final _loadingGitHub = <String, Future<ParsedCollection?>>{};
+
   /// Pending requests for the batched API (fallback).
   final _pending = <String, List<_PendingRequest>>{};
   Timer? _batchTimer;
@@ -61,36 +64,13 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _checkDisposed();
     if (!_isAllowed) return null;
 
-    // 1. Check GitHub-fetched collection cache
-    if (_collectionCache.containsKey(name.prefix)) {
-      return _collectionCache[name.prefix]!.getIcon(name.iconName);
+    // 1. Try to resolve via full collection (GitHub Raw)
+    final collection = await _getOrFetchFromGitHub(name.prefix);
+    if (collection != null) {
+      return collection.getIcon(name.iconName);
     }
 
-    // 2. Attempt to fetch full collection from GitHub (Raw)
-    try {
-      final githubUri = Uri.parse(
-          'https://raw.githubusercontent.com/iconify/icon-sets/master/json/${name.prefix}.json');
-      
-      // Diagnostic logging for debugging.
-      // ignore: avoid_print
-      print('Iconify SDK [REMOTE]: Trying GitHub Raw for ${name.prefix}...');
-      final response = await _client.get(githubUri).timeout(requestTimeout);
-
-      if (response.statusCode == 200) {
-        final collection = IconifyJsonParser.parseCollectionString(response.body);
-        _collectionCache[name.prefix] = collection;
-        // Diagnostic logging for debugging.
-      // ignore: avoid_print
-        print('Iconify SDK [REMOTE]: Successfully cached ${name.prefix} from GitHub');
-        return collection.getIcon(name.iconName);
-      }
-    } catch (e) {
-      // Diagnostic logging for debugging.
-      // ignore: avoid_print
-      print('Iconify SDK [REMOTE]: GitHub fetch failed for ${name.prefix}, falling back to API: $e');
-    }
-
-    // 3. Fallback: Use micro-batching API
+    // 2. Fallback: Use micro-batching API
     final completer = Completer<IconifyIconData?>();
     _pending.putIfAbsent(name.prefix, () => []).add(
           _PendingRequest(name.iconName, completer),
@@ -103,6 +83,60 @@ final class RemoteIconifyProvider implements IconifyProvider {
   void _startBatchTimer() {
     if (_batchTimer?.isActive ?? false) return;
     _batchTimer = Timer(batchWindow, _flushBatch);
+  }
+
+  Future<ParsedCollection?> _getOrFetchFromGitHub(String prefix) async {
+    // 1. Check completed cache
+    if (_collectionCache.containsKey(prefix)) {
+      return _collectionCache[prefix];
+    }
+
+    // 2. Check if already loading
+    if (_loadingGitHub.containsKey(prefix)) {
+      return _loadingGitHub[prefix];
+    }
+
+    // 3. Start loading from GitHub
+    final loadFuture = _fetchGitHub(prefix);
+    _loadingGitHub[prefix] = loadFuture;
+
+    try {
+      final result = await loadFuture;
+      if (result != null) {
+        _collectionCache[prefix] = result;
+      }
+      return result;
+    } finally {
+      _loadingGitHub.remove(prefix);
+    }
+  }
+
+  Future<ParsedCollection?> _fetchGitHub(String prefix) async {
+    try {
+      final githubUri = Uri.parse(
+          'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
+
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
+      print('Iconify SDK [REMOTE]: Trying GitHub Raw for $prefix...');
+      final response = await _client.get(githubUri).timeout(requestTimeout);
+
+      if (response.statusCode == 200) {
+        final collection =
+            IconifyJsonParser.parseCollectionString(response.body);
+        // Diagnostic logging for debugging.
+        // ignore: avoid_print
+        print('Iconify SDK [REMOTE]: Successfully cached $prefix from GitHub');
+        return collection;
+      }
+      return null;
+    } catch (e) {
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
+      print(
+          'Iconify SDK [REMOTE]: GitHub fetch failed for $prefix, falling back to API: $e');
+      return null;
+    }
   }
 
   Future<void> _flushBatch() async {
@@ -242,6 +276,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _disposed = true;
     _batchTimer?.cancel();
     _collectionCache.clear();
+    _loadingGitHub.clear();
     // Fail any pending requests
     for (final requests in _pending.values) {
       for (final req in requests) {
