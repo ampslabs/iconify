@@ -5,6 +5,21 @@ The definitive Iconify SDK for Flutter. Instant access to 200,000+ open-source i
 [![Pub Version](https://img.shields.io/pub/v/iconify_sdk)](https://pub.dev/packages/iconify_sdk)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
+## Installation
+
+Add `iconify_sdk` to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  iconify_sdk: ^0.2.0
+```
+
+Or run:
+
+```bash
+flutter pub add iconify_sdk
+```
+
 ## Getting Started
 
 Add `iconify_sdk` to your `pubspec.yaml` and wrap your app in `IconifyApp`:

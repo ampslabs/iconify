@@ -33,7 +33,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
         _client = httpClient ?? http.Client(),
         _allowInRelease = allowInRelease,
         _headers = {
-          'User-Agent': 'iconify_sdk_core/0.1.0 (Dart)',
+          'User-Agent': 'iconify_sdk_core/0.2.0 (Dart)',
           ...?additionalHeaders,
         };
 

@@ -11,7 +11,7 @@ Add the CLI to your `dev_dependencies`:
 
 ```yaml
 dev_dependencies:
-  iconify_sdk_cli: ^0.1.0
+  iconify_sdk_cli: ^0.2.0
 ```
 
 ## Commands

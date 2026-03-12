@@ -3,7 +3,7 @@ resolution: workspace
 description: A new Flutter project.
 
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+1
 
 environment:
   sdk: ^3.11.1
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  iconify_sdk: ^0.1.0
+  iconify_sdk: ^0.2.0
   google_fonts: ^6.2.1
   flutter_animate: ^4.5.0
 

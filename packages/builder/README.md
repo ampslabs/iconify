@@ -15,7 +15,7 @@ Add the builder to your `dev_dependencies`:
 
 ```yaml
 dev_dependencies:
-  iconify_sdk_builder: ^0.1.0
+  iconify_sdk_builder: ^0.2.0
   build_runner: ^2.4.0
 ```
 

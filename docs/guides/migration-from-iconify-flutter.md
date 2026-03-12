@@ -21,7 +21,7 @@ Remove the old package and add the new one:
 # pubspec.yaml
 dependencies:
   # iconify_flutter: ^0.1.0 <-- Remove
-  iconify_sdk: ^0.1.0
+  iconify_sdk: ^0.2.0
 ```
 
 ### 2. Add the App Wrapper

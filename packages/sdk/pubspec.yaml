@@ -3,7 +3,7 @@ resolution: workspace
 description: >
   The Flutter package for Iconify icons. Render any icon from 200+
   open-source icon sets with a single widget. Works offline with bundled starter registry.
-version: 0.1.0
+version: 0.2.0
 repository: https://github.com/ampslabs/iconify/tree/main/packages/iconify_sdk
 issue_tracker: https://github.com/ampslabs/iconify/issues
 homepage: https://github.com/ampslabs/iconify
@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  iconify_sdk_core: ^0.1.0
+  iconify_sdk_core: ^0.2.0
   flutter_svg: ^2.0.0
   meta: ^1.15.0
   path: ^1.9.0

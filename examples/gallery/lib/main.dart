@@ -986,7 +986,7 @@ class _SidebarFooter extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'v0.1.0-alpha',
+            'v0.2.0-alpha',
             style: GoogleFonts.firaCode(color: Colors.white54, fontSize: 12),
           ),
         ],
