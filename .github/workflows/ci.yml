@@ -17,7 +17,7 @@ jobs:
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
 
-  analyze:
+  verify:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,24 +28,17 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.sdk }}
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Analyze project
-        run: flutter analyze --fatal-infos --fatal-warnings
+      
+      - name: Install Melos
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        sdk: [stable, beta]
-    steps:
-      - uses: actions/checkout@v4
-      # We use flutter-action because iconify_sdk depends on Flutter
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ matrix.sdk }}
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Analyze project
+        run: melos exec -- "flutter analyze --fatal-infos --fatal-warnings"
+
       - name: Run tests
-        run: flutter test
+        run: melos exec -- "flutter test"
