@@ -21,8 +21,4 @@ melos:
 dev_dependencies:
   melos: ^7.4.0
   lints: any
-dependency_overrides:
-  test: 1.25.13
-  test_api: 0.7.10
-  matcher: 0.12.19
-  analyzer: ^6.0.0
+dependency_overrides: {}

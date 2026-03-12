@@ -1,1 +1,1 @@
-library iconify_sdk_builder;
+library;

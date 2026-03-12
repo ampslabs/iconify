@@ -1,5 +1,5 @@
 // ignore_for_file: avoid_print // Smoke test needs to output results to the console.
-import '../lib/iconify_sdk_core.dart';
+import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 Future<void> main() async {
   var passed = 0;
