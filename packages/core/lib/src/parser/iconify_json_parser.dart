@@ -46,68 +46,75 @@ final class IconifyJsonParser {
   ///
   /// Throws [IconifyParseException] on schema violations.
   static ParsedCollection parseCollection(Map<String, dynamic> json) {
-    final prefix = json['prefix'] as String?;
-    if (prefix == null || prefix.isEmpty) {
-      throw const IconifyParseException(
-        message: 'Collection JSON is missing required "prefix" field.',
-        field: 'prefix',
-      );
-    }
+    try {
+      final prefix = json['prefix'] as String?;
+      if (prefix == null || prefix.isEmpty) {
+        throw const IconifyParseException(
+          message: 'Collection JSON is missing required "prefix" field.',
+          field: 'prefix',
+        );
+      }
 
-    final rawIcons = json['icons'] as Map<String, dynamic>?;
-    if (rawIcons == null) {
-      throw IconifyParseException(
-        message: 'Collection "$prefix" is missing required "icons" field.',
-        field: 'icons',
-      );
-    }
-
-    final defaultWidth = (json['width'] as num?)?.toDouble() ?? 24.0;
-    final defaultHeight = (json['height'] as num?)?.toDouble() ?? 24.0;
-
-    // Parse icons
-    final icons = <String, IconifyIconData>{};
-    for (final entry in rawIcons.entries) {
-      try {
-        final iconJson =
-            Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
-        iconJson.putIfAbsent('width', () => defaultWidth);
-        iconJson.putIfAbsent('height', () => defaultHeight);
-        icons[entry.key] = IconifyIconData.fromJson(iconJson);
-      } catch (e) {
+      final rawIcons = json['icons'] as Map<String, dynamic>?;
+      if (rawIcons == null) {
         throw IconifyParseException(
-          message:
-              'Failed to parse icon "${entry.key}" in collection "$prefix": $e',
-          field: 'icons.${entry.key}',
-          rawValue: entry.value,
+          message: 'Collection "$prefix" is missing required "icons" field.',
+          field: 'icons',
         );
       }
-    }
 
-    // Parse aliases
-    final rawAliases = json['aliases'] as Map<String, dynamic>? ?? {};
-    final aliases = <String, AliasEntry>{};
-    for (final entry in rawAliases.entries) {
-      try {
-        aliases[entry.key] = AliasEntry.fromJson(
-          Map<String, dynamic>.from(entry.value as Map<String, dynamic>),
-        );
-      } catch (e) {
-        // Non-fatal: skip malformed alias entries with a warning
-        // In production, these should be reported but not crash parsing
+      final defaultWidth = (json['width'] as num?)?.toDouble() ?? 24.0;
+      final defaultHeight = (json['height'] as num?)?.toDouble() ?? 24.0;
+
+      // Parse icons
+      final icons = <String, IconifyIconData>{};
+      for (final entry in rawIcons.entries) {
+        try {
+          final iconJson =
+              Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
+          iconJson.putIfAbsent('width', () => defaultWidth);
+          iconJson.putIfAbsent('height', () => defaultHeight);
+          icons[entry.key] = IconifyIconData.fromJson(iconJson);
+        } catch (e) {
+          throw IconifyParseException(
+            message:
+                'Failed to parse icon "${entry.key}" in collection "$prefix": $e',
+            field: 'icons.${entry.key}',
+            rawValue: entry.value,
+          );
+        }
       }
+
+      // Parse aliases
+      final rawAliases = json['aliases'] as Map<String, dynamic>? ?? {};
+      final aliases = <String, AliasEntry>{};
+      for (final entry in rawAliases.entries) {
+        try {
+          aliases[entry.key] = AliasEntry.fromJson(
+            Map<String, dynamic>.from(entry.value as Map<String, dynamic>),
+          );
+        } catch (e) {
+          // Non-fatal: skip malformed alias entries with a warning
+          // In production, these should be reported but not crash parsing
+        }
+      }
+
+      final info = IconifyCollectionInfo.fromJson(prefix, json);
+
+      return ParsedCollection(
+        prefix: prefix,
+        info: info,
+        icons: icons,
+        aliases: aliases,
+        defaultWidth: defaultWidth,
+        defaultHeight: defaultHeight,
+      );
+    } catch (e) {
+      if (e is IconifyParseException) rethrow;
+      throw IconifyParseException(
+        message: 'Unexpected structure in collection JSON: $e',
+      );
     }
-
-    final info = IconifyCollectionInfo.fromJson(prefix, json);
-
-    return ParsedCollection(
-      prefix: prefix,
-      info: info,
-      icons: icons,
-      aliases: aliases,
-      defaultWidth: defaultWidth,
-      defaultHeight: defaultHeight,
-    );
   }
 
   /// Extracts a single icon from a pre-decoded collection JSON map.
