@@ -1211,7 +1211,7 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 - [ ] `[HUMAN]` Post on r/FlutterDev
 - [ ] `[HUMAN]` Post on Flutter Discord
-- [ ] `[HUMAN]` Comment on the original Iconify GitHub issue #336 (the one requesting an official Flutter package)
+- [ ] `[HUMAN]` Comment on the original Iconify GitHub issue #336 (the one requesting an  Flutter package)
 - [ ] `[HUMAN]` Create GitHub Discussions for: feedback, feature requests, collection requests
 - [ ] `[HUMAN]` Set up issue templates: bug report, feature request, collection request
 

@@ -1,6 +1,6 @@
 # Iconify SDK for Flutter
 
-The official Flutter package for [Iconify](https://iconify.design/). Render any icon from over 200 open-source icon sets (150,000+ icons) with a single widget.
+The  Flutter package for [Iconify](https://iconify.design/). Render any icon from over 200 open-source icon sets (150,000+ icons) with a single widget.
 
 ## Features
 
