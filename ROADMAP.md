@@ -87,69 +87,69 @@ Builder and CLI are siblings; either can be built after `iconify_sdk` is stable.
 
 ## 0.3 — CI Skeleton
 
-- [ ] `[AGENT]` Create `.github/workflows/ci.yml` with:
-  - [ ] Trigger: pull_request + push to main
-  - [ ] Job: `analyze` — runs `dart analyze` across all packages
-  - [ ] Job: `format` — runs `dart format --set-exit-if-changed`
-  - [ ] Job: `test` — runs `dart test` in each package
-  - [ ] Matrix: Dart stable + Dart beta
-- [ ] `[AGENT]` Create `.github/workflows/publish.yml` (dry-run only for now)
-  - [ ] Trigger: push to `release/*` branch
-  - [ ] Job: `dart pub publish --dry-run` for each package
+- [x] `[AGENT]` Create `.github/workflows/ci.yml` with:
+  - [x] Trigger: pull_request + push to main
+  - [x] Job: `analyze` — runs `dart analyze` across all packages
+  - [x] Job: `format` — runs `dart format --set-exit-if-changed`
+  - [x] Job: `test` — runs `dart test` in each package
+  - [x] Matrix: Dart stable + Dart beta
+- [x] `[AGENT]` Create `.github/workflows/publish.yml` (dry-run only for now)
+  - [x] Trigger: push to `release/*` branch
+  - [x] Job: `dart pub publish --dry-run` for each package
 - [ ] `[HUMAN]` Verify CI runs green on first push
 
 ---
 
 ## 0.4 — Architecture Decision Records (ADRs)
 
-Create `docs/adr/` directory. Each ADR is a markdown file.
+Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-001**: Why `prefix:name` is the canonical identity (not generated constant names)
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-002**: Why CLI + build_runner hybrid over CLI-only
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-003**: Why release builds block remote by default (Iconify API ethics + reliability)
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-004**: Rendering strategy — flutter_svg + Impeller fallback design
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-005**: Why GitHub raw JSON is the CLI data source (not the Iconify HTTP API)
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-006**: Three-package architecture rationale (core / flutter / builder+cli)
-- [ ] `[HUMAN]` + `[AGENT]` Write **ADR-007**: Starter registry contents and size budget
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-001**: Why `prefix:name` is the canonical identity (not generated constant names)
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-002**: Why CLI + build_runner hybrid over CLI-only
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-003**: Why release builds block remote by default (Iconify API ethics + reliability)
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-004**: Rendering strategy — flutter_svg + Impeller fallback design
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-005**: Why GitHub raw JSON is the CLI data source (not the Iconify HTTP API)
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-006**: Three-package architecture rationale (core / flutter / builder+cli)
+- [x] `[HUMAN]` + `[AGENT]` Write **ADR-007**: Starter registry contents and size budget
 - [ ] `[HUMAN]` Review and approve all ADRs before Phase 1 starts
 
 ---
 
 ## 0.5 — Schema & Contract Definitions
 
-- [ ] `[HUMAN]` + `[AGENT]` Define and document `iconify.yaml` schema v1 (all fields, types, defaults)
-  - [ ] `sets:` — list of `prefix:name` patterns to include
-  - [ ] `output:` — path for generated Dart file
-  - [ ] `data_dir:` — local snapshot directory
-  - [ ] `mode:` — auto / offline / generated / remoteAllowed
-  - [ ] `license_policy:` — permissive / warn / strict
-  - [ ] `custom_sets:` — list of local JSON file paths
-  - [ ] `fail_on_missing:` — bool
-- [ ] `[AGENT]` Write JSON Schema for `iconify.yaml` (for IDE validation)
-- [ ] `[AGENT]` Write the normalized internal icon schema (schemaVersion, collections, icons, aliases, license)
+- [x] `[HUMAN]` + `[AGENT]` Define and document `iconify.yaml` schema v1 (all fields, types, defaults)
+  - [x] `sets:` — list of `prefix:name` patterns to include
+  - [x] `output:` — path for generated Dart file
+  - [x] `data_dir:` — local snapshot directory
+  - [x] `mode:` — auto / offline / generated / remoteAllowed
+  - [x] `license_policy:` — permissive / warn / strict
+  - [x] `custom_sets:` — list of local JSON file paths
+  - [x] `fail_on_missing:` — bool
+- [x] `[AGENT]` Write JSON Schema for `iconify.yaml` (for IDE validation)
+- [x] `[AGENT]` Write the normalized internal icon schema (schemaVersion, collections, icons, aliases, license)
 - [ ] `[HUMAN]` Sign off on both schemas — no changes after Phase 1 starts without an ADR
 
 ---
 
 ## 0.6 — Starter Registry Definition
 
-- [ ] `[HUMAN]` Approve starter registry contents:
+- [x] `[HUMAN]` Approve starter registry contents:
   - MDI top-150 icons by usage
   - Lucide top-100 icons
   - Tabler top-100 icons
   - Heroicons all (~300)
   - Collection metadata for all 208 sets (names + license only)
-- [ ] `[HUMAN]` Set size budget: under 200KB uncompressed
-- [ ] `[AGENT]` Create `data/starter/` directory with placeholder README
+- [x] `[HUMAN]` Set size budget: under 200KB uncompressed
+- [x] `[AGENT]` Create `data/starter/` directory with placeholder README
 
 ---
 
 ## 0.7 — License Research
 
-- [ ] `[HUMAN]` Compile the "safe collections" list (MIT/Apache/ISC, no attribution required)
-- [ ] `[HUMAN]` Compile the "attribution required" list (CC BY, CC BY-SA, custom)
-- [ ] `[HUMAN]` Compile the "do not bundle" list (GPL, non-commercial)
-- [ ] `[AGENT]` Write `docs/license-guide.md` with the three lists
+- [x] `[HUMAN]` Compile the "safe collections" list (MIT/Apache/ISC, no attribution required)
+- [x] `[HUMAN]` Compile the "attribution required" list (CC BY, CC BY-SA, custom)
+- [x] `[HUMAN]` Compile the "do not bundle" list (GPL, non-commercial)
+- [x] `[AGENT]` Write `docs/license-guide.md` with the three lists
 - [ ] `[HUMAN]` Review and approve `license-guide.md`
 
 ---
