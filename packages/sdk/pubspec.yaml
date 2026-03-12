@@ -16,8 +16,19 @@ dependencies:
   flutter:
     sdk: flutter
   iconify_sdk_core: ^0.1.0
+  flutter_svg: ^2.0.0
+  meta: ^1.15.0
+  path: ^1.9.0
+  vector_graphics: ^1.1.11+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   lints: ^6.1.0
+  mocktail: ^1.0.4
+  alchemist: ^0.13.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/iconify/starter/
