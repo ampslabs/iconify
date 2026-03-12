@@ -18,7 +18,6 @@ import '../errors/iconify_exception.dart';
 /// ```
 @immutable
 final class IconifyName {
-
   /// Parses a canonical `prefix:name` string into an [IconifyName].
   ///
   /// Throws [InvalidIconNameException] if the input is not valid.
@@ -56,6 +55,7 @@ final class IconifyName {
 
     return IconifyName(prefix, name);
   }
+
   /// Creates an [IconifyName] from pre-validated parts.
   ///
   /// Prefer [IconifyName.parse] when working with user input or API data.
@@ -100,14 +100,16 @@ final class IconifyName {
     if (part.length > _maxPartLength) {
       throw InvalidIconNameException(
         input: input,
-        message: 'The $partName part of \'$input\' is ${part.length} characters, '
+        message:
+            'The $partName part of \'$input\' is ${part.length} characters, '
             'exceeding the maximum of $_maxPartLength.',
       );
     }
     if (partName == 'prefix' && !_prefixPattern.hasMatch(part)) {
       throw InvalidIconNameException(
         input: input,
-        message: 'The prefix \'$part\' in \'$input\' contains invalid characters. '
+        message:
+            'The prefix \'$part\' in \'$input\' contains invalid characters. '
             'Prefixes must use only lowercase letters (a-z), digits (0-9), '
             'and hyphens (-), and must not start or end with a hyphen.',
       );

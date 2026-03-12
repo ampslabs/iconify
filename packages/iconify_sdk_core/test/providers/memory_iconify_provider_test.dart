@@ -4,7 +4,8 @@ import 'package:test/test.dart';
 void main() {
   final home = IconifyName('mdi', 'home');
   final settings = IconifyName('mdi', 'settings');
-  final homeData = IconifyIconData(body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>');
+  final homeData =
+      IconifyIconData(body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>');
   final settingsData = IconifyIconData(body: '<path d="M19.14 12.94"/>');
 
   group('MemoryIconifyProvider', () {

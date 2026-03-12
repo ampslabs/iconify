@@ -30,7 +30,8 @@ void main() {
       verify(() => inner.getIcon(home)).called(1);
     });
 
-    test('returns cached value on second call without calling inner again', () async {
+    test('returns cached value on second call without calling inner again',
+        () async {
       when(() => inner.getIcon(home)).thenAnswer((_) async => homeData);
 
       await provider.getIcon(home);

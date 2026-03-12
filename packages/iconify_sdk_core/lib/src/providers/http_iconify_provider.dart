@@ -41,15 +41,18 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _checkDisposed();
     if (!_isAllowed) return null;
 
-    final uri = Uri.parse('$_apiBase/${name.prefix}.json?icons=${name.iconName}');
+    final uri =
+        Uri.parse('$_apiBase/${name.prefix}.json?icons=${name.iconName}');
 
     try {
-      final response = await _client.get(uri, headers: _headers).timeout(_timeout);
+      final response =
+          await _client.get(uri, headers: _headers).timeout(_timeout);
 
       if (response.statusCode == 404) return null;
       if (response.statusCode != 200) {
         throw IconifyNetworkException(
-          message: 'HTTP ${response.statusCode} fetching $name: ${response.reasonPhrase}',
+          message:
+              'HTTP ${response.statusCode} fetching $name: ${response.reasonPhrase}',
           statusCode: response.statusCode,
           uri: uri,
         );
@@ -62,7 +65,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
       // Apply collection-level defaults to icon-level data
       final defaultWidth = (json['width'] as num?)?.toDouble() ?? 24.0;
       final defaultHeight = (json['height'] as num?)?.toDouble() ?? 24.0;
-      final iconJson = Map<String, dynamic>.from(icons[name.iconName] as Map<String, dynamic>);
+      final iconJson = Map<String, dynamic>.from(
+          icons[name.iconName] as Map<String, dynamic>);
       iconJson.putIfAbsent('width', () => defaultWidth);
       iconJson.putIfAbsent('height', () => defaultHeight);
 
@@ -85,7 +89,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
     final uri = Uri.parse('$_apiBase/collection?prefix=$prefix&info=1');
 
     try {
-      final response = await _client.get(uri, headers: _headers).timeout(_timeout);
+      final response =
+          await _client.get(uri, headers: _headers).timeout(_timeout);
       if (response.statusCode == 404) return null;
       if (response.statusCode != 200) {
         throw IconifyNetworkException(

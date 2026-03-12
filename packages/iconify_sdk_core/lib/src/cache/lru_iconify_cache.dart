@@ -86,5 +86,6 @@ final class LruCacheStats {
   double get fillRatio => maxSize == 0 ? 0.0 : currentSize / maxSize;
 
   @override
-  String toString() => 'LruCacheStats($currentSize/$maxSize, ${(fillRatio * 100).toStringAsFixed(1)}% full)';
+  String toString() =>
+      'LruCacheStats($currentSize/$maxSize, ${(fillRatio * 100).toStringAsFixed(1)}% full)';
 }

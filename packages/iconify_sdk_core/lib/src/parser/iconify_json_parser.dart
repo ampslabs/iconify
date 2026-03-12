@@ -121,7 +121,8 @@ final class IconifyJsonParser {
     String iconName,
   ) {
     try {
-      final defaultWidth = (collectionJson['width'] as num?)?.toDouble() ?? 24.0;
+      final defaultWidth =
+          (collectionJson['width'] as num?)?.toDouble() ?? 24.0;
       final defaultHeight =
           (collectionJson['height'] as num?)?.toDouble() ?? 24.0;
       final rawIcons = collectionJson['icons'] as Map<String, dynamic>? ?? {};

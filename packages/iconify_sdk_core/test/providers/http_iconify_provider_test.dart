@@ -52,12 +52,14 @@ void main() {
     test('returns null for icon not in response', () async {
       final responseJson = {
         'prefix': 'mdi',
-        'icons': {'settings': {'body': '<path/>'}},
+        'icons': {
+          'settings': {'body': '<path/>'}
+        },
         'width': 24,
         'height': 24,
       };
-      final client = MockClient((_) async =>
-          http.Response(jsonEncode(responseJson), 200));
+      final client =
+          MockClient((_) async => http.Response(jsonEncode(responseJson), 200));
       final provider = RemoteIconifyProvider(httpClient: client);
 
       // Request 'home' but response only has 'settings'

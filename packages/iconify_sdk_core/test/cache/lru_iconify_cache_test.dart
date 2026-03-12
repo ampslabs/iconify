@@ -62,11 +62,12 @@ void main() {
       await cache.put(c, data); // [a, b, c] — at capacity
 
       // Access 'a' to make it recently used
-      await cache.get(a);        // [b, c, a]
+      await cache.get(a); // [b, c, a]
 
-      await cache.put(d, data);  // evicts 'b', inserts 'd' → [c, a, d]
+      await cache.put(d, data); // evicts 'b', inserts 'd' → [c, a, d]
 
-      expect(await cache.contains(b), isFalse, reason: 'b should have been evicted');
+      expect(await cache.contains(b), isFalse,
+          reason: 'b should have been evicted');
       expect(await cache.contains(a), isTrue);
       expect(await cache.contains(c), isTrue);
       expect(await cache.contains(d), isTrue);

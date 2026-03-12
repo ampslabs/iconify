@@ -2,7 +2,8 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final baseIcon = IconifyIconData(body: '<path d="M0 0"/>', width: 24, height: 24);
+  final baseIcon =
+      IconifyIconData(body: '<path d="M0 0"/>', width: 24, height: 24);
 
   final icons = {'base': baseIcon, 'other': IconifyIconData(body: '<rect/>')};
 

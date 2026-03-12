@@ -55,7 +55,8 @@ void main() {
     });
 
     test('preloadAll loads files into cache', () async {
-      final preloadedProvider = FileSystemIconifyProvider(root: tempDir.path, preload: true);
+      final preloadedProvider =
+          FileSystemIconifyProvider(root: tempDir.path, preload: true);
       // We can't easily check private cache, but we can verify it works instantly
       final icon = await preloadedProvider.getIcon(IconifyName('mdi', 'home'));
       expect(icon, isNotNull);

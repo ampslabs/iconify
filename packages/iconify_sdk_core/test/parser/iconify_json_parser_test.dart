@@ -131,14 +131,16 @@ void main() {
 
     group('fixture files', () {
       test('parses mdi_fixture.json', () {
-        final content = File('test/fixtures/mdi_fixture.json').readAsStringSync();
+        final content =
+            File('test/fixtures/mdi_fixture.json').readAsStringSync();
         final result = IconifyJsonParser.parseCollectionString(content);
         expect(result.prefix, 'mdi');
         expect(result.icons, isNotEmpty);
       });
 
       test('parses alias_chain_fixture.json', () {
-        final content = File('test/fixtures/alias_chain_fixture.json').readAsStringSync();
+        final content =
+            File('test/fixtures/alias_chain_fixture.json').readAsStringSync();
         final collection = IconifyJsonParser.parseCollectionString(content);
 
         // Direct icon

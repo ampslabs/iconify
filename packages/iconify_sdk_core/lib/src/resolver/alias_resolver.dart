@@ -53,8 +53,7 @@ final class AliasResolver {
       if (chain.length > maxChainDepth) {
         throw CircularAliasException(
           chain: List.from(chain),
-          message:
-              'Alias chain exceeded maximum depth of $maxChainDepth. '
+          message: 'Alias chain exceeded maximum depth of $maxChainDepth. '
               'Chain: ${chain.join(' -> ')}. '
               'This indicates a circular alias or abnormally deep chain.',
         );
@@ -67,11 +66,16 @@ final class AliasResolver {
       }
 
       // Collect overrides from this alias level (do not overwrite higher-level overrides)
-      if (alias.width != null) overrides.putIfAbsent('width', () => alias.width);
-      if (alias.height != null) overrides.putIfAbsent('height', () => alias.height);
-      if (alias.rotate != null) overrides.putIfAbsent('rotate', () => alias.rotate);
-      if (alias.hFlip != null) overrides.putIfAbsent('hFlip', () => alias.hFlip);
-      if (alias.vFlip != null) overrides.putIfAbsent('vFlip', () => alias.vFlip);
+      if (alias.width != null)
+        overrides.putIfAbsent('width', () => alias.width);
+      if (alias.height != null)
+        overrides.putIfAbsent('height', () => alias.height);
+      if (alias.rotate != null)
+        overrides.putIfAbsent('rotate', () => alias.rotate);
+      if (alias.hFlip != null)
+        overrides.putIfAbsent('hFlip', () => alias.hFlip);
+      if (alias.vFlip != null)
+        overrides.putIfAbsent('vFlip', () => alias.vFlip);
 
       final parentName = alias.parent;
 
@@ -80,8 +84,7 @@ final class AliasResolver {
         chain.add(parentName); // Include in chain for error message
         throw CircularAliasException(
           chain: List.from(chain),
-          message:
-              'Circular alias detected. Chain: ${chain.join(' -> ')}.',
+          message: 'Circular alias detected. Chain: ${chain.join(' -> ')}.',
         );
       }
 
