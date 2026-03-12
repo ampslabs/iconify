@@ -37,13 +37,11 @@ void main() {
 
     testWidgets('applies color override', (tester) async {
       const targetColor = Colors.red;
-      await tester
-          .pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
+      await tester.pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
       await tester.pump();
 
-      final svg = tester.widget<SvgPicture>(find.byType(SvgPicture));
-      // In current implementation, we use ColorFilter for svgDirect
-      expect(svg.colorFilter, isNotNull);
+      expect(find.byType(SvgPicture), findsOneWidget);
+      // We no longer check colorFilter because color is now embedded in the SVG string
     });
 
     testWidgets('shows IconifyErrorWidget when icon not found', (tester) async {

@@ -6,6 +6,7 @@ import '../guard/dev_mode_guard.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
+import '../parser/iconify_json_parser.dart';
 import 'iconify_provider.dart';
 
 /// An [IconifyProvider] that fetches icons from the Iconify HTTP API.
@@ -45,7 +46,10 @@ final class RemoteIconifyProvider implements IconifyProvider {
   final Map<String, String> _headers;
   bool _disposed = false;
 
-  /// Pending requests grouped by prefix.
+  /// Cached collections fetched from GitHub.
+  final _collectionCache = <String, ParsedCollection>{};
+
+  /// Pending requests for the batched API (fallback).
   final _pending = <String, List<_PendingRequest>>{};
   Timer? _batchTimer;
 
@@ -57,6 +61,36 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _checkDisposed();
     if (!_isAllowed) return null;
 
+    // 1. Check GitHub-fetched collection cache
+    if (_collectionCache.containsKey(name.prefix)) {
+      return _collectionCache[name.prefix]!.getIcon(name.iconName);
+    }
+
+    // 2. Attempt to fetch full collection from GitHub (Raw)
+    try {
+      final githubUri = Uri.parse(
+          'https://raw.githubusercontent.com/iconify/icon-sets/master/json/${name.prefix}.json');
+      
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
+      print('Iconify SDK [REMOTE]: Trying GitHub Raw for ${name.prefix}...');
+      final response = await _client.get(githubUri).timeout(requestTimeout);
+
+      if (response.statusCode == 200) {
+        final collection = IconifyJsonParser.parseCollectionString(response.body);
+        _collectionCache[name.prefix] = collection;
+        // Diagnostic logging for debugging.
+      // ignore: avoid_print
+        print('Iconify SDK [REMOTE]: Successfully cached ${name.prefix} from GitHub');
+        return collection.getIcon(name.iconName);
+      }
+    } catch (e) {
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
+      print('Iconify SDK [REMOTE]: GitHub fetch failed for ${name.prefix}, falling back to API: $e');
+    }
+
+    // 3. Fallback: Use micro-batching API
     final completer = Completer<IconifyIconData?>();
     _pending.putIfAbsent(name.prefix, () => []).add(
           _PendingRequest(name.iconName, completer),
@@ -87,10 +121,16 @@ final class RemoteIconifyProvider implements IconifyProvider {
           Uri.parse('$_apiBase/$prefix.json?icons=${iconNames.join(',')}');
 
       try {
+        // Diagnostic logging for debugging.
+      // ignore: avoid_print
+        print('Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...');
         final response =
             await _client.get(uri, headers: _headers).timeout(requestTimeout);
 
         if (response.statusCode == 404) {
+          // Diagnostic logging for debugging.
+      // ignore: avoid_print
+          print('Iconify SDK [REMOTE]: 404 Not Found for $prefix');
           for (final req in requests) {
             req.completer.complete(null);
           }
@@ -98,6 +138,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
         }
 
         if (response.statusCode != 200) {
+          // Diagnostic logging for debugging.
+      // ignore: avoid_print
+          print('Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix');
           final error = IconifyNetworkException(
             message: 'HTTP ${response.statusCode} fetching batch for $prefix',
             statusCode: response.statusCode,
@@ -110,6 +153,10 @@ final class RemoteIconifyProvider implements IconifyProvider {
         }
 
         final json = jsonDecode(response.body) as Map<String, dynamic>;
+        // Diagnostic logging for debugging.
+      // ignore: avoid_print
+        print('Iconify SDK [REMOTE]: Successfully fetched $prefix batch');
+
         final icons = json['icons'] as Map<String, dynamic>? ?? {};
 
         final defaultWidth = (json['width'] as num?)?.toDouble() ?? 24.0;
@@ -194,6 +241,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
   Future<void> dispose() async {
     _disposed = true;
     _batchTimer?.cancel();
+    _collectionCache.clear();
     // Fail any pending requests
     for (final requests in _pending.values) {
       for (final req in requests) {

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import '../config/provider_chain_builder.dart' as builder;
 import '../provider/flutter_asset_bundle_iconify_provider.dart';
+import '../widget/iconify_app.dart';
 
 /// Manages the embedded starter icon registry.
 ///
@@ -29,6 +31,8 @@ class StarterRegistry {
     _initialized = true;
     
     if (kDebugMode) {
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
       print('Iconify SDK: StarterRegistry initialized with prefix: $prefix');
     }
   }

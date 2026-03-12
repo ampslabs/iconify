@@ -13,7 +13,7 @@ import 'iconify_provider.dart';
 /// can reference asset-bundle providers in composite chains without
 /// importing Flutter.
 abstract class AssetBundleIconifyProvider extends IconifyProvider {
-  const AssetBundleIconifyProvider({
+  AssetBundleIconifyProvider({
     required this.assetPrefix,
   });
 
@@ -21,36 +21,81 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   /// Example: `'assets/iconify'`
   final String assetPrefix;
 
+  /// Internal cache to avoid re-parsing JSON for every icon request.
+  final _cache = <String, ParsedCollection>{};
+
+  /// Tracks active loading operations to prevent redundant I/O for concurrent requests.
+  final _loading = <String, Future<ParsedCollection?>>{};
+
   /// Reads the raw string of an asset at [path].
   /// Implemented by platform-specific subclasses (e.g. using `rootBundle`).
   Future<String> loadAssetString(String path);
 
   @override
   Future<IconifyIconData?> getIcon(IconifyName name) async {
+    final collection = await _getOrLoadCollection(name.prefix);
+    return collection?.getIcon(name.iconName);
+  }
+
+  @override
+  Future<IconifyCollectionInfo?> getCollection(String prefix) async {
+    final collection = await _getOrLoadCollection(prefix);
+    return collection?.info;
+  }
+
+  Future<ParsedCollection?> _getOrLoadCollection(String prefix) async {
+    // 1. Check completed cache
+    if (_cache.containsKey(prefix)) {
+      return _cache[prefix];
+    }
+
+    // 2. Check if already loading
+    if (_loading.containsKey(prefix)) {
+      return _loading[prefix];
+    }
+
+    // 3. Start loading
+    final loadFuture = _load(prefix);
+    _loading[prefix] = loadFuture;
+
     try {
-      final path = '$assetPrefix/${name.prefix}.json';
+      final result = await loadFuture;
+      if (result != null) {
+        _cache[prefix] = result;
+      }
+      return result;
+    } finally {
+      _loading.remove(prefix);
+    }
+  }
+
+  Future<ParsedCollection?> _load(String prefix) async {
+    try {
+      final path = '$assetPrefix/$prefix.json';
       final jsonString = await loadAssetString(path);
-      return IconifyJsonParser.parseCollectionString(jsonString)
-          .getIcon(name.iconName);
-    } catch (e) {
+      final collection = IconifyJsonParser.parseCollectionString(jsonString);
+
+      // Diagnostic logging for debugging.
       // ignore: avoid_print
-      print('Iconify SDK: Failed to load asset for ${name.prefix}: $e');
+      if (collection.iconCount > 0) {
+        print(
+            'Iconify SDK [LOCAL]: Loaded collection $prefix (${collection.iconCount} icons) from bundle');
+      }
+      return collection;
+    } catch (e) {
+      // Diagnostic logging for debugging.
+      // ignore: avoid_print
+      print('Iconify SDK [LOCAL]: Failed to load asset for $prefix: $e');
       return null;
     }
   }
 
   @override
-  Future<IconifyCollectionInfo?> getCollection(String prefix) async {
-    try {
-      final path = '$assetPrefix/$prefix.json';
-      final jsonString = await loadAssetString(path);
-      return IconifyJsonParser.parseCollectionString(jsonString).info;
-    } catch (e) {
-      // ignore: avoid_print
-      print('Iconify SDK: Failed to load collection asset for $prefix: $e');
-      return null;
-    }
+  Future<void> dispose() async {
+    _cache.clear();
+    _loading.clear();
   }
+
 
   @override
   Future<bool> hasIcon(IconifyName name) async {

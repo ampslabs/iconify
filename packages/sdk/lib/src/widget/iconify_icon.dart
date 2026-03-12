@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
@@ -92,6 +93,8 @@ class _IconifyIconState extends State<IconifyIcon> {
     if (kDebugMode) {
       _iconFuture!.then((data) {
         if (data == null) {
+          // Diagnostic logging for debugging.
+          // ignore: avoid_print
           print('Iconify SDK: Icon not found: ${widget.name}');
         }
       });

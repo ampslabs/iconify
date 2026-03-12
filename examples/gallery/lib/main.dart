@@ -54,19 +54,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          _buildSidebar(),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: 400.ms,
-              switchInCurve: Curves.easeOutCubic,
-              child: _buildCurrentPage(),
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 1000;
+
+        return Scaffold(
+          appBar: isSmallScreen
+              ? AppBar(
+                  backgroundColor: const Color(0xFF0F172A),
+                  title: Text(
+                    'ATLAS',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  elevation: 0,
+                )
+              : null,
+          drawer: isSmallScreen ? Drawer(child: _buildSidebarContents()) : null,
+          body: Row(
+            children: [
+              if (!isSmallScreen) _buildSidebar(),
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: 400.ms,
+                  switchInCurve: Curves.easeOutCubic,
+                  child: _buildCurrentPage(isSmallScreen),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -77,42 +97,67 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         color: const Color(0xFF0F172A),
         border: Border(right: BorderSide(color: Colors.white.withAlpha(10))),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _SidebarHeader(),
-          const SizedBox(height: 32),
-          _SidebarItem(
-            icon: 'lucide:layout-grid',
-            label: 'Explorer',
-            isActive: _activeTabIndex == 0,
-            onTap: () => setState(() => _activeTabIndex = 0),
-          ),
-          _SidebarItem(
-            icon: 'tabler:flask',
-            label: 'Design System Lab',
-            isActive: _activeTabIndex == 1,
-            onTap: () => setState(() => _activeTabIndex = 1),
-          ),
-          _SidebarItem(
-            icon: 'heroicons:cog-6-tooth',
-            label: 'Diagnostics',
-            isActive: _activeTabIndex == 2,
-            onTap: () => setState(() => _activeTabIndex = 2),
-          ),
-          const Spacer(),
-          const _SidebarFooter(),
-        ],
-      ),
+      child: _buildSidebarContents(),
     );
   }
 
-  Widget _buildCurrentPage() {
+  Widget _buildSidebarContents() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SidebarHeader(),
+        const SizedBox(height: 32),
+        _SidebarItem(
+          icon: 'lucide:layout-grid',
+          label: 'Explorer',
+          isActive: _activeTabIndex == 0,
+          onTap: () {
+            setState(() => _activeTabIndex = 0);
+            if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        _SidebarItem(
+          icon: 'tabler:flask',
+          label: 'Design System Lab',
+          isActive: _activeTabIndex == 1,
+          onTap: () {
+            setState(() => _activeTabIndex = 1);
+            if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        _SidebarItem(
+          icon: 'heroicons:cog-6-tooth',
+          label: 'Diagnostics',
+          isActive: _activeTabIndex == 2,
+          onTap: () {
+            setState(() => _activeTabIndex = 2);
+            if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        const Spacer(),
+        const _SidebarFooter(),
+      ],
+    );
+  }
+
+  Widget _buildCurrentPage(bool isSmallScreen) {
     switch (_activeTabIndex) {
       case 0:
-        return const IconExplorerPage(key: ValueKey('explorer'));
+        return IconExplorerPage(
+          key: const ValueKey('explorer'),
+          isSmallScreen: isSmallScreen,
+        );
       case 1:
-        return const DesignSystemLabPage(key: ValueKey('lab'));
+        return DesignSystemLabPage(
+          key: const ValueKey('lab'),
+          isSmallScreen: isSmallScreen,
+        );
       case 2:
         return const DiagnosticsPage(key: ValueKey('diag'));
       default:
@@ -124,18 +169,32 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 // --- EXPLORER PAGE ---
 
 class IconExplorerPage extends StatefulWidget {
-  const IconExplorerPage({super.key});
+  const IconExplorerPage({super.key, required this.isSmallScreen});
+  final bool isSmallScreen;
 
   @override
   State<IconExplorerPage> createState() => _IconExplorerPageState();
 }
 
-class _IconExplorerPageState extends State<IconExplorerPage> with SingleTickerProviderStateMixin {
+class _IconExplorerPageState extends State<IconExplorerPage>
+    with SingleTickerProviderStateMixin {
   final List<String> _icons = [
-    'lucide:rocket', 'mdi:shield-check-outline', 'tabler:brand-flutter', 'heroicons:sparkles',
-    'lucide:zap', 'mdi:connection', 'tabler:dna', 'heroicons:command-line',
-    'lucide:database', 'mdi:github', 'tabler:world', 'heroicons:fire',
-    'lucide:cpu', 'mdi:fingerprint', 'tabler:atom', 'heroicons:bolt',
+    'mdi:bag-personal-tag-outline',
+    'mdi:account',
+    'mdi:cog',
+    'mdi:magnify',
+    'lucide:rocket',
+    'lucide:zap',
+    'lucide:shield',
+    'lucide:atom',
+    'tabler:wand',
+    'tabler:dna',
+    'tabler:cpu',
+    'tabler:world',
+    'heroicons:sparkles',
+    'heroicons:fire',
+    'heroicons:bolt',
+    'heroicons:command-line',
   ];
 
   String? _selectedIcon;
@@ -159,6 +218,52 @@ class _IconExplorerPageState extends State<IconExplorerPage> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final currentColor = const Color(0xFF38BDF8);
+
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PageHeader(
+          title: 'Icon Atlas',
+          subtitle: 'Exploring 150,000+ possibilities across 200+ collections.',
+          isSmallScreen: widget.isSmallScreen,
+        ),
+        const SizedBox(height: 48),
+        Expanded(
+          child: widget.isSmallScreen
+              ? Column(
+                  children: [
+                    if (_selectedIcon != null) ...[
+                      SizedBox(
+                        height: 500,
+                        child: _IconDetailPanel(
+                          name: _selectedIcon!,
+                          color: currentColor,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                    Expanded(child: _buildGrid(currentColor, 2)),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 3, child: _buildGrid(currentColor, 4)),
+                    const SizedBox(width: 48),
+                    Expanded(
+                      flex: 2,
+                      child: _selectedIcon != null
+                          ? _IconDetailPanel(
+                              name: _selectedIcon!,
+                              color: currentColor,
+                            )
+                          : const _EmptyDetailPanel(),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
 
     return Stack(
       children: [
@@ -188,52 +293,28 @@ class _IconExplorerPageState extends State<IconExplorerPage> with SingleTickerPr
             );
           },
         ),
-        
         Padding(
-          padding: const EdgeInsets.all(48.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _PageHeader(
-                title: 'Icon Atlas',
-                subtitle: 'Exploring 150,000+ possibilities across 200+ collections.',
-              ),
-              const SizedBox(height: 48),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 24,
-                          mainAxisSpacing: 24,
-                        ),
-                        itemCount: _icons.length,
-                        itemBuilder: (context, i) => _IconCard(
-                          name: _icons[i],
-                          isSelected: _selectedIcon == _icons[i],
-                          color: currentColor,
-                          onTap: () => setState(() => _selectedIcon = _icons[i]),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 48),
-                    Expanded(
-                      flex: 2,
-                      child: _selectedIcon != null 
-                        ? _IconDetailPanel(name: _selectedIcon!, color: currentColor)
-                        : const _EmptyDetailPanel(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          padding: EdgeInsets.all(widget.isSmallScreen ? 24.0 : 48.0),
+          child: content,
         ),
       ],
+    );
+  }
+
+  Widget _buildGrid(Color currentColor, int crossAxisCount) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 24,
+        mainAxisSpacing: 24,
+      ),
+      itemCount: _icons.length,
+      itemBuilder: (context, i) => _IconCard(
+        name: _icons[i],
+        isSelected: _selectedIcon == _icons[i],
+        color: currentColor,
+        onTap: () => setState(() => _selectedIcon = _icons[i]),
+      ),
     );
   }
 }
@@ -241,23 +322,26 @@ class _IconExplorerPageState extends State<IconExplorerPage> with SingleTickerPr
 // --- DESIGN SYSTEM LAB PAGE ---
 
 class DesignSystemLabPage extends StatelessWidget {
-  const DesignSystemLabPage({super.key});
+  const DesignSystemLabPage({super.key, required this.isSmallScreen});
+  final bool isSmallScreen;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(48.0),
+      padding: EdgeInsets.all(isSmallScreen ? 24.0 : 48.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _PageHeader(
+          _PageHeader(
             title: 'Design System Lab',
-            subtitle: 'Validating icon utility within production-grade components.',
+            subtitle:
+                'Validating icon utility within production-grade components.',
+            isSmallScreen: isSmallScreen,
           ),
           const SizedBox(height: 48),
           _LabSection(
             title: 'Glassmorphic Navigation',
-            child: _GlassNavbar(),
+            child: _GlassNavbar(isSmallScreen: isSmallScreen),
           ),
           const SizedBox(height: 32),
           _LabSection(
@@ -266,23 +350,48 @@ class DesignSystemLabPage extends StatelessWidget {
               spacing: 16,
               runSpacing: 16,
               children: [
-                _StatusChip(label: 'Operational', icon: 'lucide:check-circle', color: Colors.green),
-                _StatusChip(label: 'Warning', icon: 'lucide:alert-triangle', color: Colors.amber),
-                _StatusChip(label: 'System Failure', icon: 'lucide:x-octagon', color: Colors.redAccent),
-                _StatusChip(label: 'Deploying', icon: 'lucide:refresh-cw', color: Colors.blueAccent, isSpinning: true),
+                const _StatusChip(
+                  label: 'Operational',
+                  icon: 'lucide:check',
+                  color: Colors.green,
+                ),
+                const _StatusChip(
+                  label: 'Warning',
+                  icon: 'lucide:warning',
+                  color: Colors.amber,
+                ),
+                const _StatusChip(
+                  label: 'System Failure',
+                  icon: 'lucide:error',
+                  color: Colors.redAccent,
+                ),
+                const _StatusChip(
+                  label: 'Deploying',
+                  icon: 'lucide:refresh',
+                  color: Colors.blueAccent,
+                  isSpinning: true,
+                ),
               ],
             ),
           ),
           const SizedBox(height: 32),
           _LabSection(
             title: 'Interactive Buttons',
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
               children: [
-                _ModernButton(label: 'Primary Action', icon: 'lucide:arrow-right', isPrimary: true),
-                const SizedBox(width: 16),
-                _ModernButton(label: 'Secondary', icon: 'lucide:copy'),
-                const SizedBox(width: 16),
-                _ModernButton(label: 'Delete', icon: 'lucide:trash-2', color: Colors.red.withAlpha(40)),
+                const _ModernButton(
+                  label: 'Primary Action',
+                  icon: 'lucide:arrow-right',
+                  isPrimary: true,
+                ),
+                const _ModernButton(label: 'Secondary', icon: 'lucide:copy'),
+                const _ModernButton(
+                  label: 'Delete',
+                  icon: 'lucide:trash',
+                  color: Colors.redAccent,
+                ),
               ],
             ),
           ),
@@ -299,14 +408,16 @@ class DiagnosticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = MediaQuery.of(context).size.width < 1000;
     return Padding(
       padding: const EdgeInsets.all(48.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _PageHeader(
+          _PageHeader(
             title: 'Adaptive Rendering',
             subtitle: 'Monitoring the bridge between Vector and Raster paths.',
+            isSmallScreen: isSmallScreen,
           ),
           const SizedBox(height: 48),
           Container(
@@ -359,7 +470,9 @@ class _SidebarHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF38BDF8), Color(0xFF818CF8)]),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF38BDF8), Color(0xFF818CF8)],
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconifyIcon('lucide:box', color: Colors.white, size: 24),
@@ -432,9 +545,14 @@ class _SidebarItem extends StatelessWidget {
 // --- HELPER WIDGETS (Components) ---
 
 class _PageHeader extends StatelessWidget {
-  const _PageHeader({required this.title, required this.subtitle});
+  const _PageHeader({
+    required this.title,
+    required this.subtitle,
+    required this.isSmallScreen,
+  });
   final String title;
   final String subtitle;
+  final bool isSmallScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -443,12 +561,19 @@ class _PageHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.spaceGrotesk(fontSize: 48, fontWeight: FontWeight.bold, letterSpacing: -1),
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: isSmallScreen ? 32 : 48,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -1,
+          ),
         ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1),
         const SizedBox(height: 8),
         Text(
           subtitle,
-          style: const TextStyle(fontSize: 18, color: Colors.white54),
+          style: TextStyle(
+            fontSize: isSmallScreen ? 14 : 18,
+            color: Colors.white54,
+          ),
         ).animate().fadeIn(delay: 200.ms, duration: 600.ms),
       ],
     );
@@ -456,7 +581,12 @@ class _PageHeader extends StatelessWidget {
 }
 
 class _IconCard extends StatelessWidget {
-  const _IconCard({required this.name, required this.isSelected, required this.color, required this.onTap});
+  const _IconCard({
+    required this.name,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
+  });
   final String name;
   final bool isSelected;
   final Color color;
@@ -465,28 +595,30 @@ class _IconCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: AnimatedContainer(
-        duration: 300.ms,
-        curve: Curves.easeOutCubic,
-        decoration: BoxDecoration(
-          color: isSelected ? color.withAlpha(30) : const Color(0xFF1E293B),
+          onTap: onTap,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected ? color : Colors.white.withAlpha(10),
-            width: isSelected ? 2 : 1,
+          child: AnimatedContainer(
+            duration: 300.ms,
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
+              color: isSelected ? color.withAlpha(30) : const Color(0xFF1E293B),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected ? color : Colors.white.withAlpha(10),
+                width: isSelected ? 2 : 1,
+              ),
+            ),
+            child: Center(
+              child: IconifyIcon(
+                name,
+                size: 32,
+                color: isSelected ? color : Colors.white,
+              ),
+            ),
           ),
-        ),
-        child: Center(
-          child: IconifyIcon(
-            name,
-            size: 40,
-            color: isSelected ? color : Colors.white,
-          ),
-        ),
-      ),
-    ).animate(target: isSelected ? 1 : 0).scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05));
+        )
+        .animate(target: isSelected ? 1 : 0)
+        .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05));
   }
 }
 
@@ -498,45 +630,61 @@ class _IconDetailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
         color: const Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: Colors.white.withAlpha(10)),
       ),
-      child: Column(
-        children: [
-          const Text('SPECIFICATION', style: TextStyle(letterSpacing: 2, color: Colors.white30, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 40),
-          Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Center(child: IconifyIcon(name, size: 80, color: color)),
-          ),
-          const SizedBox(height: 40),
-          _DetailRow(label: 'Identifier', value: name),
-          _DetailRow(label: 'Collection', value: name.split(':').first),
-          const _DetailRow(label: 'License', value: 'MIT / Open Source'),
-          const Spacer(),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'SPECIFICATION',
+              style: TextStyle(
+                letterSpacing: 2,
+                color: Colors.white30,
+                fontWeight: FontWeight.bold,
+                fontSize: 10,
               ),
-              icon: IconifyIcon('lucide:copy', size: 18, color: Colors.black),
-              label: const Text('COPY IDENTIFIER', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.black26,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Center(child: IconifyIcon(name, size: 64, color: color)),
+            ),
+            const SizedBox(height: 32),
+            _DetailRow(label: 'Identifier', value: name),
+            _DetailRow(label: 'Collection', value: name.split(':').first),
+            const _DetailRow(label: 'License', value: 'MIT / Open Source'),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                icon: IconifyIcon('lucide:copy', size: 18, color: Colors.black),
+                label: const Text(
+                  'COPY IDENTIFIER',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -550,10 +698,16 @@ class _EmptyDetailPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1E293B).withAlpha(100),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withAlpha(5), style: BorderStyle.solid),
+        border: Border.all(
+          color: Colors.white.withAlpha(5),
+          style: BorderStyle.solid,
+        ),
       ),
       child: const Center(
-        child: Text('Select an icon to view details', style: TextStyle(color: Colors.white24)),
+        child: Text(
+          'Select an icon to view details',
+          style: TextStyle(color: Colors.white24),
+        ),
       ),
     );
   }
@@ -572,7 +726,19 @@ class _DetailRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: Colors.white38)),
-          Text(value, style: GoogleFonts.firaCode(color: Colors.white, fontWeight: FontWeight.w500)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.firaCode(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -591,7 +757,15 @@ class _LabSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title.toUpperCase(), style: const TextStyle(letterSpacing: 1.5, color: Colors.white30, fontSize: 12, fontWeight: FontWeight.bold)),
+        Text(
+          title.toUpperCase(),
+          style: const TextStyle(
+            letterSpacing: 1.5,
+            color: Colors.white30,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 16),
         child,
       ],
@@ -600,6 +774,9 @@ class _LabSection extends StatelessWidget {
 }
 
 class _GlassNavbar extends StatelessWidget {
+  const _GlassNavbar({required this.isSmallScreen});
+  final bool isSmallScreen;
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -616,13 +793,29 @@ class _GlassNavbar extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconifyIcon('lucide:home', size: 20, color: const Color(0xFF38BDF8)),
-              const SizedBox(width: 32),
-              IconifyIcon('lucide:search', size: 20, color: Colors.white54),
-              const SizedBox(width: 32),
-              IconifyIcon('lucide:bell', size: 20, color: Colors.white54),
-              const SizedBox(width: 32),
-              IconifyIcon('lucide:user', size: 20, color: Colors.white54),
+              IconifyIcon(
+                'lucide:home',
+                size: 20,
+                color: const Color(0xFF38BDF8),
+              ),
+              SizedBox(width: isSmallScreen ? 16 : 32),
+              const IconifyIcon.name(
+                IconifyName('lucide', 'search'),
+                size: 20,
+                color: Colors.white54,
+              ),
+              SizedBox(width: isSmallScreen ? 16 : 32),
+              const IconifyIcon.name(
+                IconifyName('lucide', 'bell'),
+                size: 20,
+                color: Colors.white54,
+              ),
+              SizedBox(width: isSmallScreen ? 16 : 32),
+              const IconifyIcon.name(
+                IconifyName('lucide', 'user'),
+                size: 20,
+                color: Colors.white54,
+              ),
             ],
           ),
         ),
@@ -632,7 +825,12 @@ class _GlassNavbar extends StatelessWidget {
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.icon, required this.color, this.isSpinning = false});
+  const _StatusChip({
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.isSpinning = false,
+  });
   final String label;
   final String icon;
   final Color color;
@@ -642,7 +840,9 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget iconWidget = IconifyIcon(icon, size: 16, color: color);
     if (isSpinning) {
-      iconWidget = iconWidget.animate(onPlay: (c) => c.repeat()).rotate(duration: 2.seconds);
+      iconWidget = iconWidget
+          .animate(onPlay: (c) => c.repeat())
+          .rotate(duration: 2.seconds);
     }
 
     return Container(
@@ -657,7 +857,14 @@ class _StatusChip extends StatelessWidget {
         children: [
           iconWidget,
           const SizedBox(width: 10),
-          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
         ],
       ),
     );
@@ -665,7 +872,12 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _ModernButton extends StatelessWidget {
-  const _ModernButton({required this.label, required this.icon, this.isPrimary = false, this.color});
+  const _ModernButton({
+    required this.label,
+    required this.icon,
+    this.isPrimary = false,
+    this.color,
+  });
   final String label;
   final String icon;
   final bool isPrimary;
@@ -674,18 +886,33 @@ class _ModernButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: color ?? (isPrimary ? const Color(0xFF38BDF8) : const Color(0xFF1E293B)),
+        color:
+            color ??
+            (isPrimary ? const Color(0xFF38BDF8) : const Color(0xFF1E293B)),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isPrimary ? Colors.transparent : Colors.white.withAlpha(10)),
+        border: Border.all(
+          color: isPrimary ? Colors.transparent : Colors.white.withAlpha(10),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: TextStyle(color: isPrimary ? Colors.black : Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(width: 12),
-          IconifyIcon(icon, size: 18, color: isPrimary ? Colors.black : Colors.white),
+          Text(
+            label,
+            style: TextStyle(
+              color: isPrimary ? Colors.black : Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconifyIcon(
+            icon,
+            size: 16,
+            color: isPrimary ? Colors.black : Colors.white,
+          ),
         ],
       ),
     );
@@ -693,7 +920,12 @@ class _ModernButton extends StatelessWidget {
 }
 
 class _DiagRow extends StatelessWidget {
-  const _DiagRow({required this.label, required this.value, required this.icon, required this.color});
+  const _DiagRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
   final String label;
   final String value;
   final String icon;
@@ -705,16 +937,29 @@ class _DiagRow extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: color.withAlpha(20), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(
+            color: color.withAlpha(20),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: IconifyIcon(icon, color: color, size: 24),
         ),
         const SizedBox(width: 24),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white38, fontSize: 14)),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white38, fontSize: 14),
+            ),
             const SizedBox(height: 4),
-            Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ],
@@ -731,9 +976,19 @@ class _SidebarFooter extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('CORE VERSION', style: TextStyle(color: Colors.white24, fontSize: 10, letterSpacing: 1)),
+          const Text(
+            'CORE VERSION',
+            style: TextStyle(
+              color: Colors.white24,
+              fontSize: 10,
+              letterSpacing: 1,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text('v0.1.0-alpha', style: GoogleFonts.firaCode(color: Colors.white54, fontSize: 12)),
+          Text(
+            'v0.1.0-alpha',
+            style: GoogleFonts.firaCode(color: Colors.white54, fontSize: 12),
+          ),
         ],
       ),
     );

@@ -37,7 +37,7 @@ class IconifyApp extends StatefulWidget {
 }
 
 class _IconifyAppState extends State<IconifyApp> {
-  late IconifyProvider _provider;
+  IconifyProvider? _provider;
 
   @override
   void initState() {
@@ -53,24 +53,30 @@ class _IconifyAppState extends State<IconifyApp> {
     }
   }
 
-  void _initialize() {
+  Future<void> _initialize() async {
     // 1. Ensure starter registry is ready
     StarterRegistry.instance.initialize();
 
     // 2. Build the provider chain based on config
-    _provider = buildProviderChain(widget.config);
+    setState(() {
+      _provider = buildProviderChain(widget.config);
+    });
   }
 
   @override
   void dispose() {
-    _provider.dispose();
+    _provider?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_provider == null) {
+      return widget.child; // Or a splash screen
+    }
+
     return IconifyScope(
-      provider: _provider,
+      provider: _provider!,
       child: widget.child,
     );
   }
