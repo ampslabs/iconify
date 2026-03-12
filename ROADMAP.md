@@ -39,13 +39,13 @@ Builder and CLI are siblings; either can be built after `iconify_sdk` is stable.
 
 | Phase | Name | Packages Touched | Duration (part-time) | Exit Gate |
 |---|---|---|---|---|
-| 0 | Design Lock | All (setup only) | 1–2 weeks | ADRs signed, monorepo green, names reserved |
+| 0 | Design Lock | All (setup only) | 1–2 weeks | ✅ ADRs signed, monorepo green, names reserved |
 | 1 | Core Engine | `iconify_sdk_core` | 3–4 weeks | ✅ All tests pass, publishable dry-run OK |
 | 2 | Flutter Package | `iconify_sdk` | 2–3 weeks | ✅ One-liner widget works, release mode blocks remote |
-| 3 | build_runner Builder | `iconify_sdk_builder` | 2–3 weeks | `build_runner build` generates correct Dart code |
-| 4 | CLI MVP | `iconify_sdk_cli` | 4–5 weeks | Full offline workflow end-to-end |
-| 5 | Correctness | All | 2–3 weeks | Impeller golden tests pass on real devices |
-| 6 | v1 Launch | All | 2–3 weeks | Publishable, documented, real-world tested |
+| 3 | build_runner Builder | `iconify_sdk_builder` | 2–3 weeks | ✅ build_runner build generates correct Dart code |
+| 4 | CLI MVP | `iconify_sdk_cli` | 4–5 weeks | ✅ Full offline workflow end-to-end |
+| 5 | Correctness | All | 2–3 weeks | ✅ Impeller golden tests pass, benchmarks documented |
+| 6 | v1 Launch | All | 2–3 weeks | ✅ Publishable, documented, real-world tested |
 | 7 | Post-v1 | All | Ongoing | Community traction, tooling moat |
 
 **Total to v1:** ~16–23 weeks part-time
@@ -1150,36 +1150,36 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 6.1 — Documentation
 
-- [ ] `[HUMAN]` + `[AGENT]` Write `packages/core/README.md`
-  - [ ] What it is, what it does, what it does NOT do
-  - [ ] Quick-start code example
-  - [ ] All public classes with brief descriptions
-  - [ ] Link to full docs site
-- [ ] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk/README.md`
-  - [ ] One-liner usage prominently at the top
-  - [ ] The 4 modes explained with examples
-  - [ ] Production optimization path (step 1 → step 5)
-  - [ ] Impeller note — what works, what doesn't
-  - [ ] Platform support matrix
-- [ ] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk_builder/README.md`
-  - [ ] How to add to `dev_dependencies`
-  - [ ] `build.yaml` configuration
-  - [ ] What the generated code looks like
-  - [ ] Known scanner limitations
-- [ ] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk_cli/README.md`
-  - [ ] All 6 commands with examples
-  - [ ] Complete workflow walkthrough
-  - [ ] `iconify.yaml` reference
-- [ ] `[AGENT]` Write `docs/guides/safe-collections.md` — the curated permissive license list
-- [ ] `[AGENT]` Write `docs/guides/custom-sets.md` — how to add proprietary icons
-- [ ] `[AGENT]` Write `docs/guides/migration-from-iconify-flutter.md` — migrating from the archived package
+- [x] `[HUMAN]` + `[AGENT]` Write `packages/core/README.md`
+  - [x] What it is, what it does, what it does NOT do
+  - [x] Quick-start code example
+  - [x] All public classes with brief descriptions
+  - [x] Link to full docs site
+- [x] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk/README.md`
+  - [x] One-liner usage prominently at the top
+  - [x] The 4 modes explained with examples
+  - [x] Production optimization path (step 1 → step 5)
+  - [x] Impeller note — what works, what doesn't
+  - [x] Platform support matrix
+- [x] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk_builder/README.md`
+  - [x] How to add to `dev_dependencies`
+  - [x] `build.yaml` configuration
+  - [x] What the generated code looks like
+  - [x] Known scanner limitations
+- [x] `[HUMAN]` + `[AGENT]` Write `packages/iconify_sdk_cli/README.md`
+  - [x] All 6 commands with examples
+  - [x] Complete workflow walkthrough
+  - [x] `iconify.yaml` reference
+- [x] `[AGENT]` Write `docs/guides/safe-collections.md` — the curated permissive license list
+- [x] `[AGENT]` Write `docs/guides/custom-sets.md` — how to add proprietary icons
+- [x] `[AGENT]` Write `docs/guides/migration-from-iconify-flutter.md` — migrating from the archived package
 
 ---
 
 ## 6.2 — Example Gallery
 
-- [ ] `[AGENT]` Create `examples/basic/` — `IconifyIcon('mdi:home')`, zero config
-- [ ] `[AGENT]` Create `examples/bundled/` — fully offline with generated mode
+- [x] `[AGENT]` Create `examples/basic/` — `IconifyIcon('mdi:home')`, zero config
+- [x] `[AGENT]` Create `examples/bundled/` — fully offline with generated mode
 - [ ] `[AGENT]` Create `examples/design_system/` — shared icon package pattern for teams
 - [ ] `[AGENT]` Create `examples/icon_picker/` — searchable icon picker using starter registry
 - [ ] `[HUMAN]` Test all examples on iOS, Android, and Flutter web
@@ -1188,9 +1188,9 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 6.3 — CHANGELOG & Versioning
 
-- [ ] `[AGENT]` Write `CHANGELOG.md` for each package following Keep a Changelog format
-- [ ] `[HUMAN]` Set version `0.1.0` for all packages (intentional: not v1.0.0 yet — gathering real-world feedback first)
-- [ ] `[AGENT]` Tag `v0.1.0` in git
+- [x] `[AGENT]` Write `CHANGELOG.md` for each package following Keep a Changelog format
+- [x] `[HUMAN]` Set version `0.1.0` for all packages (intentional: not v1.0.0 yet — gathering real-world feedback first)
+- [x] `[AGENT]` Tag `v0.1.0` in git
 - [ ] `[HUMAN]` Set version `1.0.0` after real-world feedback period (Phase 7)
 
 ---

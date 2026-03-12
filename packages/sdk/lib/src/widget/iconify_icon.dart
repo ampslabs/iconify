@@ -182,10 +182,15 @@ class _IconifyIconState extends State<IconifyIcon> {
   }
 
   String _colorToHex(Color color) {
-    if (color.opacity == 1.0) {
-      return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
+    final r = (color.r * 255).round().clamp(0, 255);
+    final g = (color.g * 255).round().clamp(0, 255);
+    final b = (color.b * 255).round().clamp(0, 255);
+    final a = color.a;
+
+    if (a == 1.0) {
+      return '#${r.toRadixString(16).padLeft(2, '0')}${g.toRadixString(16).padLeft(2, '0')}${b.toRadixString(16).padLeft(2, '0')}';
     } else {
-      return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity.toStringAsFixed(3)})';
+      return 'rgba($r, $g, $b, ${a.toStringAsFixed(3)})';
     }
   }
 }
