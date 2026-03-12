@@ -1,0 +1,29 @@
+# Dart/Flutter related
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+
+# Generated code
+*.g.dart
+*.freezed.dart
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.swp
+*.out
+
+# Mac
+.DS_Store
+
+# Package specific locks
+# In a workspace, the root pubspec.lock is typically tracked, 
+# but individual package locks are often ignored.
+packages/*/pubspec.lock

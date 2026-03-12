@@ -1,0 +1,20 @@
+name: iconify_sdk_core
+resolution: workspace
+description: >
+  Pure Dart engine for Iconify icons. Provides models, providers, cache,
+  alias resolution, and JSON parsing. No Flutter dependency required.
+version: 0.1.0
+repository: https://github.com/ampslabs/iconify_sdk/tree/main/packages/iconify_sdk_core
+issue_tracker: https://github.com/ampslabs/iconify_sdk/issues
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  http: ^1.2.0
+  meta: ^1.15.0
+
+dev_dependencies:
+  mocktail: ^1.0.4
+  test: any
+  lints: ^4.0.0

@@ -1,0 +1,18 @@
+name: iconify_sdk_cli
+resolution: workspace
+description: Command line interface for Iconify SDK.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  args: ^2.5.0
+  cli_util: ^0.4.1
+  iconify_sdk_core:
+    path: ../iconify_sdk_core
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: any

@@ -1,0 +1,28 @@
+name: iconify_sdk_workspace
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+workspace:
+  - packages/iconify_sdk_core
+  - packages/iconify_sdk
+  - packages/iconify_sdk_builder
+  - packages/iconify_sdk_cli
+
+# Melos configuration
+# Melos is used for monorepo management (versioning, publishing, and scripts)
+# while Dart Workspaces handle dependency resolution.
+melos:
+  name: iconify_sdk
+  packages:
+    - packages/*
+
+dev_dependencies:
+  melos: ^6.0.0
+
+dependency_overrides:
+  test: 1.25.13
+  test_api: 0.7.10
+  matcher: 0.12.19
+  analyzer: ^6.0.0

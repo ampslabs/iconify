@@ -1,0 +1,6 @@
+{
+  "prefix": "malformed",
+  "icons": {
+    "bad": "not-an-object"
+  }
+}

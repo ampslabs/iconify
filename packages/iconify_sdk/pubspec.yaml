@@ -1,0 +1,20 @@
+name: iconify_sdk
+resolution: workspace
+description: The main Iconify SDK for Flutter.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  iconify_sdk_core:
+    path: ../iconify_sdk_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^4.0.0

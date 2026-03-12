@@ -1,0 +1,19 @@
+{
+  "prefix": "test",
+  "info": {
+    "name": "Test Icons",
+    "total": 2,
+    "author": { "name": "Iconify SDK Tests" },
+    "license": { "title": "MIT", "spdx": "MIT" }
+  },
+  "icons": {
+    "home": { "body": "<path d=\"home\"/>" },
+    "settings": { "body": "<path d=\"settings\"/>", "width": 32 }
+  },
+  "aliases": {
+    "home-alias": { "parent": "home" },
+    "deep-alias": { "parent": "home-alias" }
+  },
+  "width": 24,
+  "height": 24
+}

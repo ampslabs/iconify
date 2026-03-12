@@ -1,0 +1,5 @@
+# Exclude large test fixtures from the published package
+test/fixtures/mdi_fixture_full.json
+test/fixtures/mdi_fixture.json
+test/fixtures/tabler_fixture.json
+test/fixtures/lucide_fixture.json

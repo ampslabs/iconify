@@ -1,0 +1,7 @@
+{
+  "prefix": "bad",
+  "icons": {
+    "missing-body": { "width": 24 },
+    "valid-icon": { "body": "<path d='M0 0'/>", "width": 24, "height": 24 }
+  }
+}

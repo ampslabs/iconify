@@ -1,0 +1,19 @@
+{
+  "prefix": "test",
+  "width": 24,
+  "height": 24,
+  "icons": {
+    "base-icon": {
+      "body": "<path d='M12 2L2 22h20L12 2z'/>",
+      "width": 24,
+      "height": 24
+    }
+  },
+  "aliases": {
+    "level1": { "parent": "base-icon" },
+    "level2": { "parent": "level1" },
+    "level3": { "parent": "level2", "width": 32, "height": 32 },
+    "circular-a": { "parent": "circular-b" },
+    "circular-b": { "parent": "circular-a" }
+  }
+}
