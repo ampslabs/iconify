@@ -189,21 +189,21 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ## 1.2 — Error Hierarchy
 
-- [ ] `[AGENT]` Create `lib/src/errors/iconify_exception.dart`
-  - [ ] `sealed class IconifyException` with `message` field
-  - [ ] `final class InvalidIconNameException` — includes `input` field
-  - [ ] `final class IconNotFoundException` — includes `name` + optional `suggestion`
-  - [ ] `final class CollectionNotFoundException` — includes `prefix` + `wasRemoteAttempted`
-  - [ ] `final class IconifyNetworkException` — includes `statusCode?` + `uri?`
-  - [ ] `final class IconifyLicenseException` — includes `prefix`
-  - [ ] `final class IconifyParseException` — includes `field?` + `rawValue?`
-  - [ ] `final class CircularAliasException` — includes `chain` (full chain list)
-  - [ ] `final class IconifyCacheException` — includes `cause?`
-- [ ] `[AGENT]` Write `test/errors/iconify_exception_test.dart`
-  - [ ] Test: each exception type is a subtype of `IconifyException`
-  - [ ] Test: `toString()` is non-empty and informative for each type
-  - [ ] Test: pattern matching works across all subtypes
-- [ ] `[CI]` `dart test test/errors/` — must pass
+- [x] `[AGENT]` Create `lib/src/errors/iconify_exception.dart`
+  - [x] `sealed class IconifyException` with `message` field
+  - [x] `final class InvalidIconNameException` — includes `input` field
+  - [x] `final class IconNotFoundException` — includes `name` + optional `suggestion`
+  - [x] `final class CollectionNotFoundException` — includes `prefix` + `wasRemoteAttempted`
+  - [x] `final class IconifyNetworkException` — includes `statusCode?` + `uri?`
+  - [x] `final class IconifyLicenseException` — includes `prefix`
+  - [x] `final class IconifyParseException` — includes `field?` + `rawValue?`
+  - [x] `final class CircularAliasException` — includes `chain` (full chain list)
+  - [x] `final class IconifyCacheException` — includes `cause?`
+- [x] `[AGENT]` Write `test/errors/iconify_exception_test.dart`
+  - [x] Test: each exception type is a subtype of `IconifyException`
+  - [x] Test: `toString()` is non-empty and informative for each type
+  - [x] Test: pattern matching works across all subtypes
+- [x] `[CI]` `dart test test/errors/` — must pass
 
 ---
 
@@ -211,79 +211,79 @@ Create `user-docs/adr/` directory. Each ADR is a markdown file.
 
 ### 1.3.1 — IconifyName
 
-- [ ] `[AGENT]` Create `lib/src/models/iconify_name.dart`
-  - [ ] `@immutable final class IconifyName`
-  - [ ] `const` constructor `IconifyName(prefix, iconName)` — no validation (for generated code use)
-  - [ ] `factory IconifyName.parse(String value)` — full validation, descriptive error messages
-  - [ ] `static IconifyName? tryParse(String value)` — null on failure
-  - [ ] Regex: prefix `^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$`
-  - [ ] Regex: name same pattern
-  - [ ] Max length: 64 chars per part
-  - [ ] `==` and `hashCode` by value
-  - [ ] `toString()` returns `prefix:iconName`
-- [ ] `[AGENT]` Write `test/models/iconify_name_test.dart`
-  - [ ] Valid: simple, hyphens, digits, single-char
-  - [ ] Invalid: no colon, double colon, uppercase, leading/trailing hyphen, empty parts, too long
-  - [ ] Error messages contain helpful context
-  - [ ] Equality: same value equals, different value not equal
-  - [ ] Map key usage
-  - [ ] Set deduplication
-  - [ ] `tryParse` returns null on bad input
-- [ ] `[CI]` Tests pass
+- [x] `[AGENT]` Create `lib/src/models/iconify_name.dart`
+  - [x] `@immutable final class IconifyName`
+  - [x] `const` constructor `IconifyName(prefix, iconName)` — no validation (for generated code use)
+  - [x] `factory IconifyName.parse(String value)` — full validation, descriptive error messages
+  - [x] `static IconifyName? tryParse(String value)` — null on failure
+  - [x] Regex: prefix `^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$`
+  - [x] Regex: name same pattern
+  - [x] Max length: 64 chars per part
+  - [x] `==` and `hashCode` by value
+  - [x] `toString()` returns `prefix:iconName`
+- [x] `[AGENT]` Write `test/models/iconify_name_test.dart`
+  - [x] Valid: simple, hyphens, digits, single-char
+  - [x] Invalid: no colon, double colon, uppercase, leading/trailing hyphen, empty parts, too long
+  - [x] Error messages contain helpful context
+  - [x] Equality: same value equals, different value not equal
+  - [x] Map key usage 
+  - [x] Set deduplication
+  - [x] `tryParse` returns null on bad input
+- [x] `[CI]` Tests pass
 
 ### 1.3.2 — IconifyLicense
 
-- [ ] `[AGENT]` Create `lib/src/models/iconify_license.dart`
-  - [ ] Fields: `title?`, `spdx?`, `url?`, `requiresAttribution`
-  - [ ] `isKnownCommercialFriendly` getter — checks against known safe SPDX list
-  - [ ] `fromJson` / `toJson`
-  - [ ] `copyWith`
-  - [ ] Value equality
-- [ ] `[AGENT]` Write `test/models/iconify_license_test.dart`
-  - [ ] MIT/Apache/ISC are commercial friendly
-  - [ ] CC-BY-4.0 is NOT commercial friendly
-  - [ ] null spdx is NOT commercial friendly
-  - [ ] fromJson/toJson round-trip
+- [x] `[AGENT]` Create `lib/src/models/iconify_license.dart`
+  - [x] Fields: `title?`, `spdx?`, `url?`, `requiresAttribution`
+  - [x] `isKnownCommercialFriendly` getter — checks against known safe SPDX list
+  - [x] `fromJson` / `toJson`
+  - [x] `copyWith`
+  - [x] Value equality
+- [x] `[AGENT]` Write `test/models/iconify_license_test.dart`
+  - [x] MIT/Apache/ISC are commercial friendly
+  - [x] CC-BY-4.0 is NOT commercial friendly
+  - [x] null spdx is NOT commercial friendly
+  - [x] fromJson/toJson round-trip
 
 ### 1.3.3 — IconifyIconData
 
-- [ ] `[AGENT]` Create `lib/src/models/iconify_icon_data.dart`
-  - [ ] Fields: `body`, `width`, `height`, `aliases`, `hidden`, `rotate`, `hFlip`, `vFlip`, `raw`
-  - [ ] Defaults: width=24, height=24, all flags false
-  - [ ] `isMonochrome` getter — checks body for `currentColor`
-  - [ ] `isSquare` getter
-  - [ ] `toSvgString({size?, color?})` — wraps body in full SVG element
-  - [ ] `fromJson` / `toJson`
-  - [ ] `copyWith`
-  - [ ] Value equality by body + width + height
-- [ ] `[AGENT]` Write `test/models/iconify_icon_data_test.dart`
-  - [ ] `isMonochrome` true when body has `currentColor`
-  - [ ] `isMonochrome` false when body has explicit color
-  - [ ] `toSvgString` produces valid SVG string
-  - [ ] `toSvgString` with color replaces `currentColor`
-  - [ ] `toSvgString` does not replace color in non-monotone icon
-  - [ ] `fromJson` inherits defaults for missing fields
-  - [ ] `copyWith` produces new instance with changed field
+- [x] `[AGENT]` Create `lib/src/models/iconify_icon_data.dart`
+  - [x] Fields: `body`, `width`, `height`, `aliases`, `hidden`, `rotate`, `hFlip`, `vFlip`, `raw`
+  - [x] Defaults: width=24, height=24, all flags false
+  - [x] `isMonochrome` getter — checks body for `currentColor`
+  - [x] `isSquare` getter
+  - [x] `toSvgString({size?, color?})` — wraps body in full SVG element
+  - [x] `fromJson` / `toJson`
+  - [x] `copyWith`
+  - [x] Value equality by body + width + height
+- [x] `[AGENT]` Write `test/models/iconify_icon_data_test.dart`
+  - [x] `isMonochrome` true when body has `currentColor`
+  - [x] `isMonochrome` false when body has explicit color
+  - [x] `toSvgString` produces valid SVG string
+  - [x] `toSvgString` with color replaces `currentColor`
+  - [x] `toSvgString` does not replace color in non-monotone icon
+  - [x] `fromJson` inherits defaults for missing fields
+  - [x] `copyWith` produces new instance with changed field
 
 ### 1.3.4 — IconifyCollectionInfo
 
-- [ ] `[AGENT]` Create `lib/src/models/iconify_collection_info.dart`
-  - [ ] Fields: `prefix`, `name`, `totalIcons`, `author?`, `license?`, `samples`, `categories`, `tags`, `version?`, `raw`
-  - [ ] `requiresAttribution` delegate to license
-  - [ ] `isKnownCommercialFriendly` delegate to license
-  - [ ] `fromJson(prefix, json)` — handles both flat and nested `info:` structure
-  - [ ] `toJson`
-  - [ ] Equality by prefix
-- [ ] `[AGENT]` Write `test/models/iconify_collection_info_test.dart`
-  - [ ] Parses flat JSON structure
-  - [ ] Parses nested `info:` JSON structure
-  - [ ] `author` handles string and object forms
-  - [ ] `requiresAttribution` delegates correctly
+- [x] `[AGENT]` Create `lib/src/models/iconify_collection_info.dart`
+  - [x] Fields: `prefix`, `name`, `totalIcons`, `author?`, `license?`, `samples`, `categories`, `tags`, `version?`, `raw`
+  - [x] `requiresAttribution` delegate to license
+  - [x] `isKnownCommercialFriendly` delegate to license
+  - [x] `fromJson(prefix, json)` — handles both flat and nested `info:` structure
+  - [x] `toJson`
+  - [x] Equality by prefix
+- [x] `[AGENT]` Write `test/models/iconify_collection_info_test.dart`
+  - [x] Parses flat JSON structure
+  - [x] Parses nested `info:` JSON structure
+  - [x] `author` handles string and object forms
+  - [x] `requiresAttribution` delegates correctly
 
 ### 1.3.5 — IconifySearchResult
 
-- [ ] `[AGENT]` Create `lib/src/models/iconify_search_result.dart`
-  - [ ] Fields: `name`, `score`, `matchedOn?`
+- [x] `[AGENT]` Create `lib/src/models/iconify_search_result.dart`
+  - [x] Fields: `name`, `score`, `matchedOn?`
 
 ---
 

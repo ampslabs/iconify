@@ -69,5 +69,15 @@ void main() {
           await preloadedProvider.getIcon(const IconifyName('mdi', 'home'));
       expect(icon, isNotNull);
     });
+
+    test('throws IconifyParseException for malformed JSON', () async {
+      final badFile = File('${tempDir.path}/bad.json');
+      await badFile.writeAsString('invalid json {');
+
+      expect(
+        () => provider.getIcon(const IconifyName('bad', 'icon')),
+        throwsA(isA<IconifyParseException>()),
+      );
+    });
   });
 }

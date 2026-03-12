@@ -85,7 +85,8 @@ void main() {
     });
 
     test('hasIcon returns true on success', () async {
-      final client = MockClient((_) async => http.Response(jsonEncode(validIconJson), 200));
+      final client = MockClient(
+          (_) async => http.Response(jsonEncode(validIconJson), 200));
       final provider = RemoteIconifyProvider(httpClient: client);
 
       expect(await provider.hasIcon(const IconifyName('mdi', 'home')), isTrue);

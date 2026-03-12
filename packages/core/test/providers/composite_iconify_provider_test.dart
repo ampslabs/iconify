@@ -44,7 +44,8 @@ void main() {
     });
 
     test('getCollection returns first match', () async {
-      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      final info = const IconifyCollectionInfo(
+          prefix: 'mdi', name: 'MDI', totalIcons: 1);
       final first = MemoryIconifyProvider();
       final second = MemoryIconifyProvider()..putCollection(info);
 
@@ -54,7 +55,8 @@ void main() {
     });
 
     test('hasCollection returns true if any provider has it', () async {
-      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      final info = const IconifyCollectionInfo(
+          prefix: 'mdi', name: 'MDI', totalIcons: 1);
       final first = MemoryIconifyProvider();
       final second = MemoryIconifyProvider()..putCollection(info);
 
@@ -63,7 +65,8 @@ void main() {
     });
 
     test('dispose disposes all providers', () async {
-      final first = RemoteIconifyProvider(); // Has dispose side effect (disposed flag)
+      final first =
+          RemoteIconifyProvider(); // Has dispose side effect (disposed flag)
       final composite = CompositeIconifyProvider([first]);
       await composite.dispose();
       expect(() => first.getIcon(home), throwsStateError);

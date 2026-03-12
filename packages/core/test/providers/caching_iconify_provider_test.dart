@@ -69,7 +69,8 @@ void main() {
     });
 
     test('getCollection delegates to inner without caching', () async {
-      final info = const IconifyCollectionInfo(prefix: 'mdi', name: 'MDI', totalIcons: 1);
+      final info = const IconifyCollectionInfo(
+          prefix: 'mdi', name: 'MDI', totalIcons: 1);
       when(() => inner.getCollection('mdi')).thenAnswer((_) async => info);
 
       final result = await provider.getCollection('mdi');

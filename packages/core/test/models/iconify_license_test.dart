@@ -20,17 +20,25 @@ void main() {
     });
 
     test('isKnownCommercialFriendly identifies safe licenses', () {
-      expect(const IconifyLicense(spdx: 'MIT').isKnownCommercialFriendly, isTrue);
-      expect(const IconifyLicense(spdx: 'Apache-2.0').isKnownCommercialFriendly, isTrue);
-      expect(const IconifyLicense(spdx: 'ISC').isKnownCommercialFriendly, isTrue);
-      expect(const IconifyLicense(spdx: 'CC0-1.0').isKnownCommercialFriendly, isTrue);
+      expect(
+          const IconifyLicense(spdx: 'MIT').isKnownCommercialFriendly, isTrue);
+      expect(const IconifyLicense(spdx: 'Apache-2.0').isKnownCommercialFriendly,
+          isTrue);
+      expect(
+          const IconifyLicense(spdx: 'ISC').isKnownCommercialFriendly, isTrue);
+      expect(const IconifyLicense(spdx: 'CC0-1.0').isKnownCommercialFriendly,
+          isTrue);
     });
 
     test('isKnownCommercialFriendly identifies unsafe or unknown licenses', () {
-      expect(const IconifyLicense(spdx: 'CC-BY-4.0').isKnownCommercialFriendly, isFalse);
-      expect(const IconifyLicense(spdx: 'GPL-3.0').isKnownCommercialFriendly, isFalse);
-      expect(const IconifyLicense(spdx: null).isKnownCommercialFriendly, isFalse);
-      expect(const IconifyLicense(spdx: 'Custom').isKnownCommercialFriendly, isFalse);
+      expect(const IconifyLicense(spdx: 'CC-BY-4.0').isKnownCommercialFriendly,
+          isFalse);
+      expect(const IconifyLicense(spdx: 'GPL-3.0').isKnownCommercialFriendly,
+          isFalse);
+      expect(
+          const IconifyLicense(spdx: null).isKnownCommercialFriendly, isFalse);
+      expect(const IconifyLicense(spdx: 'Custom').isKnownCommercialFriendly,
+          isFalse);
     });
 
     test('requiresAttribution defaults to false', () {

@@ -95,7 +95,8 @@ void main() {
 
     test('applies rotate, hFlip, vFlip overrides from alias', () {
       final aliases = {
-        'flipped': const AliasEntry(parent: 'base', rotate: 1, hFlip: true, vFlip: true),
+        'flipped': const AliasEntry(
+            parent: 'base', rotate: 1, hFlip: true, vFlip: true),
       };
       final result = resolver.resolve(
         iconName: 'flipped',

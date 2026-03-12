@@ -33,7 +33,11 @@ jobs:
         run: melos exec -- "dart format --output=none --set-exit-if-changed ."
 
       - name: Analyze project
-        run: melos exec -- "flutter analyze --fatal-infos --fatal-warnings"
+        run: |
+          melos exec --no-flutter -- "dart analyze --fatal-infos"
+          melos exec --flutter -- "flutter analyze --fatal-infos"
 
       - name: Run tests
-        run: melos exec --dir-exists=test -- "flutter test"
+        run: |
+          melos exec --dir-exists=test --no-flutter -- "dart test"
+          melos exec --dir-exists=test --flutter -- "flutter test"
