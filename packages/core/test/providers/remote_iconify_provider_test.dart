@@ -55,12 +55,13 @@ void main() {
 
       expect(result, isNotNull);
       expect(githubCalled, isTrue, reason: 'Should have tried GitHub first');
-      expect(apiCalled, isFalse, reason: 'Should NOT have tried API if GitHub succeeded');
-      
+      expect(apiCalled, isFalse,
+          reason: 'Should NOT have tried API if GitHub succeeded');
+
       // Subsequent call should use cache
       await provider.getIcon(const IconifyName('mdi', 'home'));
       // githubCalled should still be true (1 call), not 2
-      
+
       await provider.dispose();
     });
 
@@ -156,7 +157,7 @@ void main() {
         var callCount = 0;
         final client = MockClient((request) async {
           callCount++;
-          
+
           // Fallback GitHub to force the batched API call
           if (request.url.host == 'raw.githubusercontent.com') {
             return http.Response('not found', 404);
@@ -192,9 +193,9 @@ void main() {
 
         expect(results[0]?.body, contains('home'));
         expect(results[1]?.body, contains('settings'));
-        
+
         // Expected: 1 call to GitHub (failed) + 1 batched call to API = 2
-        // Wait, why was it 3 in the logs? 
+        // Wait, why was it 3 in the logs?
         // 1. home tries GitHub -> 404
         // 2. settings tries GitHub -> 404 (happening concurrently before first one finishes?)
         // 3. Batched API call

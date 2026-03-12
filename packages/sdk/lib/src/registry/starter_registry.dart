@@ -29,7 +29,7 @@ class StarterRegistry {
 
     builder.setStarterProvider(_provider);
     _initialized = true;
-    
+
     if (kDebugMode) {
       // Diagnostic logging for debugging.
       // ignore: avoid_print

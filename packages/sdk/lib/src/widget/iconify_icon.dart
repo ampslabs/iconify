@@ -89,7 +89,7 @@ class _IconifyIconState extends State<IconifyIcon> {
   void _resolveIcon() {
     final provider = IconifyScope.of(context);
     _iconFuture = provider.getIcon(widget.name);
-    
+
     if (kDebugMode) {
       _iconFuture!.then((data) {
         if (data == null) {

@@ -1,3 +1,7 @@
+// This file uses a pattern where futures are stored in a map for deduplication.
+// These futures are intentionally not awaited at the point of assignment.
+// ignore_for_file: unawaited_futures
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -64,7 +68,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _checkDisposed();
     if (!_isAllowed) return null;
 
-    // 1. Try to resolve via full collection (GitHub Raw)
+    // 1. Try to resolve via full collection (GitHub Raw or Cache)
     final collection = await _getOrFetchFromGitHub(name.prefix);
     if (collection != null) {
       return collection.getIcon(name.iconName);
@@ -93,7 +97,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
     // 2. Check if already loading
     if (_loadingGitHub.containsKey(prefix)) {
-      return _loadingGitHub[prefix];
+      return await _loadingGitHub[prefix];
     }
 
     // 3. Start loading from GitHub
@@ -116,7 +120,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
       final githubUri = Uri.parse(
           'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
 
-      // Diagnostic logging for debugging.
+      // Use print for developer diagnostic logging in the console.
       // ignore: avoid_print
       print('Iconify SDK [REMOTE]: Trying GitHub Raw for $prefix...');
       final response = await _client.get(githubUri).timeout(requestTimeout);
@@ -124,14 +128,14 @@ final class RemoteIconifyProvider implements IconifyProvider {
       if (response.statusCode == 200) {
         final collection =
             IconifyJsonParser.parseCollectionString(response.body);
-        // Diagnostic logging for debugging.
+        // Use print for developer diagnostic logging in the console.
         // ignore: avoid_print
         print('Iconify SDK [REMOTE]: Successfully cached $prefix from GitHub');
         return collection;
       }
       return null;
     } catch (e) {
-      // Diagnostic logging for debugging.
+      // Use print for developer diagnostic logging in the console.
       // ignore: avoid_print
       print(
           'Iconify SDK [REMOTE]: GitHub fetch failed for $prefix, falling back to API: $e');
@@ -155,15 +159,16 @@ final class RemoteIconifyProvider implements IconifyProvider {
           Uri.parse('$_apiBase/$prefix.json?icons=${iconNames.join(',')}');
 
       try {
-        // Diagnostic logging for debugging.
-      // ignore: avoid_print
-        print('Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...');
+        // Use print for developer diagnostic logging in the console.
+        // ignore: avoid_print
+        print(
+            'Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...');
         final response =
             await _client.get(uri, headers: _headers).timeout(requestTimeout);
 
         if (response.statusCode == 404) {
-          // Diagnostic logging for debugging.
-      // ignore: avoid_print
+          // Use print for developer diagnostic logging in the console.
+          // ignore: avoid_print
           print('Iconify SDK [REMOTE]: 404 Not Found for $prefix');
           for (final req in requests) {
             req.completer.complete(null);
@@ -172,9 +177,10 @@ final class RemoteIconifyProvider implements IconifyProvider {
         }
 
         if (response.statusCode != 200) {
-          // Diagnostic logging for debugging.
-      // ignore: avoid_print
-          print('Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix');
+          // Use print for developer diagnostic logging in the console.
+          // ignore: avoid_print
+          print(
+              'Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix');
           final error = IconifyNetworkException(
             message: 'HTTP ${response.statusCode} fetching batch for $prefix',
             statusCode: response.statusCode,
@@ -187,8 +193,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
         }
 
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        // Diagnostic logging for debugging.
-      // ignore: avoid_print
+        // Use print for developer diagnostic logging in the console.
+        // ignore: avoid_print
         print('Iconify SDK [REMOTE]: Successfully fetched $prefix batch');
 
         final icons = json['icons'] as Map<String, dynamic>? ?? {};
@@ -256,7 +262,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
   @override
   Future<bool> hasIcon(IconifyName name) async {
     try {
-      return await getIcon(name) != null;
+      final icon = await getIcon(name);
+      return icon != null;
     } catch (_) {
       return false;
     }
@@ -265,7 +272,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
   @override
   Future<bool> hasCollection(String prefix) async {
     try {
-      return await getCollection(prefix) != null;
+      final info = await getCollection(prefix);
+      return info != null;
     } catch (_) {
       return false;
     }
@@ -276,7 +284,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
     _disposed = true;
     _batchTimer?.cancel();
     _collectionCache.clear();
+    final loadingGitHub = _loadingGitHub.values.toList();
     _loadingGitHub.clear();
+    await Future.wait(loadingGitHub);
     // Fail any pending requests
     for (final requests in _pending.values) {
       for (final req in requests) {

@@ -1,3 +1,8 @@
+// This file uses a pattern where futures are stored in a map for deduplication.
+// These futures are intentionally not awaited at the point of assignment.
+// ignore_for_file: unawaited_futures
+
+import 'dart:async';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
@@ -51,7 +56,7 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
 
     // 2. Check if already loading
     if (_loading.containsKey(prefix)) {
-      return _loading[prefix];
+      return await _loading[prefix];
     }
 
     // 3. Start loading
@@ -75,15 +80,15 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
       final jsonString = await loadAssetString(path);
       final collection = IconifyJsonParser.parseCollectionString(jsonString);
 
-      // Diagnostic logging for debugging.
-      // ignore: avoid_print
       if (collection.iconCount > 0) {
+        // Use print for developer diagnostic logging in the console.
+        // ignore: avoid_print
         print(
             'Iconify SDK [LOCAL]: Loaded collection $prefix (${collection.iconCount} icons) from bundle');
       }
       return collection;
     } catch (e) {
-      // Diagnostic logging for debugging.
+      // Use print for developer diagnostic logging in the console.
       // ignore: avoid_print
       print('Iconify SDK [LOCAL]: Failed to load asset for $prefix: $e');
       return null;
@@ -93,14 +98,16 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   @override
   Future<void> dispose() async {
     _cache.clear();
+    final loading = _loading.values.toList();
     _loading.clear();
+    await Future.wait(loading);
   }
-
 
   @override
   Future<bool> hasIcon(IconifyName name) async {
     try {
-      return await getIcon(name) != null;
+      final icon = await getIcon(name);
+      return icon != null;
     } catch (_) {
       return false;
     }
@@ -109,7 +116,8 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   @override
   Future<bool> hasCollection(String prefix) async {
     try {
-      return await getCollection(prefix) != null;
+      final info = await getCollection(prefix);
+      return info != null;
     } catch (_) {
       return false;
     }

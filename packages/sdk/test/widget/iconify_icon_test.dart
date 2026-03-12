@@ -37,7 +37,8 @@ void main() {
 
     testWidgets('applies color override', (tester) async {
       const targetColor = Colors.red;
-      await tester.pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
+      await tester
+          .pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
       await tester.pump();
 
       expect(find.byType(SvgPicture), findsOneWidget);
