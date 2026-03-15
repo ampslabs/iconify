@@ -1,3 +1,7 @@
+// Increments to offset/rOffset are flagged as having no effect by the linter when they appear
+// after the last read in a block, but they are preserved for consistency and maintainability.
+// ignore_for_file: noop_primitive_operations
+
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -136,7 +140,7 @@ class BinaryIconFormat {
     // 7. String Table
     final stringTableOffset = builder.length;
     builder.setUint32(stringTableOffsetPos, stringTableOffset);
-    
+
     // Write string index (offsets)
     final stringDataOffsetPositions = <int>[];
     for (var i = 0; i < stringTable.count; i++) {
@@ -149,7 +153,7 @@ class BinaryIconFormat {
       final s = stringTable.strings[i];
       final sOffset = builder.length;
       builder.setUint32(stringDataOffsetPositions[i], sOffset);
-      
+
       final bytes = utf8.encode(s);
       builder.addUint32(bytes.length);
       builder.addBytes(bytes);
@@ -162,7 +166,8 @@ class BinaryIconFormat {
   static ParsedCollection decode(Uint8List bytes) {
     final data = ByteData.view(bytes.buffer, bytes.offsetInBytes, bytes.length);
     if (data.getUint32(0) != _magic) {
-      throw const FormatException('Invalid .iconbin format: Magic bytes mismatch');
+      throw const FormatException(
+          'Invalid .iconbin format: Magic bytes mismatch');
     }
     if (data.getUint8(4) != _version) {
       throw FormatException('Unsupported .iconbin version: ${data.getUint8(4)}');
@@ -176,27 +181,39 @@ class BinaryIconFormat {
     final aliasIndexOffset = data.getUint32(22);
     final stringTableOffset = data.getUint32(26);
 
+    final stringCache = <int, String>{};
     String readString(int index) {
       if (index >= stringCount) return '';
-      final offsetToOffset = stringTableOffset + (index * 4);
-      final sOffset = data.getUint32(offsetToOffset);
-      final len = data.getUint32(sOffset);
-      final bytesView = Uint8List.view(
-          data.buffer, data.offsetInBytes + sOffset + 4, len);
-      return utf8.decode(bytesView);
+      return stringCache.putIfAbsent(index, () {
+        final offsetToOffset = stringTableOffset + (index * 4);
+        final sOffset = data.getUint32(offsetToOffset);
+        final len = data.getUint32(sOffset);
+        final bytesView = Uint8List.view(
+            data.buffer, data.offsetInBytes + sOffset + 4, len);
+        return utf8.decode(bytesView);
+      });
     }
 
     var offset = metadataOffset;
-    final prefix = readString(data.getUint32(offset)); offset += 4;
-    final name = readString(data.getUint32(offset)); offset += 4;
-    final totalIcons = data.getUint32(offset); offset += 4;
-    final author = readString(data.getUint32(offset)); offset += 4;
-    final licenseTitle = readString(data.getUint32(offset)); offset += 4;
-    final licenseSpdx = readString(data.getUint32(offset)); offset += 4;
-    final licenseUrl = readString(data.getUint32(offset)); offset += 4;
-    final requiresAttribution = data.getUint8(offset) == 1; offset += 1;
-    final defaultWidth = data.getFloat32(offset); offset += 4;
-    final defaultHeight = data.getFloat32(offset); offset += 4;
+    final prefix = readString(data.getUint32(offset));
+    offset += 4;
+    final name = readString(data.getUint32(offset));
+    offset += 4;
+    final totalIcons = data.getUint32(offset);
+    offset += 4;
+    final author = readString(data.getUint32(offset));
+    offset += 4;
+    final licenseTitle = readString(data.getUint32(offset));
+    offset += 4;
+    final licenseSpdx = readString(data.getUint32(offset));
+    offset += 4;
+    final licenseUrl = readString(data.getUint32(offset));
+    offset += 4;
+    final requiresAttribution = data.getUint8(offset) == 1;
+    offset += 1;
+    final defaultWidth = data.getFloat32(offset);
+    offset += 4;
+    final defaultHeight = data.getFloat32(offset);
 
     final info = IconifyCollectionInfo(
       prefix: prefix,
@@ -217,12 +234,16 @@ class BinaryIconFormat {
       final nameIdx = data.getUint32(idxOffset);
       final recordOffset = data.getUint32(idxOffset + 4);
       final iconName = readString(nameIdx);
-      
+
       var rOffset = recordOffset;
-      final body = readString(data.getUint32(rOffset)); rOffset += 4;
-      final width = data.getFloat32(rOffset); rOffset += 4;
-      final height = data.getFloat32(rOffset); rOffset += 4;
-      final flags = data.getUint8(rOffset); rOffset += 1;
+      final body = readString(data.getUint32(rOffset));
+      rOffset += 4;
+      final width = data.getFloat32(rOffset);
+      rOffset += 4;
+      final height = data.getFloat32(rOffset);
+      rOffset += 4;
+      final flags = data.getUint8(rOffset);
+      rOffset += 1;
       final rotate = data.getUint8(rOffset);
 
       icons[iconName] = IconifyIconData(
@@ -242,12 +263,16 @@ class BinaryIconFormat {
       final nameIdx = data.getUint32(idxOffset);
       final recordOffset = data.getUint32(idxOffset + 4);
       final aliasName = readString(nameIdx);
-      
+
       var rOffset = recordOffset;
-      final parent = readString(data.getUint32(rOffset)); rOffset += 4;
-      final width = data.getFloat32(rOffset); rOffset += 4;
-      final height = data.getFloat32(rOffset); rOffset += 4;
-      final flags = data.getUint8(rOffset); rOffset += 1;
+      final parent = readString(data.getUint32(rOffset));
+      rOffset += 4;
+      final width = data.getFloat32(rOffset);
+      rOffset += 4;
+      final height = data.getFloat32(rOffset);
+      rOffset += 4;
+      final flags = data.getUint8(rOffset);
+      rOffset += 1;
       final rotate = data.getUint8(rOffset);
 
       aliases[aliasName] = AliasEntry(
@@ -302,10 +327,14 @@ class BinaryIconFormat {
       if (cmp == 0) {
         final recordOffset = data.getUint32(idxOffset + 4);
         var rOffset = recordOffset;
-        final body = readString(data.getUint32(rOffset)); rOffset += 4;
-        final width = data.getFloat32(rOffset); rOffset += 4;
-        final height = data.getFloat32(rOffset); rOffset += 4;
-        final flags = data.getUint8(rOffset); rOffset += 1;
+        final body = readString(data.getUint32(rOffset));
+        rOffset += 4;
+        final width = data.getFloat32(rOffset);
+        rOffset += 4;
+        final height = data.getFloat32(rOffset);
+        rOffset += 4;
+        final flags = data.getUint8(rOffset);
+        rOffset += 1;
         final rotate = data.getUint8(rOffset);
 
         return IconifyIconData(

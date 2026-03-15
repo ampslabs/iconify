@@ -164,7 +164,8 @@ class GenerateCommand extends Command<int> {
         final encoded = BinaryIconFormat.encode(collection);
 
         if (argResults?['dry-run'] == true) {
-          _logger.info('Dry run: Would write $prefix.iconbin (${encoded.length} bytes)');
+          _logger.info(
+              'Dry run: Would write $prefix.iconbin (${encoded.length} bytes)');
         } else {
           final binaryFile = File('${config.dataDir}/$prefix.iconbin');
           await binaryFile.writeAsBytes(encoded);
@@ -202,8 +203,7 @@ class GenerateCommand extends Command<int> {
       }
     }
 
-    progress.complete(
-        'Successfully generated icon data (${format})');
+    progress.complete('Successfully generated icon data ($format)');
     return ExitCode.success.code;
   }
 }

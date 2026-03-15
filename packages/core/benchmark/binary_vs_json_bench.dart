@@ -1,36 +1,50 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
-import 'package:iconify_sdk_core/src/parser/binary_icon_format.dart';
 
 void main() async {
   final jsonPath = '../../examples/basic/assets/iconify/mdi.json';
   final file = File(jsonPath);
   if (!file.existsSync()) {
-    print('Error: mdi.json not found at $jsonPath. Run sync in examples/basic first.');
+    // Benchmarks are expected to print to console.
+    // ignore: avoid_print
+    print(
+        'Error: mdi.json not found at $jsonPath. Run sync in examples/basic first.');
     return;
   }
 
   final jsonString = await file.readAsString();
-  print('Collection size: ${(jsonString.length / 1024 / 1024).toStringAsFixed(2)} MB');
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
+  print(
+      'Collection size: ${(jsonString.length / 1024 / 1024).toStringAsFixed(2)} MB');
 
   // Benchmark JSON Parsing
   final swJson = Stopwatch()..start();
   final collection = IconifyJsonParser.parseCollectionString(jsonString);
   swJson.stop();
-  print('JSON Parse Time: ${swJson.elapsedMilliseconds}ms (${collection.iconCount} icons)');
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
+  print(
+      'JSON Parse Time: ${swJson.elapsedMilliseconds}ms (${collection.iconCount} icons)');
 
   // Benchmark Binary Encoding
   final swEncode = Stopwatch()..start();
   final encoded = BinaryIconFormat.encode(collection);
   swEncode.stop();
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
   print('Binary Encode Time: ${swEncode.elapsedMilliseconds}ms');
-  print('Binary Size: ${(encoded.length / 1024 / 1024).toStringAsFixed(2)} MB (${(encoded.length / jsonString.length * 100).toStringAsFixed(1)}% of JSON)');
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
+  print(
+      'Binary Size: ${(encoded.length / 1024 / 1024).toStringAsFixed(2)} MB (${(encoded.length / jsonString.length * 100).toStringAsFixed(1)}% of JSON)');
 
   // Benchmark Binary Decoding (Full)
   final swDecode = Stopwatch()..start();
-  final decoded = BinaryIconFormat.decode(encoded);
+  BinaryIconFormat.decode(encoded);
   swDecode.stop();
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
   print('Binary Decode (Full) Time: ${swDecode.elapsedMilliseconds}ms');
 
   // Benchmark Binary Decode (Single Icon - Average of 1000 lookups)
@@ -41,14 +55,24 @@ void main() async {
     BinaryIconFormat.decodeIcon(encoded, name);
   }
   swLookup.stop();
-  print('Binary Single Icon Lookup (avg): ${(swLookup.elapsedMicroseconds / 1000).toStringAsFixed(3)}μs');
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
+  print(
+      'Binary Single Icon Lookup (avg): ${(swLookup.elapsedMicroseconds / 1000).toStringAsFixed(3)}μs');
 
   // Comparison
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
   print('\n--- SUMMARY ---');
-  print('Full Parse Speedup: ${(swJson.elapsedMilliseconds / swDecode.elapsedMilliseconds).toStringAsFixed(1)}x');
-  
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
+  print(
+      'Full Parse Speedup: ${(swJson.elapsedMilliseconds / swDecode.elapsedMilliseconds).toStringAsFixed(1)}x');
+
   // Clean up
   final binFile = File('mdi.iconbin');
   await binFile.writeAsBytes(encoded);
+  // Benchmarks are expected to print to console.
+  // ignore: avoid_print
   print('Wrote mdi.iconbin for reference.');
 }

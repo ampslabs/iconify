@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
-import 'package:iconify_sdk_core/src/parser/binary_icon_format.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('BinaryIconFormat', () {
-    final collection = ParsedCollection(
+    const collection = ParsedCollection(
       prefix: 'test',
-      info: const IconifyCollectionInfo(
+      info: IconifyCollectionInfo(
         prefix: 'test',
         name: 'Test Collection',
         totalIcons: 2,
@@ -19,11 +18,12 @@ void main() {
         ),
       ),
       icons: {
-        'home': const IconifyIconData(body: '<path d="home"/>', width: 24, height: 24),
-        'user': const IconifyIconData(body: '<path d="user"/>', width: 20, height: 20, rotate: 1, hFlip: true),
+        'home': IconifyIconData(body: '<path d="home"/>', width: 24, height: 24),
+        'user': IconifyIconData(
+            body: '<path d="user"/>', width: 20, height: 20, rotate: 1, hFlip: true),
       },
       aliases: {
-        'profile': const AliasEntry(parent: 'user', vFlip: true),
+        'profile': AliasEntry(parent: 'user', vFlip: true),
       },
       defaultWidth: 24,
       defaultHeight: 24,
@@ -37,31 +37,38 @@ void main() {
       expect(decoded.info.name, equals(collection.info.name));
       expect(decoded.info.totalIcons, equals(collection.info.totalIcons));
       expect(decoded.info.author, equals(collection.info.author));
-      expect(decoded.info.license?.title, equals(collection.info.license?.title));
-      
+      expect(
+          decoded.info.license?.title, equals(collection.info.license?.title));
+
       expect(decoded.iconCount, equals(collection.iconCount));
-      expect(decoded.icons['home']?.body, equals(collection.icons['home']?.body));
-      expect(decoded.icons['home']?.width, equals(collection.icons['home']?.width));
-      expect(decoded.icons['user']?.rotate, equals(collection.icons['user']?.rotate));
-      expect(decoded.icons['user']?.hFlip, equals(collection.icons['user']?.hFlip));
+      expect(
+          decoded.icons['home']?.body, equals(collection.icons['home']?.body));
+      expect(decoded.icons['home']?.width,
+          equals(collection.icons['home']?.width));
+      expect(decoded.icons['user']?.rotate,
+          equals(collection.icons['user']?.rotate));
+      expect(decoded.icons['user']?.hFlip,
+          equals(collection.icons['user']?.hFlip));
 
       expect(decoded.aliasCount, equals(collection.aliasCount));
-      expect(decoded.aliases['profile']?.parent, equals(collection.aliases['profile']?.parent));
-      expect(decoded.aliases['profile']?.vFlip, equals(collection.aliases['profile']?.vFlip));
+      expect(decoded.aliases['profile']?.parent,
+          equals(collection.aliases['profile']?.parent));
+      expect(decoded.aliases['profile']?.vFlip,
+          equals(collection.aliases['profile']?.vFlip));
     });
 
     test('decodeIcon extracts single icon without full decode', () {
       final encoded = BinaryIconFormat.encode(collection);
-      
+
       final home = BinaryIconFormat.decodeIcon(encoded, 'home');
       expect(home, isNotNull);
       expect(home?.body, equals('<path d="home"/>'));
-      
+
       final user = BinaryIconFormat.decodeIcon(encoded, 'user');
       expect(user, isNotNull);
       expect(user?.body, equals('<path d="user"/>'));
       expect(user?.rotate, equals(1));
-      
+
       final missing = BinaryIconFormat.decodeIcon(encoded, 'missing');
       expect(missing, isNull);
     });

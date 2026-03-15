@@ -6,6 +6,7 @@ import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
 import '../parser/binary_icon_format.dart';
 import '../parser/iconify_json_parser.dart';
+import 'file_system_iconify_provider.dart';
 import 'iconify_provider.dart';
 
 /// An [IconifyProvider] that reads optimized `.iconbin` files from the filesystem.
@@ -24,7 +25,7 @@ final class BinaryIconifyProvider extends IconifyProvider {
 
   final String root;
   final Directory _root;
-  
+
   /// Cache of raw bytes for each collection.
   final _cache = <String, Uint8List>{};
 
@@ -52,6 +53,7 @@ final class BinaryIconifyProvider extends IconifyProvider {
       _cache[prefix] = bytes;
       return bytes;
     } catch (e) {
+      // BinaryIconifyProvider uses print for developer diagnostics.
       // ignore: avoid_print
       print('Iconify SDK [BINARY]: Failed to read $prefix.iconbin: $e');
       return null;
@@ -81,6 +83,7 @@ final class BinaryIconifyProvider extends IconifyProvider {
       _decodedCache[prefix] = collection;
       return collection.info;
     } catch (e) {
+      // BinaryIconifyProvider uses print for developer diagnostics.
       // ignore: avoid_print
       print('Iconify SDK [BINARY]: Failed to decode $prefix.iconbin: $e');
       return null;
