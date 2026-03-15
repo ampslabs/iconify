@@ -162,11 +162,14 @@ class GenerateCommand extends Command<int> {
       for (final info in attributionRequired.values) {
         buffer.writeln('## ${info.name}');
         buffer.writeln('- **Prefix**: `${info.prefix}`');
-        if (info.author != null) buffer.writeln('- **Author**: ${info.author}');
+        if (info.author != null) {
+          buffer.writeln('- **Author**: ${info.author}');
+        }
         buffer.writeln(
             '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
-        if (info.license?.url != null)
+        if (info.license?.url != null) {
           buffer.writeln('- **License URL**: ${info.license?.url}');
+        }
         buffer.writeln();
       }
       await attributionFile.writeAsString(buffer.toString());
