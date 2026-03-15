@@ -39,7 +39,9 @@ jobs:
 
       - name: Run tests
         run: |
+          # Run pure Dart tests
           melos exec --dir-exists=test --no-flutter -- "dart test"
+          # Run Flutter tests
           melos exec --dir-exists=test --flutter -- "flutter test"
 
       - name: Upload failure artifacts

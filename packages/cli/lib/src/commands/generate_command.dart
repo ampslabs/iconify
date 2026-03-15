@@ -114,11 +114,13 @@ class GenerateCommand extends Command<int> {
     if (attributionRequired.isNotEmpty) {
       _logger.warn('⚠️  Some used icons require attribution:');
       for (final info in attributionRequired.values) {
-        _logger.info('   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}');
+        _logger.info(
+            '   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}');
       }
 
       if (argResults?['strict-licenses'] == true) {
-        progress.fail('Strict license check failed: Attribution-required icons detected.');
+        progress.fail(
+            'Strict license check failed: Attribution-required icons detected.');
         return ExitCode.software.code;
       }
     }
@@ -154,14 +156,17 @@ class GenerateCommand extends Command<int> {
       final buffer = StringBuffer();
       buffer.writeln('# Icon Attribution');
       buffer.writeln();
-      buffer.writeln('The following icon collections used in this project require attribution:');
+      buffer.writeln(
+          'The following icon collections used in this project require attribution:');
       buffer.writeln();
       for (final info in attributionRequired.values) {
         buffer.writeln('## ${info.name}');
         buffer.writeln('- **Prefix**: `${info.prefix}`');
         if (info.author != null) buffer.writeln('- **Author**: ${info.author}');
-        buffer.writeln('- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
-        if (info.license?.url != null) buffer.writeln('- **License URL**: ${info.license?.url}');
+        buffer.writeln(
+            '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
+        if (info.license?.url != null)
+          buffer.writeln('- **License URL**: ${info.license?.url}');
         buffer.writeln();
       }
       await attributionFile.writeAsString(buffer.toString());

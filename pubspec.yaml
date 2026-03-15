@@ -9,7 +9,6 @@ workspace:
   - packages/sdk
   - packages/builder
   - packages/cli
-  - tools
   - examples/gallery
 
 # Melos configuration

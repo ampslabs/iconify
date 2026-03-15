@@ -94,7 +94,8 @@ class SvgSanitizer {
         if (mode == SanitizerMode.strict) {
           throw SvgSanitizationException(
               message: 'Forbidden event handler attribute: $attrName');
-        }        attributesToRemove.add(attribute);
+        }
+        attributesToRemove.add(attribute);
         continue;
       }
 

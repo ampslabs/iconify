@@ -87,7 +87,8 @@ class VerifyCommand extends Command<int> {
         latestCommit = json['sha'] as String;
         progressSha.complete('Latest commit: ${latestCommit.substring(0, 7)}');
       } else {
-        progressSha.complete('GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
+        progressSha.complete(
+            'GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
       }
     } catch (e) {
       progressSha.complete('GitHub API error: $e. Falling back to "master".');
@@ -105,8 +106,8 @@ class VerifyCommand extends Command<int> {
 
         final currentLock = lockData[prefix] as Map<String, dynamic>?;
         if (currentLock == null) {
-          progress
-              .fail('No lock data found for $prefix. Run "iconify sync" first.');
+          progress.fail(
+              'No lock data found for $prefix. Run "iconify sync" first.');
           errorCount++;
           continue;
         }

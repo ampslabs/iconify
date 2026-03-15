@@ -106,7 +106,8 @@ class SyncCommand extends Command<int> {
           commitRef = json['sha'] as String;
           progress.complete('Latest commit: ${commitRef.substring(0, 7)}');
         } else {
-          progress.complete('GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
+          progress.complete(
+              'GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
         }
       } catch (e) {
         progress.complete('GitHub API error: $e. Falling back to "master".');

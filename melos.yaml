@@ -1,7 +1,6 @@
 name: iconify_sdk
 packages:
   - packages/*
-  - tools
   - examples/*
 
 scripts:
