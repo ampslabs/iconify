@@ -3,6 +3,7 @@
 // ignore_for_file: unawaited_futures
 
 import 'dart:async';
+import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
@@ -20,11 +21,18 @@ import 'iconify_provider.dart';
 abstract class AssetBundleIconifyProvider extends IconifyProvider {
   AssetBundleIconifyProvider({
     required this.assetPrefix,
+    this.sanitizer = const SvgSanitizer(mode: SanitizerMode.strict),
   });
 
   /// The asset path prefix where Iconify JSON files are stored.
   /// Example: `'assets/iconify'`
   final String assetPrefix;
+
+  /// Optional sanitizer to apply to loaded icons.
+  ///
+  /// Defaults to a strict [SvgSanitizer] as asset bundles typically
+  /// contain official starter sets.
+  final SvgSanitizer? sanitizer;
 
   /// Internal cache to avoid re-parsing JSON for every icon request.
   final _cache = <String, ParsedCollection>{};
@@ -78,7 +86,10 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
     try {
       final path = '$assetPrefix/$prefix.json';
       final jsonString = await loadAssetString(path);
-      final collection = IconifyJsonParser.parseCollectionString(jsonString);
+      final collection = IconifyJsonParser.parseCollectionString(
+        jsonString,
+        sanitizer: sanitizer,
+      );
 
       if (collection.iconCount > 0) {
         // Use print for developer diagnostic logging in the console.

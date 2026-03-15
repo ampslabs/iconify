@@ -1,3 +1,26 @@
 name: iconify_sdk
 packages:
   - packages/*
+  - examples/*
+
+scripts:
+  test:
+    name: "Test"
+    description: "Run tests for all packages."
+    run: melos exec -- "flutter test || dart test"
+    # Note: flutter test handles pure dart packages too, but usually it's faster
+    # to let them fall through or use a more specific filter.
+    # Alternatively, we can use filters:
+    # run: melos exec --dir-exists=test -- "dart test"
+
+  test:pure:
+    run: melos exec --dir-exists=test --ignore="*flutter*" --ignore="iconify_sdk" -- "dart test"
+    description: "Run pure Dart tests."
+
+  test:flutter:
+    run: melos exec --dir-exists=test --scope="iconify_sdk" -- "flutter test"
+    description: "Run Flutter tests."
+
+  analyze:
+    run: melos exec -- "dart analyze --fatal-infos"
+    description: "Run static analysis."

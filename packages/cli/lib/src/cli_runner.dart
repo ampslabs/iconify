@@ -9,6 +9,7 @@ import 'commands/init_command.dart';
 import 'commands/licenses_command.dart';
 import 'commands/prune_command.dart';
 import 'commands/sync_command.dart';
+import 'commands/verify_command.dart';
 
 class IconifyCommandRunner extends CommandRunner<int> {
   IconifyCommandRunner({Logger? logger})
@@ -23,6 +24,7 @@ class IconifyCommandRunner extends CommandRunner<int> {
 
     addCommand(InitCommand(logger: _logger));
     addCommand(SyncCommand(logger: _logger));
+    addCommand(VerifyCommand(logger: _logger));
     addCommand(GenerateCommand(logger: _logger));
     addCommand(DoctorCommand(logger: _logger));
     addCommand(LicensesCommand(logger: _logger));

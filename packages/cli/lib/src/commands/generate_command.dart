@@ -12,6 +12,17 @@ class GenerateCommand extends Command<int> {
       help: 'Show what would be generated without writing to disk.',
       negatable: false,
     );
+    argParser.addFlag(
+      'strict-licenses',
+      help: 'Exit with error if any attribution-required icons are detected.',
+      negatable: false,
+    );
+    argParser.addOption(
+      'attribution-output',
+      abbr: 'a',
+      help: 'Path to generate ICON_ATTRIBUTION.md.',
+      defaultsTo: 'ICON_ATTRIBUTION.md',
+    );
   }
 
   @override
@@ -68,6 +79,7 @@ class GenerateCommand extends Command<int> {
     // 2. Resolve data from local snapshots
     final iconDataMap = <String, IconifyIconData>{};
     final collections = <String, ParsedCollection>{};
+    final attributionRequired = <String, IconifyCollectionInfo>{};
 
     for (final fullName in usedIcons) {
       final parts = fullName.split(':');
@@ -80,8 +92,12 @@ class GenerateCommand extends Command<int> {
         final dataFile = File('${config.dataDir}/$prefix.json');
         if (dataFile.existsSync()) {
           final jsonStr = await dataFile.readAsString();
-          collections[prefix] =
-              IconifyJsonParser.parseCollectionString(jsonStr);
+          final collection = IconifyJsonParser.parseCollectionString(jsonStr);
+          collections[prefix] = collection;
+
+          if (collection.info.requiresAttribution) {
+            attributionRequired[prefix] = collection.info;
+          }
         } else {
           _logger.warn('Snapshot missing for $prefix at ${dataFile.path}');
           continue;
@@ -94,9 +110,24 @@ class GenerateCommand extends Command<int> {
       }
     }
 
+    // 3. License Enforcement
+    if (attributionRequired.isNotEmpty) {
+      _logger.warn('⚠️  Some used icons require attribution:');
+      for (final info in attributionRequired.values) {
+        _logger.info(
+            '   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}');
+      }
+
+      if (argResults?['strict-licenses'] == true) {
+        progress.fail(
+            'Strict license check failed: Attribution-required icons detected.');
+        return ExitCode.software.code;
+      }
+    }
+
     progress.update('Generating code...');
 
-    // 3. Generate Dart code
+    // 4. Generate Dart code
     final outputContent = IconCodeGenerator.generate(
       usedIconNames: usedIcons,
       iconDataMap: iconDataMap,
@@ -111,12 +142,39 @@ class GenerateCommand extends Command<int> {
       return ExitCode.success.code;
     }
 
-    // 4. Write to disk
+    // 5. Write to disk
     final outputFile = File(config.output);
     if (!outputFile.parent.existsSync()) {
       outputFile.parent.createSync(recursive: true);
     }
     await outputFile.writeAsString(outputContent);
+
+    // 6. Generate Attribution File
+    if (attributionRequired.isNotEmpty) {
+      final attributionPath = argResults?['attribution-output'] as String;
+      final attributionFile = File(attributionPath);
+      final buffer = StringBuffer();
+      buffer.writeln('# Icon Attribution');
+      buffer.writeln();
+      buffer.writeln(
+          'The following icon collections used in this project require attribution:');
+      buffer.writeln();
+      for (final info in attributionRequired.values) {
+        buffer.writeln('## ${info.name}');
+        buffer.writeln('- **Prefix**: `${info.prefix}`');
+        if (info.author != null) {
+          buffer.writeln('- **Author**: ${info.author}');
+        }
+        buffer.writeln(
+            '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
+        if (info.license?.url != null) {
+          buffer.writeln('- **License URL**: ${info.license?.url}');
+        }
+        buffer.writeln();
+      }
+      await attributionFile.writeAsString(buffer.toString());
+      _logger.info('✅ Generated $attributionPath');
+    }
 
     progress.complete(
         'Successfully generated ${iconDataMap.length} icons into ${config.output}');

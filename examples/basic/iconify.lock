@@ -1,0 +1,17 @@
+{
+  "mdi": {
+    "sha256": "cf9b89dda466f1c384af19d3c7bf835c3c1e75eccf313f7821ac48c14f2c8c7b",
+    "syncedAt": "2026-03-15T18:16:30.145294Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  },
+  "lucide": {
+    "sha256": "3327086d484a4cd05f28f853d99a64a65dda40d68ed62b215b7d11c80b122015",
+    "syncedAt": "2026-03-15T18:16:30.468933Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  },
+  "fa6-solid": {
+    "sha256": "61a114ab51362bfe3852bf2cf265375a9a72df62296a8962ce7fc9fb2e9a48fd",
+    "syncedAt": "2026-03-15T18:17:53.156086Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  }
+}

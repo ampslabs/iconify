@@ -117,6 +117,13 @@ final class CircularAliasException extends IconifyException {
   final List<String> chain;
 }
 
+/// Thrown when an SVG body fails security sanitization.
+final class SvgSanitizationException extends IconifyException {
+  const SvgSanitizationException({
+    required super.message,
+  });
+}
+
 /// Thrown when the local cache fails to read or write.
 final class IconifyCacheException extends IconifyException {
   const IconifyCacheException({

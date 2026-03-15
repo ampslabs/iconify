@@ -25,7 +25,7 @@ class IconCodeGenerator {
 
     // 1. Generate namespace classes
     for (final prefix in groupedByPrefix.keys) {
-      final className = 'Icons${_capitalize(prefix)}';
+      final className = 'Icons${_capitalize(_toCamelCase(prefix))}';
       buffer.writeln('/// Icon set: $prefix');
       buffer.writeln('class $className {');
       buffer.writeln('  $className._();');
@@ -56,9 +56,10 @@ class IconCodeGenerator {
         '/// Injects all generated icons into a [MemoryIconifyProvider].');
     buffer.writeln('void initGeneratedIcons(MemoryIconifyProvider provider) {');
     for (final fullName in usedIconNames) {
-      final prefix = fullName.split(':').first;
-      final iconName = fullName.split(':').last;
-      final className = 'Icons${_capitalize(prefix)}';
+      final parts = fullName.split(':');
+      final prefix = parts.first;
+      final iconName = parts.last;
+      final className = 'Icons${_capitalize(_toCamelCase(prefix))}';
       final varName = _toCamelCase(iconName);
 
       if (iconDataMap.containsKey(fullName)) {

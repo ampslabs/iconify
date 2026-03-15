@@ -128,6 +128,7 @@ void main() {
         const IconifyLicenseException(prefix: '', message: ''),
         const IconifyParseException(message: ''),
         const CircularAliasException(chain: [], message: ''),
+        const SvgSanitizationException(message: ''),
         const IconifyCacheException(message: ''),
       ];
 
@@ -140,6 +141,7 @@ void main() {
           IconifyLicenseException() => 'license',
           IconifyParseException() => 'parse',
           CircularAliasException() => 'circular',
+          SvgSanitizationException() => 'sanitization',
           IconifyCacheException() => 'cache',
         };
         expect(result, isNotEmpty);

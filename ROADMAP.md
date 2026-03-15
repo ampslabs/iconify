@@ -115,7 +115,7 @@
 > Alternative to purely implicit write-back. Lets developers explicitly declare which icons they want available.
 
 - [ ] `[AGENT]` Implement `iconify add <prefix:name> [<prefix:name>...]` CLI command
-  - [ ] Fetches icon data from local synced files or starter — falls back to GitHub raw
+  - [ ] Fetches icon data from local synced files  falls back to GitHub raw
   - [ ] Writes directly into `used_icons.json` without needing to run the app first
   - [ ] Useful for CI/offline environments and for adding icons before writing the widget code
   - [ ] `--collection mdi` flag: adds all icons from a local synced collection

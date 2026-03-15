@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import '../errors/iconify_exception.dart';
+import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
@@ -23,6 +24,7 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   FileSystemIconifyProvider({
     required this.root,
     bool preload = false,
+    this.sanitizer = const SvgSanitizer(mode: SanitizerMode.lenient),
   }) : _root = Directory(root) {
     if (preload) {
       // Fire and forget; load will happen on first access otherwise
@@ -33,6 +35,11 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   final String root;
   final Directory _root;
   final _cache = <String, Map<String, dynamic>>{};
+
+  /// Optional sanitizer to apply to icons loaded from the file system.
+  ///
+  /// Defaults to a lenient [SvgSanitizer].
+  final SvgSanitizer? sanitizer;
 
   Future<void> _preloadAll() async {
     if (!_root.existsSync()) return;
@@ -68,7 +75,11 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   Future<IconifyIconData?> getIcon(IconifyName name) async {
     final json = await _loadCollection(name.prefix);
     if (json == null) return null;
-    return IconifyJsonParser.extractIcon(json, name.iconName);
+    return IconifyJsonParser.extractIcon(
+      json,
+      name.iconName,
+      sanitizer: sanitizer,
+    );
   }
 
   @override

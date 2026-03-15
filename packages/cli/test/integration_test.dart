@@ -9,8 +9,10 @@ void main() {
     late Directory tempDir;
     late Logger logger;
     late IconifyCommandRunner runner;
+    late String originalCwd;
 
     setUp(() async {
+      originalCwd = Directory.current.path;
       tempDir = await Directory.systemTemp.createTemp('iconify_cli_test_');
       logger = Logger();
       runner = IconifyCommandRunner(logger: logger);
@@ -18,7 +20,10 @@ void main() {
     });
 
     tearDown(() async {
-      await tempDir.delete(recursive: true);
+      Directory.current = originalCwd;
+      if (tempDir.existsSync()) {
+        await tempDir.delete(recursive: true);
+      }
     });
 
     test('full workflow: init -> sync -> doctor -> generate', () async {

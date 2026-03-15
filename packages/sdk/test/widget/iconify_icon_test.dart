@@ -9,8 +9,8 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 void main() {
   group('IconifyIcon', () {
     late MemoryIconifyProvider provider;
-    final home = IconifyName('mdi', 'home');
-    final homeData = IconifyIconData(
+    const home = IconifyName('mdi', 'home');
+    const homeData = IconifyIconData(
       body:
           '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>',
     );
