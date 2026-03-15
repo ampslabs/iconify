@@ -1,0 +1,13 @@
+# Iconify SDK Configuration
+# See docs at https://github.com/ampslabs/iconify
+
+sets:
+  - mdi:*
+  - lucide:*
+  - fa6-solid:*
+
+data_dir: assets/iconify
+output: lib/icons.g.dart
+mode: auto
+license_policy: warn
+fail_on_missing: false

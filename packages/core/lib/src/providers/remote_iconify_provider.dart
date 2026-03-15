@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../errors/iconify_exception.dart';
 import '../guard/dev_mode_guard.dart';
+import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
@@ -32,6 +33,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
     Map<String, String>? additionalHeaders,
     this.livingCache,
     this.writeBackEnabled = true,
+    this.sanitizer = const SvgSanitizer(mode: SanitizerMode.lenient),
   })  : _apiBase = apiBase ?? 'https://api.iconify.design',
         _client = httpClient ?? http.Client(),
         _allowInRelease = allowInRelease,
@@ -51,6 +53,11 @@ final class RemoteIconifyProvider implements IconifyProvider {
   ///
   /// Defaults to true. Only effective if [livingCache] is provided.
   final bool writeBackEnabled;
+
+  /// Optional sanitizer to apply to fetched icons.
+  ///
+  /// Defaults to a lenient [SvgSanitizer].
+  final SvgSanitizer? sanitizer;
 
   /// The duration to wait for concurrent requests before dispatching a batch.
   final Duration batchWindow;
@@ -161,8 +168,10 @@ final class RemoteIconifyProvider implements IconifyProvider {
       final response = await _client.get(githubUri).timeout(requestTimeout);
 
       if (response.statusCode == 200) {
-        final collection =
-            IconifyJsonParser.parseCollectionString(response.body);
+        final collection = IconifyJsonParser.parseCollectionString(
+          response.body,
+          sanitizer: sanitizer,
+        );
         // Use print for developer diagnostic logging in the console.
         // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
         print('Iconify SDK [REMOTE]: Successfully cached $prefix from GitHub');
@@ -245,7 +254,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
             final iconJson = Map<String, dynamic>.from(iconData);
             iconJson.putIfAbsent('width', () => defaultWidth);
             iconJson.putIfAbsent('height', () => defaultHeight);
-            req.completer.complete(IconifyIconData.fromJson(iconJson));
+            req.completer.complete(
+              IconifyIconData.fromJson(iconJson, sanitizer: sanitizer),
+            );
           }
         }
       } catch (e, stack) {

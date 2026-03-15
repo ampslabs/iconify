@@ -60,3 +60,12 @@ void main() {
 ```
 
 By default, **release builds block all remote network calls**. By following this workflow, your app is now 100% offline-ready and perfectly optimized.
+
+## Step 6: Security & CI
+
+To ensure your supply chain is secure and that you are complying with icon licenses, you can add these steps to your CI pipeline:
+
+1.  **Verify Integrity**: Run `dart run iconify verify` to ensure your local icon snapshots match the upstream versions and have not been tampered with.
+2.  **Enforce Licenses**: Run `dart run iconify generate --strict-licenses` as a pre-build step. This will cause the CI to fail if any used icons require attribution, ensuring you don't accidentally ship icons that violate their license terms without proper attribution.
+3.  **Audit Attribution**: Check the auto-generated `ICON_ATTRIBUTION.md` in your project root to see a consolidated list of all icons requiring attribution.
+

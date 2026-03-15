@@ -23,6 +23,7 @@ export 'src/errors/iconify_exception.dart';
 
 // Guard
 export 'src/guard/dev_mode_guard.dart';
+export 'src/guard/svg_sanitizer.dart';
 
 // Models
 export 'src/models/iconify_collection_info.dart';

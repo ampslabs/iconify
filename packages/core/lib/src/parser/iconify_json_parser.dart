@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../errors/iconify_exception.dart';
+import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../resolver/alias_resolver.dart';
@@ -30,7 +31,8 @@ final class IconifyJsonParser {
   /// Parses a raw JSON string into a [ParsedCollection].
   ///
   /// Throws [IconifyParseException] on malformed input.
-  static ParsedCollection parseCollectionString(String jsonString) {
+  static ParsedCollection parseCollectionString(String jsonString,
+      {SvgSanitizer? sanitizer}) {
     final Map<String, dynamic> json;
     try {
       json = jsonDecode(jsonString) as Map<String, dynamic>;
@@ -39,13 +41,14 @@ final class IconifyJsonParser {
         message: 'Invalid JSON: $e',
       );
     }
-    return parseCollection(json);
+    return parseCollection(json, sanitizer: sanitizer);
   }
 
   /// Parses a decoded JSON map into a [ParsedCollection].
   ///
   /// Throws [IconifyParseException] on schema violations.
-  static ParsedCollection parseCollection(Map<String, dynamic> json) {
+  static ParsedCollection parseCollection(Map<String, dynamic> json,
+      {SvgSanitizer? sanitizer}) {
     try {
       final prefix = json['prefix'] as String?;
       if (prefix == null || prefix.isEmpty) {
@@ -74,7 +77,8 @@ final class IconifyJsonParser {
               Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
           iconJson.putIfAbsent('width', () => defaultWidth);
           iconJson.putIfAbsent('height', () => defaultHeight);
-          icons[entry.key] = IconifyIconData.fromJson(iconJson);
+          icons[entry.key] =
+              IconifyIconData.fromJson(iconJson, sanitizer: sanitizer);
         } catch (e) {
           throw IconifyParseException(
             message:
@@ -125,8 +129,9 @@ final class IconifyJsonParser {
   /// Throws [IconifyParseException] if the JSON structure is invalid.
   static IconifyIconData? extractIcon(
     Map<String, dynamic> collectionJson,
-    String iconName,
-  ) {
+    String iconName, {
+    SvgSanitizer? sanitizer,
+  }) {
     try {
       final defaultWidth =
           (collectionJson['width'] as num?)?.toDouble() ?? 24.0;
@@ -143,7 +148,7 @@ final class IconifyJsonParser {
         );
         iconJson.putIfAbsent('width', () => defaultWidth);
         iconJson.putIfAbsent('height', () => defaultHeight);
-        return IconifyIconData.fromJson(iconJson);
+        return IconifyIconData.fromJson(iconJson, sanitizer: sanitizer);
       }
 
       // Try alias resolution
@@ -153,7 +158,8 @@ final class IconifyJsonParser {
             Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
         iconJson.putIfAbsent('width', () => defaultWidth);
         iconJson.putIfAbsent('height', () => defaultHeight);
-        icons[entry.key] = IconifyIconData.fromJson(iconJson);
+        icons[entry.key] =
+            IconifyIconData.fromJson(iconJson, sanitizer: sanitizer);
       }
 
       final aliases = <String, AliasEntry>{};

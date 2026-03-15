@@ -15,12 +15,18 @@ final class IconifyLicense {
     this.requiresAttribution = false,
   });
 
-  factory IconifyLicense.fromJson(Map<String, dynamic> json) => IconifyLicense(
-        title: json['title'] as String?,
-        spdx: json['spdx'] as String?,
-        url: json['url'] as String?,
-        requiresAttribution: json['requiresAttribution'] as bool? ?? false,
-      );
+  factory IconifyLicense.fromJson(Map<String, dynamic> json) {
+    final spdx = json['spdx'] as String?;
+    final requiresAttribution = json['requiresAttribution'] as bool? ??
+        (spdx != null && !_noAttributionRequired.contains(spdx));
+
+    return IconifyLicense(
+      title: json['title'] as String?,
+      spdx: spdx,
+      url: json['url'] as String?,
+      requiresAttribution: requiresAttribution,
+    );
+  }
 
   /// Human-readable license name, e.g., "MIT License", "Apache License 2.0".
   final String? title;

@@ -42,6 +42,11 @@ class BasicExample extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            // Font Awesome icon (requires attribution)
+            IconifyIcon('fa6-solid:circle-info', size: 32, color: Colors.blue),
+
+            const SizedBox(height: 20),
+
             // Multi-color icon
             IconifyIcon('logos:flutter', size: 48),
 

@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import '../guard/svg_sanitizer.dart';
 
 /// The data for a single Iconify icon.
 ///
@@ -29,9 +30,11 @@ final class IconifyIconData {
     this.raw = const {},
   });
 
-  factory IconifyIconData.fromJson(Map<String, dynamic> json) {
+  factory IconifyIconData.fromJson(Map<String, dynamic> json,
+      {SvgSanitizer? sanitizer}) {
+    final body = json['body'] as String;
     return IconifyIconData(
-      body: json['body'] as String,
+      body: sanitizer?.sanitize(body) ?? body,
       width: (json['width'] as num?)?.toDouble() ?? 24.0,
       height: (json['height'] as num?)?.toDouble() ?? 24.0,
       aliases: (json['aliases'] as List<dynamic>?)
