@@ -2,10 +2,12 @@ import 'package:args/command_runner.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
 
+import 'commands/add_command.dart';
 import 'commands/doctor_command.dart';
 import 'commands/generate_command.dart';
 import 'commands/init_command.dart';
 import 'commands/licenses_command.dart';
+import 'commands/prune_command.dart';
 import 'commands/sync_command.dart';
 
 class IconifyCommandRunner extends CommandRunner<int> {
@@ -24,6 +26,8 @@ class IconifyCommandRunner extends CommandRunner<int> {
     addCommand(GenerateCommand(logger: _logger));
     addCommand(DoctorCommand(logger: _logger));
     addCommand(LicensesCommand(logger: _logger));
+    addCommand(PruneCommand(logger: _logger));
+    addCommand(AddCommand(logger: _logger));
   }
 
   final Logger _logger;

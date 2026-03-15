@@ -40,9 +40,12 @@ export 'src/providers/asset_bundle_iconify_provider.dart';
 export 'src/providers/caching_iconify_provider.dart';
 export 'src/providers/composite_iconify_provider.dart';
 export 'src/providers/file_system_iconify_provider.dart';
+export 'src/providers/file_system_living_cache_storage.dart';
 export 'src/providers/iconify_provider.dart';
+export 'src/providers/living_cache_provider.dart';
 export 'src/providers/memory_iconify_provider.dart';
 export 'src/providers/remote_iconify_provider.dart';
 
 // Resolver
 export 'src/resolver/alias_resolver.dart';
+export 'src/resolver/pub_cache_path_resolver.dart';

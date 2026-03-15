@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:path/path.dart' as p;
 
 class InitCommand extends Command<int> {
   InitCommand({required Logger logger}) : _logger = logger {
@@ -77,14 +78,24 @@ class InitCommand extends Command<int> {
       dir.createSync(recursive: true);
     }
 
+    // 6. Create initial used_icons.json
+    final cachePath = p.join(dataDir, 'used_icons.json');
+    final cacheFile = File(cachePath);
+    if (!cacheFile.existsSync()) {
+      await cacheFile.writeAsString(
+        '{"schemaVersion": 1, "generated": "${DateTime.now().toUtc().toIso8601String()}", "icons": {}}',
+      );
+    }
+
     _logger.success('✅ Created iconify.yaml');
+    _logger.success('✅ Initialized $cachePath');
     _logger.info('\nNext steps:');
     _logger.info(
         '1. Run ${lightCyan.wrap('dart run iconify_sdk_cli sync')} to download icon data.');
     _logger
         .info('2. Add ${lightCyan.wrap('IconifyIcon')} widgets to your app.');
     _logger.info(
-        '3. Run ${lightCyan.wrap('dart run build_runner build')} to bundle icons for production.');
+        '3. Run ${lightCyan.wrap('iconify prune')} to clean up stale icons.');
 
     return ExitCode.success.code;
   }

@@ -12,6 +12,7 @@ import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
 import '../parser/iconify_json_parser.dart';
 import 'iconify_provider.dart';
+import 'living_cache_provider.dart';
 
 /// An [IconifyProvider] that fetches icons from the Iconify HTTP API.
 ///
@@ -29,6 +30,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
     this.batchWindow = const Duration(milliseconds: 50),
     this.requestTimeout = const Duration(seconds: 10),
     Map<String, String>? additionalHeaders,
+    this.livingCache,
+    this.writeBackEnabled = true,
   })  : _apiBase = apiBase ?? 'https://api.iconify.design',
         _client = httpClient ?? http.Client(),
         _allowInRelease = allowInRelease,
@@ -40,6 +43,14 @@ final class RemoteIconifyProvider implements IconifyProvider {
   final String _apiBase;
   final http.Client _client;
   final bool _allowInRelease;
+
+  /// Optional living cache to write fetched icons back to.
+  final LivingCacheProvider? livingCache;
+
+  /// Whether to write fetched icons back to the [livingCache].
+  ///
+  /// Defaults to true. Only effective if [livingCache] is provided.
+  final bool writeBackEnabled;
 
   /// The duration to wait for concurrent requests before dispatching a batch.
   final Duration batchWindow;
@@ -71,7 +82,11 @@ final class RemoteIconifyProvider implements IconifyProvider {
     // 1. Try to resolve via full collection (GitHub Raw or Cache)
     final collection = await _getOrFetchFromGitHub(name.prefix);
     if (collection != null) {
-      return collection.getIcon(name.iconName);
+      final data = collection.getIcon(name.iconName);
+      if (data != null) {
+        await _handleWriteBack(name, data);
+      }
+      return data;
     }
 
     // 2. Fallback: Use micro-batching API
@@ -81,7 +96,27 @@ final class RemoteIconifyProvider implements IconifyProvider {
         );
 
     _startBatchTimer();
-    return completer.future;
+
+    try {
+      final result = await completer.future;
+      if (result != null) {
+        await _handleWriteBack(name, result);
+      }
+      return result;
+    } catch (e) {
+      // If the batch fails, we don't want to rethrow from getIcon
+      // to maintain consistency with other providers that return null.
+      return null;
+    }
+  }
+
+  Future<void> _handleWriteBack(IconifyName name, IconifyIconData data) async {
+    if (livingCache != null && writeBackEnabled && _isAllowed) {
+      await livingCache!.addIcon(name, data, source: 'remote');
+
+      // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
+      print("[iconify] '$name' fetched remotely → written to used_icons.json");
+    }
   }
 
   void _startBatchTimer() {
@@ -121,7 +156,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
           'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
 
       // Use print for developer diagnostic logging in the console.
-      // ignore: avoid_print
+      // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
       print('Iconify SDK [REMOTE]: Trying GitHub Raw for $prefix...');
       final response = await _client.get(githubUri).timeout(requestTimeout);
 
@@ -129,14 +164,14 @@ final class RemoteIconifyProvider implements IconifyProvider {
         final collection =
             IconifyJsonParser.parseCollectionString(response.body);
         // Use print for developer diagnostic logging in the console.
-        // ignore: avoid_print
+        // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
         print('Iconify SDK [REMOTE]: Successfully cached $prefix from GitHub');
         return collection;
       }
       return null;
     } catch (e) {
       // Use print for developer diagnostic logging in the console.
-      // ignore: avoid_print
+      // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
       print(
           'Iconify SDK [REMOTE]: GitHub fetch failed for $prefix, falling back to API: $e');
       return null;
@@ -160,7 +195,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
       try {
         // Use print for developer diagnostic logging in the console.
-        // ignore: avoid_print
+        // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
         print(
             'Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...');
         final response =
@@ -168,7 +203,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
         if (response.statusCode == 404) {
           // Use print for developer diagnostic logging in the console.
-          // ignore: avoid_print
+          // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
           print('Iconify SDK [REMOTE]: 404 Not Found for $prefix');
           for (final req in requests) {
             req.completer.complete(null);
@@ -178,7 +213,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
         if (response.statusCode != 200) {
           // Use print for developer diagnostic logging in the console.
-          // ignore: avoid_print
+          // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
           print(
               'Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix');
           final error = IconifyNetworkException(
@@ -194,7 +229,7 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         // Use print for developer diagnostic logging in the console.
-        // ignore: avoid_print
+        // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
         print('Iconify SDK [REMOTE]: Successfully fetched $prefix batch');
 
         final icons = json['icons'] as Map<String, dynamic>? ?? {};
@@ -290,7 +325,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
     // Fail any pending requests
     for (final requests in _pending.values) {
       for (final req in requests) {
-        req.completer.completeError(StateError('Provider disposed'));
+        if (!req.completer.isCompleted) {
+          req.completer.completeError(StateError('Provider disposed'));
+        }
       }
     }
     _pending.clear();
