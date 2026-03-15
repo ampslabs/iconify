@@ -104,7 +104,7 @@ class SyncCommand extends Command<int> {
         if (response.statusCode == 200) {
           final json = jsonDecode(response.body) as Map<String, dynamic>;
           commitRef = json['sha'] as String;
-          progress.complete('Latest commit: ${commitRef.substring(0, 7)}');
+          progress.complete('Latest commit: ${_shortRef(commitRef)}');
         } else {
           progress.complete(
               'GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
@@ -115,7 +115,7 @@ class SyncCommand extends Command<int> {
     }
 
     _logger.info(
-        '🔄 Syncing ${prefixes.length} collections (ref: ${commitRef.substring(0, 7)}) to ${config.dataDir}...');
+        '🔄 Syncing ${prefixes.length} collections (ref: ${_shortRef(commitRef)}) to ${config.dataDir}...');
 
     final dataDir = Directory(config.dataDir);
     if (!dataDir.existsSync()) {
@@ -200,5 +200,10 @@ class SyncCommand extends Command<int> {
     }
 
     return ExitCode.success.code;
+  }
+
+  String _shortRef(String ref) {
+    if (ref.length > 7) return ref.substring(0, 7);
+    return ref;
   }
 }

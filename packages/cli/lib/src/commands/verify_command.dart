@@ -85,7 +85,7 @@ class VerifyCommand extends Command<int> {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         latestCommit = json['sha'] as String;
-        progressSha.complete('Latest commit: ${latestCommit.substring(0, 7)}');
+        progressSha.complete('Latest commit: ${_shortRef(latestCommit)}');
       } else {
         progressSha.complete(
             'GitHub API failed (HTTP ${response.statusCode}). Falling back to "master".');
@@ -95,7 +95,7 @@ class VerifyCommand extends Command<int> {
     }
 
     _logger.info(
-        '🔍 Verifying ${prefixes.length} collections against upstream (ref: ${latestCommit.substring(0, 7)})...');
+        '🔍 Verifying ${prefixes.length} collections against upstream (ref: ${_shortRef(latestCommit)})...');
 
     var mismatchCount = 0;
     var errorCount = 0;
@@ -154,5 +154,10 @@ class VerifyCommand extends Command<int> {
       _logger.err('❌ Failed to verify $errorCount collections.');
       return ExitCode.software.code;
     }
+  }
+
+  String _shortRef(String ref) {
+    if (ref.length > 7) return ref.substring(0, 7);
+    return ref;
   }
 }
