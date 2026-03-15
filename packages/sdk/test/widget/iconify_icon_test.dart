@@ -3,13 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iconify_sdk/iconify_sdk.dart';
 import 'package:iconify_sdk/src/config/provider_chain_builder.dart';
+import 'package:iconify_sdk/src/registry/starter_registry.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 void main() {
   group('IconifyIcon', () {
     late MemoryIconifyProvider provider;
-    final home = const IconifyName('mdi', 'home');
-    final homeData = const IconifyIconData(
+    final home = IconifyName('mdi', 'home');
+    final homeData = IconifyIconData(
       body:
           '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>',
     );
@@ -42,7 +43,6 @@ void main() {
       await tester.pump();
 
       expect(find.byType(SvgPicture), findsOneWidget);
-      // We no longer check colorFilter because color is now embedded in the SVG string
     });
 
     testWidgets('shows IconifyErrorWidget when icon not found', (tester) async {
@@ -65,7 +65,6 @@ void main() {
     });
 
     testWidgets('uses custom loadingBuilder', (tester) async {
-      // Don't pump until resolved to see loading state
       await tester.pumpWidget(wrap(
         IconifyIcon(
           'mdi:home',
@@ -82,6 +81,12 @@ void main() {
 
     testWidgets('IconifyApp initializes with default provider chain',
         (tester) async {
+      // Manually initialize the registry to ensure it's ready for the test
+      // because PubCachePathResolver might behave differently in test environments.
+      await tester.runAsync(() async {
+        await StarterRegistry.instance.initialize();
+      });
+
       await tester.pumpWidget(IconifyApp(
         child: MaterialApp(
           home: Scaffold(
@@ -89,27 +94,17 @@ void main() {
           ),
         ),
       ));
-      await tester.pump();
 
-      // Should show error widget because starter registry is empty for now
-      // but the point is that it doesn't throw and builds the tree.
+      await tester.pumpAndSettle();
+
       expect(find.byType(IconifyIcon), findsOneWidget);
     });
 
     testWidgets('blocks remote fetching in release mode by default',
         (tester) async {
-      // We can't easily change kReleaseMode at runtime, but we can test
-      // RemoteIconifyProvider directly using DevModeGuard override.
-      DevModeGuard.resetOverride(); // ensure default behavior
-
-      // In tests, asserts are enabled, so DevModeGuard returns true.
-      // To simulate release mode, we'd need a non-assert environment.
-      // However, we already have unit tests in 'core' for DevModeGuard.
-      // Here we verify that RemoteIconifyProvider is part of the chain.
-
+      DevModeGuard.resetOverride();
       const config = IconifyConfig(mode: IconifyMode.auto);
       final chain = buildProviderChain(config);
-
       expect(chain, isA<CachingIconifyProvider>());
     });
   });

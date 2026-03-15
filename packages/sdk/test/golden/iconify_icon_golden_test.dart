@@ -2,7 +2,6 @@ import 'package:alchemist/alchemist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iconify_sdk/iconify_sdk.dart';
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 void main() {
   group('IconifyIcon Golden Tests', () {

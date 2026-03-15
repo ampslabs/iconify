@@ -1,0 +1,33 @@
+import 'package:flutter/services.dart';
+import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+
+/// A [LivingCacheStorage] implementation that reads from the Flutter [AssetBundle].
+///
+/// This is read-only because assets cannot be modified at runtime in a Flutter app.
+/// It is used in release mode to serve the icons bundled in `used_icons.json`.
+class AssetBundleLivingCacheStorage implements LivingCacheStorage {
+  AssetBundleLivingCacheStorage({
+    this.bundle,
+    this.path = 'assets/iconify/used_icons.json',
+  });
+
+  final AssetBundle? bundle;
+  final String path;
+
+  @override
+  Future<String?> read() async {
+    try {
+      final actualBundle = bundle ?? rootBundle;
+      return await actualBundle.loadString(path);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> write(String content) async {
+    // Assets are read-only at runtime.
+    // In development, FileSystemLivingCacheStorage should be used instead.
+    throw UnsupportedError('Cannot write to AssetBundle at runtime.');
+  }
+}

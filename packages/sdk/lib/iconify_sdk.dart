@@ -41,7 +41,10 @@ export 'package:iconify_sdk_core/iconify_sdk_core.dart'
         RenderStrategy,
         IconifyProvider,
         MemoryIconifyProvider,
-        RemoteIconifyProvider;
+        RemoteIconifyProvider,
+        LivingCacheProvider,
+        LivingCacheStorage,
+        FileSystemLivingCacheStorage;
 
 // Configuration
 export 'src/config/iconify_config.dart';
@@ -49,6 +52,7 @@ export 'src/config/iconify_mode.dart';
 export 'src/config/iconify_scope.dart';
 
 // Providers (Flutter specific)
+export 'src/provider/asset_bundle_living_cache_storage.dart';
 export 'src/provider/flutter_asset_bundle_iconify_provider.dart';
 
 // Widgets

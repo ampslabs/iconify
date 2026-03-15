@@ -55,12 +55,14 @@ class _IconifyAppState extends State<IconifyApp> {
 
   Future<void> _initialize() async {
     // 1. Ensure starter registry is ready
-    StarterRegistry.instance.initialize();
+    await StarterRegistry.instance.initialize();
 
     // 2. Build the provider chain based on config
-    setState(() {
-      _provider = buildProviderChain(widget.config);
-    });
+    if (mounted) {
+      setState(() {
+        _provider = buildProviderChain(widget.config);
+      });
+    }
   }
 
   @override
@@ -72,7 +74,11 @@ class _IconifyAppState extends State<IconifyApp> {
   @override
   Widget build(BuildContext context) {
     if (_provider == null) {
-      return widget.child; // Or a splash screen
+      // In development, we must wait for initialization to avoid missing
+      // starter icons that are now filesystem-only.
+      // We return a transparent box or similar to avoid mounting children
+      // that might depend on IconifyScope prematurely.
+      return const SizedBox.shrink();
     }
 
     return IconifyScope(

@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:path/path.dart' as p;
 
 class DoctorCommand extends Command<int> {
   DoctorCommand({required Logger logger}) : _logger = logger;
@@ -65,6 +67,47 @@ class DoctorCommand extends Command<int> {
               } catch (_) {}
             }
           }
+        }
+
+        // 5. Check Living Cache (used_icons.json)
+        final cachePath = p.join(config.dataDir, 'used_icons.json');
+        final cacheFile = File(cachePath);
+        if (cacheFile.existsSync()) {
+          try {
+            final cacheJson = jsonDecode(await cacheFile.readAsString())
+                as Map<String, dynamic>;
+            final cachedIcons =
+                (cacheJson['icons'] as Map<String, dynamic>? ?? {})
+                    .keys
+                    .toSet();
+
+            if (cachedIcons.isNotEmpty) {
+              // Quick scan for stale icons
+              final usedIcons = <String>{};
+              final libDir = Directory('lib');
+              if (libDir.existsSync()) {
+                final entities = libDir.listSync(recursive: true);
+                for (final entity in entities) {
+                  if (entity is File && entity.path.endsWith('.dart')) {
+                    if (entity.path.endsWith(config.output)) continue;
+                    final content = await entity.readAsString();
+                    final scanner = IconNameScanner()..scan(content);
+                    usedIcons.addAll(scanner.iconNames);
+                  }
+                }
+
+                final staleIcons = cachedIcons.difference(usedIcons);
+                if (staleIcons.isNotEmpty) {
+                  _logger.warn(
+                      '  ⚠️ Found ${staleIcons.length} stale icons in used_icons.json. Run "iconify prune" to clean up.');
+                  hasWarnings = true;
+                } else {
+                  _logger.success(
+                      '  ✅ used_icons.json is healthy (${cachedIcons.length} icons).');
+                }
+              }
+            }
+          } catch (_) {}
         }
       } catch (e) {
         _logger.err('  ❌ Failed to parse iconify.yaml: $e');
