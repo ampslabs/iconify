@@ -7,7 +7,7 @@ const { entry, lang } = Astro.props;
 const siteUrl = Astro.site ?? new URL('https://docs.example.com');
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
 const title = entry?.data?.title ?? 'Docs';
-const description = entry?.data?.description ?? 'A high-performance Flutter package for scrollable content.';
+const description = entry?.data?.description ?? 'A high-performance, offline-ready icon SDK for Flutter and Dart.';
 const ogImage = new URL('/og-image.png', siteUrl).href;
 ---
 
