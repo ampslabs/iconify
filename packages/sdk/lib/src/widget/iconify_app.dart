@@ -55,7 +55,8 @@ class _IconifyAppState extends State<IconifyApp> {
 
   Future<void> _initialize() async {
     // 1. Ensure starter registry is ready
-    await StarterRegistry.instance.initialize();
+    await StarterRegistry.instance
+        .initialize(preloadPrefixes: widget.config.preloadPrefixes);
 
     // 2. Build the provider chain based on config
     if (mounted) {

@@ -18,9 +18,14 @@ void main() {
         ),
       ),
       icons: {
-        'home': IconifyIconData(body: '<path d="home"/>', width: 24, height: 24),
+        'home':
+            IconifyIconData(body: '<path d="home"/>', width: 24, height: 24),
         'user': IconifyIconData(
-            body: '<path d="user"/>', width: 20, height: 20, rotate: 1, hFlip: true),
+            body: '<path d="user"/>',
+            width: 20,
+            height: 20,
+            rotate: 1,
+            hFlip: true),
       },
       aliases: {
         'profile': AliasEntry(parent: 'user', vFlip: true),

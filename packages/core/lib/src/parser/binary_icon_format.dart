@@ -70,7 +70,8 @@ class BinaryIconFormat {
     builder.addUint32(stringTable.indexOf(collection.info.name));
     builder.addUint32(collection.info.totalIcons);
     builder.addUint32(stringTable.indexOf(collection.info.author ?? ''));
-    builder.addUint32(stringTable.indexOf(collection.info.license?.title ?? ''));
+    builder
+        .addUint32(stringTable.indexOf(collection.info.license?.title ?? ''));
     builder.addUint32(stringTable.indexOf(collection.info.license?.spdx ?? ''));
     builder.addUint32(stringTable.indexOf(collection.info.license?.url ?? ''));
     builder.addUint8(collection.info.requiresAttribution ? 1 : 0);
@@ -170,7 +171,8 @@ class BinaryIconFormat {
           'Invalid .iconbin format: Magic bytes mismatch');
     }
     if (data.getUint8(4) != _version) {
-      throw FormatException('Unsupported .iconbin version: ${data.getUint8(4)}');
+      throw FormatException(
+          'Unsupported .iconbin version: ${data.getUint8(4)}');
     }
 
     final iconCount = data.getUint16(6);
@@ -188,8 +190,8 @@ class BinaryIconFormat {
         final offsetToOffset = stringTableOffset + (index * 4);
         final sOffset = data.getUint32(offsetToOffset);
         final len = data.getUint32(sOffset);
-        final bytesView = Uint8List.view(
-            data.buffer, data.offsetInBytes + sOffset + 4, len);
+        final bytesView =
+            Uint8List.view(data.buffer, data.offsetInBytes + sOffset + 4, len);
         return utf8.decode(bytesView);
       });
     }
@@ -310,8 +312,8 @@ class BinaryIconFormat {
       final offsetToOffset = stringTableOffset + (index * 4);
       final sOffset = data.getUint32(offsetToOffset);
       final len = data.getUint32(sOffset);
-      final sBytes = Uint8List.view(
-          data.buffer, data.offsetInBytes + sOffset + 4, len);
+      final sBytes =
+          Uint8List.view(data.buffer, data.offsetInBytes + sOffset + 4, len);
       return utf8.decode(sBytes);
     }
 

@@ -10,6 +10,7 @@ final class IconifyConfig {
     this.customProviders = const [],
     this.cacheMaxEntries = 500,
     this.remoteApiBase,
+    this.preloadPrefixes = const [],
   });
 
   /// The operational mode for icon resolution.
@@ -25,6 +26,11 @@ final class IconifyConfig {
   /// Defaults to `https://api.iconify.design`.
   final String? remoteApiBase;
 
+  /// Icon collection prefixes to preload during initialization.
+  ///
+  /// This is only supported by [FileSystemIconifyProvider] (standard dev mode).
+  final List<String> preloadPrefixes;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -32,8 +38,10 @@ final class IconifyConfig {
           runtimeType == other.runtimeType &&
           mode == other.mode &&
           cacheMaxEntries == other.cacheMaxEntries &&
-          remoteApiBase == other.remoteApiBase;
+          remoteApiBase == other.remoteApiBase &&
+          preloadPrefixes == other.preloadPrefixes;
 
   @override
-  int get hashCode => Object.hash(mode, cacheMaxEntries, remoteApiBase);
+  int get hashCode =>
+      Object.hash(mode, cacheMaxEntries, remoteApiBase, preloadPrefixes);
 }

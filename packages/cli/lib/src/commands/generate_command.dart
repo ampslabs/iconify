@@ -27,7 +27,7 @@ class GenerateCommand extends Command<int> {
       'format',
       abbr: 'f',
       help: 'Output format for icon data.',
-      allowed: ['dart', 'binary', 'both'],
+      allowed: ['dart', 'binary', 'sprite', 'all'],
       defaultsTo: 'dart',
     );
   }
@@ -133,8 +133,9 @@ class GenerateCommand extends Command<int> {
     }
 
     final format = argResults?['format'] as String;
-    final bool generateDart = format == 'dart' || format == 'both';
-    final bool generateBinary = format == 'binary' || format == 'both';
+    final bool generateDart = format == 'dart' || format == 'all';
+    final bool generateBinary = format == 'binary' || format == 'all';
+    final bool generateSprite = format == 'sprite' || format == 'all';
 
     if (generateDart) {
       progress.update('Generating Dart code...');
@@ -171,6 +172,33 @@ class GenerateCommand extends Command<int> {
           await binaryFile.writeAsBytes(encoded);
           _logger.info('✅ Generated ${binaryFile.path}');
         }
+      }
+    }
+
+    if (generateSprite) {
+      progress.update('Generating SVG Sprite Sheet...');
+      final buffer = StringBuffer();
+      buffer.writeln(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="display:none;">');
+
+      final sortedKeys = iconDataMap.keys.toList()..sort();
+      for (final fullName in sortedKeys) {
+        final data = iconDataMap[fullName]!;
+        final id = fullName.replaceAll(':', '-');
+        buffer.writeln(
+            '  <symbol id="$id" viewBox="0 0 ${data.width} ${data.height}">');
+        buffer.writeln('    ${data.body}');
+        buffer.writeln('  </symbol>');
+      }
+      buffer.writeln('</svg>');
+
+      if (argResults?['dry-run'] == true) {
+        _logger.info(
+            'Dry run: Would write icons.sprite.svg (${buffer.length} bytes)');
+      } else {
+        final spriteFile = File('${config.dataDir}/icons.sprite.svg');
+        await spriteFile.writeAsString(buffer.toString());
+        _logger.info('✅ Generated ${spriteFile.path}');
       }
     }
 
