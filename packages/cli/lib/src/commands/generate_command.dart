@@ -23,6 +23,13 @@ class GenerateCommand extends Command<int> {
       help: 'Path to generate ICON_ATTRIBUTION.md.',
       defaultsTo: 'ICON_ATTRIBUTION.md',
     );
+    argParser.addOption(
+      'format',
+      abbr: 'f',
+      help: 'Output format for icon data.',
+      allowed: ['dart', 'binary', 'both'],
+      defaultsTo: 'dart',
+    );
   }
 
   @override
@@ -125,29 +132,46 @@ class GenerateCommand extends Command<int> {
       }
     }
 
-    progress.update('Generating code...');
+    final format = argResults?['format'] as String;
+    final bool generateDart = format == 'dart' || format == 'both';
+    final bool generateBinary = format == 'binary' || format == 'both';
 
-    // 4. Generate Dart code
-    final outputContent = IconCodeGenerator.generate(
-      usedIconNames: usedIcons,
-      iconDataMap: iconDataMap,
-    );
+    if (generateDart) {
+      progress.update('Generating Dart code...');
+      final outputContent = IconCodeGenerator.generate(
+        usedIconNames: usedIcons,
+        iconDataMap: iconDataMap,
+      );
 
-    if (argResults?['dry-run'] == true) {
-      progress.complete(
-          'Dry run: Code generation would produce ${iconDataMap.length} icons.');
-      _logger.info('\n--- PREVIEW ---');
-      _logger.info(outputContent.split('\n').take(20).join('\n'));
-      _logger.info('...');
-      return ExitCode.success.code;
+      if (argResults?['dry-run'] == true) {
+        _logger.info('\n--- DART PREVIEW ---');
+        _logger.info(outputContent.split('\n').take(10).join('\n'));
+        _logger.info('...');
+      } else {
+        final outputFile = File(config.output);
+        if (!outputFile.parent.existsSync()) {
+          outputFile.parent.createSync(recursive: true);
+        }
+        await outputFile.writeAsString(outputContent);
+      }
     }
 
-    // 5. Write to disk
-    final outputFile = File(config.output);
-    if (!outputFile.parent.existsSync()) {
-      outputFile.parent.createSync(recursive: true);
+    if (generateBinary) {
+      progress.update('Generating Binary files...');
+      for (final entry in collections.entries) {
+        final prefix = entry.key;
+        final collection = entry.value;
+        final encoded = BinaryIconFormat.encode(collection);
+
+        if (argResults?['dry-run'] == true) {
+          _logger.info('Dry run: Would write $prefix.iconbin (${encoded.length} bytes)');
+        } else {
+          final binaryFile = File('${config.dataDir}/$prefix.iconbin');
+          await binaryFile.writeAsBytes(encoded);
+          _logger.info('✅ Generated ${binaryFile.path}');
+        }
+      }
     }
-    await outputFile.writeAsString(outputContent);
 
     // 6. Generate Attribution File
     if (attributionRequired.isNotEmpty) {
@@ -172,12 +196,14 @@ class GenerateCommand extends Command<int> {
         }
         buffer.writeln();
       }
-      await attributionFile.writeAsString(buffer.toString());
-      _logger.info('✅ Generated $attributionPath');
+      if (argResults?['dry-run'] != true) {
+        await attributionFile.writeAsString(buffer.toString());
+        _logger.info('✅ Generated $attributionPath');
+      }
     }
 
     progress.complete(
-        'Successfully generated ${iconDataMap.length} icons into ${config.output}');
+        'Successfully generated icon data (${format})');
     return ExitCode.success.code;
   }
 }

@@ -35,9 +35,11 @@ export 'src/models/render_strategy.dart';
 
 // Parser
 export 'src/parser/iconify_json_parser.dart';
+export 'src/parser/binary_icon_format.dart';
 
 // Providers
 export 'src/providers/asset_bundle_iconify_provider.dart';
+export 'src/providers/binary_iconify_provider.dart';
 export 'src/providers/caching_iconify_provider.dart';
 export 'src/providers/composite_iconify_provider.dart';
 export 'src/providers/file_system_iconify_provider.dart';
