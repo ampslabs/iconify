@@ -78,7 +78,8 @@ final class FileSystemIconifyProvider extends IconifyProvider {
     try {
       final content = await file.readAsString();
       // Offload JSON decoding to a background isolate to avoid blocking the main thread
-      return await Isolate.run(() => jsonDecode(content) as Map<String, dynamic>);
+      return await Isolate.run(
+          () => jsonDecode(content) as Map<String, dynamic>);
     } catch (e) {
       // Diagnostic logging for developers.
       // ignore: avoid_print
