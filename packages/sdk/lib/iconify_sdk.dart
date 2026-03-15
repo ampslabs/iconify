@@ -38,7 +38,10 @@ export 'package:iconify_sdk_core/iconify_sdk_core.dart'
         IconifyParseException,
         CircularAliasException,
         IconifyCacheException,
-        RenderStrategy;
+        RenderStrategy,
+        IconifyProvider,
+        MemoryIconifyProvider,
+        RemoteIconifyProvider;
 
 // Configuration
 export 'src/config/iconify_config.dart';

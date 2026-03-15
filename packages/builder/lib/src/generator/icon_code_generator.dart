@@ -13,7 +13,7 @@ class IconCodeGenerator {
     buffer.writeln(
         '// ignore_for_file: constant_identifier_names, library_private_types_in_public_api');
     buffer.writeln();
-    buffer.writeln("import 'package:iconify_sdk_core/iconify_sdk_core.dart';");
+    buffer.writeln("import 'package:iconify_sdk/iconify_sdk.dart';");
     buffer.writeln();
 
     // Group icons by prefix for organization
@@ -40,7 +40,7 @@ class IconCodeGenerator {
           final varName = _toCamelCase(iconName);
           buffer.writeln('  /// $fullName');
           buffer.writeln('  static const $varName = IconifyIconData(');
-          buffer.writeln("    body: r'${data.body}',");
+          buffer.writeln("    body: r'''${data.body}''',");
           buffer.writeln('    width: ${data.width},');
           buffer.writeln('    height: ${data.height},');
           buffer.writeln('  );');

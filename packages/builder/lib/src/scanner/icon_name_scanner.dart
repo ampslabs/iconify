@@ -13,7 +13,7 @@ class IconNameScanner {
     r'([a-z0-9][a-z0-9\-]*:[a-z0-9][a-z0-9\-]*)'
     r"['"
     r'"]'
-    r'\s*\)',
+    r'[\s\S]*?\)',
     caseSensitive: false,
   );
 
@@ -28,7 +28,7 @@ class IconNameScanner {
     r'([a-z0-9][a-z0-9\-]*)'
     r"['"
     r'"]'
-    r'\s*\)',
+    r'[\s\S]*?\)',
     caseSensitive: false,
   );
 

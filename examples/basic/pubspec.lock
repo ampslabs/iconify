@@ -105,15 +105,15 @@ packages:
       path: "../../packages/sdk"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.2.0"
   iconify_sdk_core:
     dependency: transitive
     description:
       name: iconify_sdk_core
-      sha256: "2f246aee51c7867fc9333a142b457685c6623175301c89267a5e5a98c8f1c6fe"
+      sha256: "86eb36da4b2967fac9ca2b8c0457cccd13dd9de11d4bb5e733e735d2b23e77d5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.2.0"
   leak_tracker:
     dependency: transitive
     description:
