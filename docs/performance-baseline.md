@@ -22,6 +22,15 @@ This document tracks performance benchmarks for the Iconify SDK v2.
 
 ## Benchmarks Log
 
+### 2026-03-16
+- **Device**: macOS Workstation (Apple M2)
+- **Dart Version**: 3.5.0
+- **Full Parse (MDI)**: 29ms (JSON) vs 11ms (Binary) — **2.6x Speedup**
+- **Single Icon Lookup (Binary)**: 3.9μs vs 11.8ms (JSON parse+extract) — **~3000x Speedup**
+- **PictureCache Hit**: 0.4μs (10k iterations in 4ms)
+- **PictureCache Eviction Overhead**: Negligible (<1ms for 100 evictions)
+- **Parallel Preloading**: 7ms (Parallel) vs 22ms (Sequential) for 5 collections — **3.1x Speedup**
+
 ### 2026-03-15
 - Initial benchmark of `BinaryIconFormat` v1.
 - Results confirmed 3x faster full parse and extremely fast random access.
