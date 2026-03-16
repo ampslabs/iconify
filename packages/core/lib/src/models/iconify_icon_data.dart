@@ -3,19 +3,9 @@ import '../guard/svg_sanitizer.dart';
 
 /// The data for a single Iconify icon.
 ///
-/// The [body] contains the SVG path content WITHOUT the outer `<svg>` tag.
-/// To render this icon, wrap the body in:
-/// ```xml
-/// <svg xmlns="http://www.w3.org/2000/svg"
-///      viewBox="0 0 {width} {height}"
-///      width="{size}" height="{size}">
-///   {body}
-/// </svg>
-/// ```
-///
-/// If the [body] contains `currentColor`, the icon is monotone and supports
-/// color theming. If it does not, it is a multicolor icon and color overrides
-/// should not be applied without explicit user consent.
+/// The [body] contains either:
+/// 1. The SVG path content WITHOUT the outer `<svg>` tag.
+/// 2. A single character string (e.g. from an icon font) if [fontFamily] is set.
 @immutable
 final class IconifyIconData {
   const IconifyIconData({
@@ -27,6 +17,7 @@ final class IconifyIconData {
     this.rotate = 0,
     this.hFlip = false,
     this.vFlip = false,
+    this.fontFamily,
     this.raw = const {},
   });
 
@@ -34,7 +25,9 @@ final class IconifyIconData {
       {SvgSanitizer? sanitizer}) {
     final body = json['body'] as String;
     return IconifyIconData(
-      body: sanitizer?.sanitize(body) ?? body,
+      body: (json['fontFamily'] == null && sanitizer != null)
+          ? sanitizer.sanitize(body)
+          : body,
       width: (json['width'] as num?)?.toDouble() ?? 24.0,
       height: (json['height'] as num?)?.toDouble() ?? 24.0,
       aliases: (json['aliases'] as List<dynamic>?)
@@ -45,17 +38,18 @@ final class IconifyIconData {
       rotate: json['rotate'] as int? ?? 0,
       hFlip: json['hFlip'] as bool? ?? false,
       vFlip: json['vFlip'] as bool? ?? false,
+      fontFamily: json['fontFamily'] as String?,
       raw: Map<String, dynamic>.from(json),
     );
   }
 
-  /// SVG body content (everything inside the `<svg>` tag).
+  /// SVG body content or font character.
   final String body;
 
-  /// Viewbox width. Defaults to 24 (the Iconify standard).
+  /// Viewbox width or natural size. Defaults to 24.
   final double width;
 
-  /// Viewbox height. Defaults to 24 (the Iconify standard).
+  /// Viewbox height or natural size. Defaults to 24.
   final double height;
 
   /// Alias names for this icon within the same collection.
@@ -73,25 +67,23 @@ final class IconifyIconData {
   /// Whether the icon should be flipped vertically.
   final bool vFlip;
 
-  /// The original raw JSON data for this icon, preserved for debugging
-  /// and advanced use cases. All values are JSON-safe types.
+  /// Optional font family for font-based rendering.
+  final String? fontFamily;
+
+  /// The original raw JSON data for this icon.
   final Map<String, dynamic> raw;
 
   /// Whether this icon supports color theming via `currentColor`.
-  ///
-  /// Monotone icons use `currentColor` for fill/stroke and can be
-  /// recolored freely. Multicolor icons should not be recolored.
-  bool get isMonochrome => body.contains('currentColor');
+  bool get isMonochrome => fontFamily != null || body.contains('currentColor');
 
   /// Whether the viewbox is square.
   bool get isSquare => width == height;
 
   /// Creates a complete SVG string ready for rendering.
-  ///
-  /// [size] sets both width and height attributes. If null, uses
-  /// the icon's natural [width] and [height].
-  /// [color] replaces `currentColor` in the body (monotone icons only).
   String toSvgString({double? size, String? color}) {
+    if (fontFamily != null) {
+      throw StateError('Cannot generate SVG string for font-based icon.');
+    }
     final w = size ?? width;
     final h = size ?? height;
     var svgBody = body;
@@ -114,6 +106,7 @@ final class IconifyIconData {
     int? rotate,
     bool? hFlip,
     bool? vFlip,
+    String? fontFamily,
     Map<String, dynamic>? raw,
   }) =>
       IconifyIconData(
@@ -125,6 +118,7 @@ final class IconifyIconData {
         rotate: rotate ?? this.rotate,
         hFlip: hFlip ?? this.hFlip,
         vFlip: vFlip ?? this.vFlip,
+        fontFamily: fontFamily ?? this.fontFamily,
         raw: raw ?? this.raw,
       );
 
@@ -137,6 +131,7 @@ final class IconifyIconData {
         if (rotate != 0) 'rotate': rotate,
         if (hFlip) 'hFlip': hFlip,
         if (vFlip) 'vFlip': vFlip,
+        if (fontFamily != null) 'fontFamily': fontFamily,
       };
 
   @override
@@ -146,12 +141,13 @@ final class IconifyIconData {
           runtimeType == other.runtimeType &&
           body == other.body &&
           width == other.width &&
-          height == other.height;
+          height == other.height &&
+          fontFamily == other.fontFamily;
 
   @override
-  int get hashCode => Object.hash(body, width, height);
+  int get hashCode => Object.hash(body, width, height, fontFamily);
 
   @override
   String toString() =>
-      'IconifyIconData(${width.toStringAsFixed(0)}x${height.toStringAsFixed(0)}, monotone: $isMonochrome)';
+      'IconifyIconData(${width.toStringAsFixed(0)}x${height.toStringAsFixed(0)}, monochrome: $isMonochrome${fontFamily != null ? ', font: $fontFamily' : ''})';
 }

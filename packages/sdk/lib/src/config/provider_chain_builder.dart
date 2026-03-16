@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:iconify_sdk/src/provider/asset_bundle_living_cache_storage.dart';
+import 'package:iconify_sdk/src/provider/font_iconify_provider.dart';
 import 'package:iconify_sdk/src/provider/sprite_iconify_provider.dart';
 import 'package:iconify_sdk/src/registry/starter_registry.dart'
     show StarterRegistry;
@@ -33,16 +34,20 @@ IconifyProvider buildProviderChain(IconifyConfig config) {
     providers.add(SpriteIconifyProvider(compress: config.compress));
   }
 
-  // 3. Living Cache (L2) - Optimization for production bundle size
+  // 3. Font Provider (Monochromatic optimization)
+  // High priority as it is significantly smaller than SVG for monochrome icons.
+  providers.add(FontIconifyProvider(compress: config.compress));
+
+  // 4. Living Cache (L2) - Optimization for production bundle size
   // and development write-back.
   final livingCache = _createLivingCacheProvider(config.compress);
   providers.add(livingCache);
 
-  // 3. In-memory cache (standard performance optimization)
+  // 5. In-memory cache (standard performance optimization)
   final memoryProvider = MemoryIconifyProvider();
   providers.add(memoryProvider);
 
-  // 4. Mode-specific logic
+  // 6. Mode-specific logic
   switch (config.mode) {
     case IconifyMode.auto:
       _addAutoModeProviders(providers, config, livingCache);

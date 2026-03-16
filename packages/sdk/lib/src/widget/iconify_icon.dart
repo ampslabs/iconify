@@ -140,12 +140,25 @@ class _IconifyIconState extends State<IconifyIcon> {
   }
 
   Widget _buildIcon(BuildContext context, IconifyIconData data, Color? color) {
+    final double effectiveSize = widget.size ?? data.width;
+
+    // 1. Font-based rendering (highest efficiency for monochrome)
+    if (data.fontFamily != null) {
+      return Icon(
+        IconData(
+          data.body.codeUnitAt(0),
+          fontFamily: data.fontFamily,
+        ),
+        size: effectiveSize,
+        color: color,
+        semanticLabel: widget.semanticLabel,
+      );
+    }
+
     final effectiveStrategy = resolveRenderStrategy(
       strategy: widget.renderStrategy,
       color: color,
     );
-
-    final double effectiveSize = widget.size ?? data.width;
 
     if (effectiveStrategy == RenderStrategy.rasterized) {
       final pixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0;

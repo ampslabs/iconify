@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:args/command_runner.dart';
+import 'package:icon_font_generator/icon_font_generator.dart';
 import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -36,6 +37,11 @@ class GenerateCommand extends Command<int> {
       'compress',
       abbr: 'c',
       help: 'Use GZIP compression for output files.',
+      negatable: false,
+    );
+    argParser.addFlag(
+      'font',
+      help: 'Generate an icon font for monochrome icons.',
       negatable: false,
     );
   }
@@ -142,6 +148,7 @@ class GenerateCommand extends Command<int> {
 
     final format = argResults?['format'] as String;
     final compress = argResults?['compress'] as bool;
+    final generateFont = argResults?['font'] as bool;
     final bool generateDart = format == 'dart' || format == 'all';
     final bool generateBinary = format == 'binary' || format == 'all';
     final bool generateSprite = format == 'sprite' || format == 'all';
@@ -274,6 +281,72 @@ class GenerateCommand extends Command<int> {
           await manifestFile.writeAsString(manifestStr);
         }
         _logger.info('✅ Generated ${manifestFile.path}');
+      }
+    }
+
+    if (generateFont) {
+      progress.update('Generating Icon Font...');
+      final monoIcons = <String, String>{};
+      final fontMapping = <String, int>{};
+
+      for (final fullName in iconDataMap.keys) {
+        final data = iconDataMap[fullName]!;
+        if (data.isMonochrome) {
+          monoIcons[fullName] = data.toSvgString();
+        }
+      }
+
+      if (monoIcons.isEmpty) {
+        _logger.warn('No monochrome icons found. Skipping font generation.');
+      } else {
+        try {
+          final result = svgToOtf(
+            svgMap: monoIcons,
+            fontName: 'IconifyIcons',
+          );
+
+          final fontFileBytes =
+              OTFWriter().write(result.font).buffer.asUint8List();
+          final fontFileName = compress ? 'icons.font.otf.gz' : 'icons.font.otf';
+          final fontFile = File('${config.dataDir}/$fontFileName');
+
+          if (compress) {
+            await fontFile.writeAsBytes(gzip.encode(fontFileBytes));
+          } else {
+            await fontFile.writeAsBytes(fontFileBytes);
+          }
+
+
+          // Create mapping
+          for (var i = 0; i < result.glyphList.length; i++) {
+            final glyph = result.glyphList[i];
+            if (glyph.metadata.name != null &&
+                glyph.metadata.charCode != null) {
+              fontMapping[glyph.metadata.name!] = glyph.metadata.charCode!;
+            }
+          }
+
+          final mapping = {
+            'fontFamily': 'IconifyIcons',
+            'icons': fontMapping,
+          };
+          final mappingStr = jsonEncode(mapping);
+          final mappingFileName =
+              compress ? 'icons.font.json.gz' : 'icons.font.json';
+          final mappingFile = File('${config.dataDir}/$mappingFileName');
+
+          if (compress) {
+            await mappingFile
+                .writeAsBytes(gzip.encode(utf8.encode(mappingStr)));
+          } else {
+            await mappingFile.writeAsString(mappingStr);
+          }
+
+          _logger.info('✅ Generated ${fontFile.path}');
+          _logger.info('✅ Generated ${mappingFile.path}');
+        } catch (e) {
+          _logger.err('Failed to generate icon font: $e');
+        }
       }
     }
 

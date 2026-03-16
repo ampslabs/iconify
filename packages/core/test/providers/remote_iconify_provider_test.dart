@@ -143,8 +143,8 @@ void main() {
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       // API fails
-      when(() => client.get(any(
-              that: predicate<Uri>((u) => u.host == 'api.iconify.design'))))
+      when(() => client.get(
+              any(that: predicate<Uri>((u) => u.host == 'api.iconify.design'))))
           .thenAnswer((_) async => http.Response('Server Error', 500));
 
       final icon = await provider.getIcon(name);

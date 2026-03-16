@@ -24,6 +24,7 @@ dependencies:
   io: ^1.0.3
   mason_logger: ^0.3.1
   glob: ^2.1.2
+  icon_font_generator: ^4.1.0
 
 dev_dependencies:
   lints: ^6.1.0
