@@ -32,6 +32,22 @@ class IconifyApp extends StatefulWidget {
   /// Global configuration for icon resolution and rendering.
   final IconifyConfig config;
 
+  /// Starts preloading icon collections before the [IconifyApp] widget is built.
+  ///
+  /// This is an optional optimization that can be called in `main()` to
+  /// reduce latency for the first icons rendered.
+  ///
+  /// ```dart
+  /// void main() async {
+  ///   WidgetsFlutterBinding.ensureInitialized();
+  ///   await IconifyApp.preload(prefixes: ['mdi', 'lucide']);
+  ///   runApp(const IconifyApp(child: MyApp()));
+  /// }
+  /// ```
+  static Future<void> preload({List<String> prefixes = const []}) async {
+    await StarterRegistry.instance.initialize(preloadPrefixes: prefixes);
+  }
+
   @override
   State<IconifyApp> createState() => _IconifyAppState();
 }

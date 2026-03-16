@@ -12,13 +12,25 @@ class IconifyPictureCache {
   final int maxEntries;
   final _cache = <String, PictureInfo>{};
 
+  int _hits = 0;
+  int _misses = 0;
+
+  /// Returns the number of cache hits.
+  int get hits => _hits;
+
+  /// Returns the number of cache misses.
+  int get misses => _misses;
+
   /// Returns a cached [PictureInfo] if it exists.
   PictureInfo? get(String key) {
     final info = _cache.remove(key);
     if (info != null) {
       _cache[key] = info;
+      _hits++;
+      return info;
     }
-    return info;
+    _misses++;
+    return null;
   }
 
   /// Puts a [PictureInfo] into the cache.
@@ -39,6 +51,8 @@ class IconifyPictureCache {
       info.picture.dispose();
     }
     _cache.clear();
+    _hits = 0;
+    _misses = 0;
   }
 
   /// The current number of entries in the cache.

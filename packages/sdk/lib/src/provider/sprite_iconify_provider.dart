@@ -1,68 +1,72 @@
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 /// An [IconifyProvider] that uses SVG Sprite Sheets for optimized web rendering.
 ///
-/// This provider expects an `icons.sprite.svg` file to be present in the
-/// asset bundle. It returns lightweight [IconifyIconData] that uses the
-/// `<use>` tag to reference symbols within the sprite sheet.
+/// This provider expects an `icons.sprite.svg` file and an `icons.sprite.json`
+/// manifest to be present in the asset bundle.
 final class SpriteIconifyProvider extends IconifyProvider {
   SpriteIconifyProvider({
     this.assetPath = 'assets/iconify/icons.sprite.svg',
+    this.manifestPath = 'assets/iconify/icons.sprite.json',
   });
 
   final String assetPath;
-  bool _manifestChecked = false;
-  Set<String>? _availableIcons;
+  final String manifestPath;
 
-  Future<void> _ensureManifest() async {
-    if (_manifestChecked) return;
+  bool _initialized = false;
+  Map<String, dynamic>? _manifest;
+
+  Future<void> _ensureInitialized() async {
+    if (_initialized) return;
     try {
-      // In a real implementation, we might have a small JSON manifest
-      // telling us which icons are in the sprite sheet.
-      // For now, we assume if the sprite file exists, it contains the used icons.
-      await rootBundle.load(assetPath);
-      _availableIcons = {}; // Empty means "unknown but file exists"
+      final manifestContent = await rootBundle.loadString(manifestPath);
+      final decoded = jsonDecode(manifestContent) as Map<String, dynamic>;
+      _manifest = decoded['icons'] as Map<String, dynamic>?;
     } catch (_) {
-      _availableIcons = null;
+      _manifest = null;
     }
-    _manifestChecked = true;
+    _initialized = true;
   }
 
   @override
   Future<IconifyIconData?> getIcon(IconifyName name) async {
-    await _ensureManifest();
-    if (_availableIcons == null) return null;
+    await _ensureInitialized();
+    if (_manifest == null) return null;
 
+    final fullName = name.toString();
+    if (!_manifest!.containsKey(fullName)) return null;
+
+    final iconInfo = _manifest![fullName] as Map<String, dynamic>;
     final id = '${name.prefix}-${name.iconName}';
 
-    // Return an icon data that uses the <use> tag.
-    // Note: This requires the sprite sheet to be injected into the DOM
-    // or referenced correctly. For Flutter Web HTML renderer,
-    // referencing the asset file works best.
     return IconifyIconData(
+      // The HTML renderer can render this <use> tag efficiently
+      // when it points to an external SVG file in the assets.
       body: '<use href="$assetPath#$id" />',
-      // Natural size is hard to know without manifest,
-      // but IconifyIcon will scale it anyway.
-      width: 24,
-      height: 24,
+      width: (iconInfo['width'] as num?)?.toDouble() ?? 24.0,
+      height: (iconInfo['height'] as num?)?.toDouble() ?? 24.0,
     );
   }
 
   @override
   Future<IconifyCollectionInfo?> getCollection(String prefix) async {
-    return null; // Not supported by sprite provider
+    return null; // Minimal metadata provided by sprite provider
   }
 
   @override
   Future<bool> hasIcon(IconifyName name) async {
-    await _ensureManifest();
-    return _availableIcons != null;
+    await _ensureInitialized();
+    return _manifest?.containsKey(name.toString()) ?? false;
   }
 
   @override
   Future<bool> hasCollection(String prefix) async {
-    await _ensureManifest();
-    return _availableIcons != null;
+    await _ensureInitialized();
+    if (_manifest == null) return false;
+    // Check if any icon in the manifest starts with this prefix
+    final search = '$prefix:';
+    return _manifest!.keys.any((key) => key.startsWith(search));
   }
 }

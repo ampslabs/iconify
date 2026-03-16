@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
@@ -199,6 +200,17 @@ class GenerateCommand extends Command<int> {
         final spriteFile = File('${config.dataDir}/icons.sprite.svg');
         await spriteFile.writeAsString(buffer.toString());
         _logger.info('✅ Generated ${spriteFile.path}');
+
+        // Generate manifest for SpriteIconifyProvider
+        final manifest = {
+          'icons': iconDataMap.map((key, value) => MapEntry(key, {
+                'width': value.width,
+                'height': value.height,
+              })),
+        };
+        final manifestFile = File('${config.dataDir}/icons.sprite.json');
+        await manifestFile.writeAsString(jsonEncode(manifest));
+        _logger.info('✅ Generated ${manifestFile.path}');
       }
     }
 

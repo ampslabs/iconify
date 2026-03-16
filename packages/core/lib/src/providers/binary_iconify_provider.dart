@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import '../models/iconify_collection_info.dart';
@@ -17,14 +18,18 @@ final class BinaryIconifyProvider extends IconifyProvider {
   BinaryIconifyProvider({
     required this.root,
     bool preload = false,
+    this.preloadPrefixes,
   }) : _root = Directory(root) {
-    if (preload) {
+    if (preload || (preloadPrefixes?.isNotEmpty ?? false)) {
       _preloadAll();
     }
   }
 
   final String root;
   final Directory _root;
+
+  /// Optional list of collection prefixes to preload.
+  final List<String>? preloadPrefixes;
 
   /// Cache of raw bytes for each collection.
   final _cache = <String, Uint8List>{};
@@ -34,11 +39,42 @@ final class BinaryIconifyProvider extends IconifyProvider {
 
   Future<void> _preloadAll() async {
     if (!_root.existsSync()) return;
-    await for (final entity in _root.list()) {
-      if (entity is File && entity.path.endsWith('.iconbin')) {
-        final prefix = entity.uri.pathSegments.last.replaceAll('.iconbin', '');
-        await _loadCollectionBytes(prefix);
+
+    final prefixes = <String>[];
+    if (preloadPrefixes != null) {
+      prefixes.addAll(preloadPrefixes!);
+    } else {
+      await for (final entity in _root.list()) {
+        if (entity is File && entity.path.endsWith('.iconbin')) {
+          final prefix =
+              entity.uri.pathSegments.last.replaceAll('.iconbin', '');
+          prefixes.add(prefix);
+        }
       }
+    }
+
+    // Parallel load using Isolate.run for reading files off-thread
+    final results = await Future.wait(prefixes.map((p) => _loadInIsolate(p)));
+    for (var i = 0; i < prefixes.length; i++) {
+      if (results[i] != null) {
+        _cache[prefixes[i]] = results[i]!;
+      }
+    }
+  }
+
+  Future<Uint8List?> _loadInIsolate(String prefix) async {
+    final path = '${_root.path}/$prefix.iconbin';
+    final file = File(path);
+    if (!file.existsSync()) return null;
+
+    try {
+      // For large .iconbin files (like MDI), reading as bytes can still be heavy
+      return await Isolate.run(() => file.readAsBytesSync());
+    } catch (e) {
+      // Diagnostic logging for developers.
+      // ignore: avoid_print
+      print('Iconify SDK [BINARY]: Failed to preload $prefix.iconbin: $e');
+      return null;
     }
   }
 

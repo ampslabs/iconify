@@ -55,6 +55,9 @@ export 'src/config/iconify_scope.dart';
 export 'src/provider/asset_bundle_living_cache_storage.dart';
 export 'src/provider/flutter_asset_bundle_iconify_provider.dart';
 
+// Diagnostics
+export 'src/render/iconify_diagnostics.dart';
+
 // Widgets
 export 'src/widget/iconify_app.dart';
 export 'src/widget/iconify_error_widget.dart';

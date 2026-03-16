@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 class _MockLogger extends Mock implements Logger {}
+
 class _MockProgress extends Mock implements Progress {}
 
 void main() {
@@ -26,7 +27,8 @@ void main() {
       final progress = _MockProgress();
       when(() => logger.progress(any())).thenReturn(progress);
       // Mock confirmation to return true by default
-      when(() => logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
+      when(() =>
+              logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
           .thenReturn(true);
 
       // Create dummy iconify.yaml
@@ -39,7 +41,8 @@ data_dir: assets/iconify
       // Create dummy used_icons.json with one stale icon
       final dataDir = Directory(p.join(tempDir.path, 'assets', 'iconify'))
         ..createSync(recursive: true);
-      File(p.join(dataDir.path, 'used_icons.json')).writeAsStringSync(jsonEncode({
+      File(p.join(dataDir.path, 'used_icons.json'))
+          .writeAsStringSync(jsonEncode({
         'icons': {
           'mdi:home': {
             'body': '<path/>',
@@ -71,8 +74,10 @@ data_dir: assets/iconify
       final result = await runner.run(['prune']);
 
       expect(result, equals(ExitCode.success.code));
-      verify(() => logger.confirm(any(), defaultValue: any(named: 'defaultValue'))).called(1);
-      
+      verify(() =>
+              logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
+          .called(1);
+
       final cacheFile = File('assets/iconify/used_icons.json');
       final data = jsonDecode(cacheFile.readAsStringSync()) as Map;
       final icons = data['icons'] as Map;

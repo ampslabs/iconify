@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:iconify_sdk/src/provider/asset_bundle_living_cache_storage.dart';
+import 'package:iconify_sdk/src/provider/sprite_iconify_provider.dart';
 import 'package:iconify_sdk/src/registry/starter_registry.dart'
     show StarterRegistry;
+import 'package:iconify_sdk/src/render/web_renderer_detector.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'iconify_config.dart';
 import 'iconify_mode.dart';
@@ -25,7 +27,13 @@ IconifyProvider buildProviderChain(IconifyConfig config) {
   // 1. User-provided custom providers (highest priority)
   providers.addAll(config.customProviders);
 
-  // 2. Living Cache (L2) - Optimization for production bundle size
+  // 2. Sprite Provider (Web HTML optimized)
+  // This is highest priority for Web HTML because individual SVG rendering is slow.
+  if (WebRendererDetector.isHtmlRenderer) {
+    providers.add(SpriteIconifyProvider());
+  }
+
+  // 3. Living Cache (L2) - Optimization for production bundle size
   // and development write-back.
   final livingCache = _createLivingCacheProvider();
   providers.add(livingCache);

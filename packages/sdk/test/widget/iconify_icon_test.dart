@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iconify_sdk/iconify_sdk.dart';
 import 'package:iconify_sdk/src/config/provider_chain_builder.dart';
 import 'package:iconify_sdk/src/registry/starter_registry.dart';
+import 'package:iconify_sdk/src/widget/cached_svg_iconify_widget.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 
 void main() {
@@ -29,20 +29,22 @@ void main() {
       );
     }
 
-    testWidgets('renders SvgPicture when icon is found', (tester) async {
+    testWidgets('renders CachedSvgIconifyWidget when icon is found',
+        (tester) async {
       await tester.pumpWidget(wrap(IconifyIcon('mdi:home')));
-      await tester.pump(); // Allow Future to resolve
+      await tester
+          .pumpAndSettle(); // Allow Future and Picture loading to resolve
 
-      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(find.byType(CachedSvgIconifyWidget), findsOneWidget);
     });
 
     testWidgets('applies color override', (tester) async {
       const targetColor = Colors.red;
       await tester
           .pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(find.byType(CachedSvgIconifyWidget), findsOneWidget);
     });
 
     testWidgets('shows IconifyErrorWidget when icon not found', (tester) async {
@@ -74,9 +76,9 @@ void main() {
 
       expect(find.text('Loading...'), findsOneWidget);
 
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Loading...'), findsNothing);
-      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(find.byType(CachedSvgIconifyWidget), findsOneWidget);
     });
 
     testWidgets('IconifyApp initializes with default provider chain',
