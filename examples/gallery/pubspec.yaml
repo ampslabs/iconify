@@ -1,24 +1,34 @@
 name: gallery
-resolution: workspace
-description: A new Flutter project.
-
+description: A gallery of Iconify SDK.
 publish_to: 'none'
-version: 0.2.0+1
+version: 0.2.0
 
 environment:
-  sdk: ^3.11.1
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.10.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  iconify_sdk: ^0.2.0
-  google_fonts: ^6.2.1
+  iconify_sdk:
+    path: ../../packages/sdk
   flutter_animate: ^4.5.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/iconify/used_icons.json.gz
+    - assets/iconify/icons.sprite.svg.gz
+    - assets/iconify/icons.sprite.json.gz
+    - assets/iconify/icons.font.json.gz
+    - assets/iconify/icons.font.otf.gz
+    - assets/iconify/mdi.iconbin.gz
+    - assets/iconify/lucide.iconbin.gz
+    - assets/iconify/tabler.iconbin.gz
+    - assets/iconify/heroicons.iconbin.gz

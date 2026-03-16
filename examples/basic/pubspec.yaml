@@ -21,3 +21,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/iconify/used_icons.json.gz
+    - assets/iconify/mdi.iconbin.gz
+    - assets/iconify/lucide.iconbin.gz
+    - assets/iconify/fa6-solid.iconbin.gz
+    - assets/iconify/icons.sprite.svg.gz
+    - assets/iconify/icons.sprite.json.gz
+    - assets/iconify/icons.font.json.gz
+    - assets/iconify/icons.font.otf.gz

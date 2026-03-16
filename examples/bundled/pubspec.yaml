@@ -1,5 +1,5 @@
 name: bundled_example
-description: An example of using iconify_sdk with offline bundling.
+description: A bundled example of using iconify_sdk.
 publish_to: 'none'
 version: 0.2.0
 
@@ -12,17 +12,22 @@ dependencies:
     sdk: flutter
   iconify_sdk:
     path: ../../packages/sdk
-  flutter_svg: ^2.0.10+1
+  # iconify_sdk_core is needed by the generated lib/icons.g.dart
+  iconify_sdk_core:
+    path: ../../packages/core
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  iconify_sdk_builder:
-    path: ../../packages/builder
-  build_runner: ^2.4.0
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/iconify/
+    - assets/iconify/used_icons.json.gz
+    - assets/iconify/mdi.iconbin.gz
+    - assets/iconify/lucide.iconbin.gz
+    - assets/iconify/icons.sprite.svg.gz
+    - assets/iconify/icons.sprite.json.gz
+    - assets/iconify/icons.font.json.gz
+    - assets/iconify/icons.font.otf.gz

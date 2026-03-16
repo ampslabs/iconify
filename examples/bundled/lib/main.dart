@@ -16,6 +16,7 @@ void main() {
         customProviders: [memoryProvider],
         // 3. Optional: Use offline mode to guarantee zero network
         mode: IconifyMode.offline,
+        compress: true,
       ),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -43,6 +44,8 @@ class BundledExample extends StatelessWidget {
 
             // This is loading from lib/icons.g.dart
             IconifyIcon('mdi:account', size: 80, color: Colors.blue),
+            IconifyIcon('mdi:home', size: 80, color: Colors.green),
+            IconifyIcon('lucide:zap', size: 80, color: Colors.orange),
 
             const SizedBox(height: 20),
 

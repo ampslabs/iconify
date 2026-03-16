@@ -1,0 +1,22 @@
+{
+  "mdi": {
+    "sha256": "cf9b89dda466f1c384af19d3c7bf835c3c1e75eccf313f7821ac48c14f2c8c7b",
+    "syncedAt": "2026-03-16T22:39:40.318595Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  },
+  "lucide": {
+    "sha256": "3327086d484a4cd05f28f853d99a64a65dda40d68ed62b215b7d11c80b122015",
+    "syncedAt": "2026-03-16T22:39:41.185695Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  },
+  "tabler": {
+    "sha256": "6a08a97d62f3303e8b6a6e776f3fac0772a4aa84f2ddc9cef617021c741e9348",
+    "syncedAt": "2026-03-16T22:39:41.634404Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  },
+  "heroicons": {
+    "sha256": "fca0072086b18fbdf36fb61eeb6c58eacaa37209268cc7754c0c01762df721e7",
+    "syncedAt": "2026-03-16T22:39:41.937114Z",
+    "commitRef": "4c8fcd16dc9426342253b3bfa1481bdf0d486634"
+  }
+}

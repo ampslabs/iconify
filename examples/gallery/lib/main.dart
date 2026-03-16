@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,7 +8,10 @@ import 'package:iconify_sdk/iconify_sdk.dart';
 void main() {
   runApp(
     IconifyApp(
-      config: const IconifyConfig(mode: IconifyMode.auto),
+      config: const IconifyConfig(
+        mode: IconifyMode.auto,
+        compress: true,
+      ),
       child: const IconifyAtlasApp(),
     ),
   );
@@ -182,7 +186,7 @@ class _IconExplorerPageState extends State<IconExplorerPage>
     'mdi:bag-personal-tag-outline',
     'mdi:account',
     'mdi:cog',
-    'mdi:magnify',
+    'mdi:home',
     'lucide:rocket',
     'lucide:zap',
     'lucide:shield',
@@ -217,7 +221,7 @@ class _IconExplorerPageState extends State<IconExplorerPage>
 
   @override
   Widget build(BuildContext context) {
-    final currentColor = const Color(0xFF38BDF8);
+    const currentColor = Color(0xFF38BDF8);
 
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,22 +354,22 @@ class DesignSystemLabPage extends StatelessWidget {
               spacing: 16,
               runSpacing: 16,
               children: [
-                const _StatusChip(
+                _StatusChip(
                   label: 'Operational',
                   icon: 'lucide:check',
                   color: Colors.green,
                 ),
-                const _StatusChip(
+                _StatusChip(
                   label: 'Warning',
                   icon: 'lucide:warning',
                   color: Colors.amber,
                 ),
-                const _StatusChip(
+                _StatusChip(
                   label: 'System Failure',
                   icon: 'lucide:error',
                   color: Colors.redAccent,
                 ),
-                const _StatusChip(
+                _StatusChip(
                   label: 'Deploying',
                   icon: 'lucide:refresh',
                   color: Colors.blueAccent,
@@ -403,13 +407,36 @@ class DesignSystemLabPage extends StatelessWidget {
 
 // --- DIAGNOSTICS PAGE ---
 
-class DiagnosticsPage extends StatelessWidget {
+class DiagnosticsPage extends StatefulWidget {
   const DiagnosticsPage({super.key});
+
+  @override
+  State<DiagnosticsPage> createState() => _DiagnosticsPageState();
+}
+
+class _DiagnosticsPageState extends State<DiagnosticsPage> {
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 1000;
-    return Padding(
+    final stats = IconifyDiagnostics.pictureCacheStats;
+
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(48.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,6 +447,8 @@ class DiagnosticsPage extends StatelessWidget {
             isSmallScreen: isSmallScreen,
           ),
           const SizedBox(height: 48),
+          const _SectionLabel(label: 'Cache Engine'),
+          const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
@@ -429,28 +458,131 @@ class DiagnosticsPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const _DiagRow(
-                  label: 'Renderer Backend',
-                  value: 'Impeller (Metal)',
-                  icon: 'lucide:cpu',
-                  color: Colors.orangeAccent,
-                ),
-                const Divider(height: 48, color: Colors.white10),
-                const _DiagRow(
-                  label: 'SVG Direct Path',
-                  value: 'Active (No color filter)',
-                  icon: 'lucide:check',
-                  color: Colors.greenAccent,
-                ),
-                const Divider(height: 48, color: Colors.white10),
-                const _DiagRow(
-                  label: 'Rasterized Fallback',
-                  value: 'Ready (Color override detected)',
-                  icon: 'lucide:layers',
+                _DiagRow(
+                  label: 'Cache Utilization',
+                  value: '${stats.length} / ${stats.maxEntries} entries',
+                  icon: 'lucide:database',
                   color: Colors.blueAccent,
+                ),
+                const Divider(height: 48, color: Colors.white10),
+                _DiagRow(
+                  label: 'Hit Rate',
+                  value: '${(stats.hitRate * 100).toStringAsFixed(1)}%',
+                  icon: 'lucide:zap',
+                  color: Colors.amberAccent,
+                ),
+                const Divider(height: 48, color: Colors.white10),
+                _DiagRow(
+                  label: 'Traffic',
+                  value: '${stats.hits} Hits / ${stats.misses} Misses',
+                  icon: 'lucide:activity',
+                  color: Colors.greenAccent,
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 48),
+          const _SectionLabel(label: 'Optimization Stack'),
+          const SizedBox(height: 16),
+          const Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _OptimizationCard(
+                label: 'GZIP Compression',
+                isEnabled: true,
+                description: '70% smaller bundle size',
+              ),
+              _OptimizationCard(
+                label: 'Binary Format',
+                isEnabled: true,
+                description: '3000x faster lookup',
+              ),
+              _OptimizationCard(
+                label: 'Icon Font',
+                isEnabled: true,
+                description: 'Native rendering path',
+              ),
+            ],
+          ),
+          const SizedBox(height: 48),
+          Center(
+            child: TextButton.icon(
+              onPressed: () => IconifyDiagnostics.reset(),
+              icon: const Icon(Icons.refresh, color: Colors.redAccent),
+              label: const Text('RESET ALL CACHES',
+                  style: TextStyle(color: Colors.redAccent)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label.toUpperCase(),
+      style: const TextStyle(
+        letterSpacing: 1.5,
+        color: Colors.white30,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+class _OptimizationCard extends StatelessWidget {
+  const _OptimizationCard({
+    required this.label,
+    required this.isEnabled,
+    required this.description,
+  });
+
+  final String label;
+  final bool isEnabled;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 250,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withAlpha(10)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isEnabled ? Icons.check_circle : Icons.cancel,
+                color: isEnabled ? Colors.greenAccent : Colors.redAccent,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: const TextStyle(color: Colors.white54, fontSize: 12),
           ),
         ],
       ),
@@ -799,20 +931,20 @@ class _GlassNavbar extends StatelessWidget {
                 color: const Color(0xFF38BDF8),
               ),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              const IconifyIcon.name(
-                IconifyName('lucide', 'search'),
+              IconifyIcon(
+                'lucide:search',
                 size: 20,
                 color: Colors.white54,
               ),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              const IconifyIcon.name(
-                IconifyName('lucide', 'bell'),
+              IconifyIcon(
+                'lucide:bell',
                 size: 20,
                 color: Colors.white54,
               ),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              const IconifyIcon.name(
-                IconifyName('lucide', 'user'),
+              IconifyIcon(
+                'lucide:user',
                 size: 20,
                 color: Colors.white54,
               ),

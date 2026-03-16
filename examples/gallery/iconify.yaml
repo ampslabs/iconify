@@ -1,6 +1,8 @@
 sets:
   - mdi:*
   - lucide:*
+  - tabler:*
+  - heroicons:*
 output: lib/icons.g.dart
 data_dir: assets/iconify
 compress: true
