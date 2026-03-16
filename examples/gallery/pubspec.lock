@@ -181,10 +181,9 @@ packages:
   iconify_sdk_core:
     dependency: transitive
     description:
-      name: iconify_sdk_core
-      sha256: "86eb36da4b2967fac9ca2b8c0457cccd13dd9de11d4bb5e733e735d2b23e77d5"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../packages/core"
+      relative: true
+    source: path
     version: "0.2.0"
   leak_tracker:
     dependency: transitive

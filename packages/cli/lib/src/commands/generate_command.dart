@@ -102,6 +102,23 @@ class GenerateCommand extends Command<int> {
     final collections = <String, ParsedCollection>{};
     final attributionRequired = <String, IconifyCollectionInfo>{};
 
+    // 2a. Pre-load all configured collections for binary generation
+    for (final setConfig in config.sets) {
+      final prefix = setConfig.split(':').first;
+      if (!collections.containsKey(prefix)) {
+        final dataFile = File('${config.dataDir}/$prefix.json');
+        if (dataFile.existsSync()) {
+          final jsonStr = await dataFile.readAsString();
+          final collection = IconifyJsonParser.parseCollectionString(jsonStr);
+          collections[prefix] = collection;
+
+          if (collection.info.requiresAttribution) {
+            attributionRequired[prefix] = collection.info;
+          }
+        }
+      }
+    }
+
     for (final fullName in usedIcons) {
       final parts = fullName.split(':');
       if (parts.length < 2) continue;

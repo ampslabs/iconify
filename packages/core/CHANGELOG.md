@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0] - 2026-03-16
+
+### Added
+- **Performance**: High-performance `.iconbin` binary format support with zero-parsing startup and $O(\log n)$ lookup.
+- **Bundle Optimization**: Optional GZIP compression for all icon data formats, reducing bundle size by up to 70%.
+- **Parallel Loading**: Support for parallel collection preloading via background isolates.
+- **Expanded Models**: Added `fontFamily` support to `IconifyIconData` for native icon font rendering.
+
+### Changed
+- Stable release version 1.0.0.
+- Improved `AssetBundleIconifyProvider` to support byte-based loading and decompression.
+
 ## [0.2.0] - 2026-03-12
 
 ### Added

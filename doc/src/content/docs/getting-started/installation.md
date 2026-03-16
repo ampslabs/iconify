@@ -27,13 +27,13 @@ Your `pubspec.yaml` should now look something like this:
 dependencies:
   flutter:
     sdk: flutter
-  iconify_sdk: ^latest_version
+  iconify_sdk: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  iconify_sdk_builder: ^latest_version
-  iconify_sdk_cli: ^latest_version
+  iconify_sdk_builder: ^1.0.0
+  iconify_sdk_cli: ^1.0.0
 ```
 
 ## Next Steps

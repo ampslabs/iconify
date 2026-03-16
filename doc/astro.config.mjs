@@ -52,11 +52,13 @@ export default defineConfig({
             { label: 'Configuration (iconify.yaml)', link: '/reference/configuration' },
             { label: 'Safe Collections', link: '/reference/safe-collections' },
             { label: 'License Guide', link: '/reference/license-guide' },
+            { label: 'Performance Baseline', link: '/reference/benchmarks' },
           ],
         },
         {
           label: 'Explanation',
           items: [
+            { label: 'Performance Architecture', link: '/explanation/performance' },
             { label: 'Impeller & Rendering', link: '/explanation/impeller' },
           ],
         },

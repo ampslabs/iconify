@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0] - 2026-03-16
+
+### Added
+- **Optimization Flags**:
+  - `--format=binary`: Generates high-performance `.iconbin` files.
+  - `--format=sprite`: Generates SVG sprite sheets for Web HTML optimization.
+  - `--compress`: Automatically applies GZIP compression to all generated assets.
+  - `--font`: Generates `.otf` icon fonts for monochromatic icon sets.
+- **Manifest Generation**: Automatic creation of `icons.sprite.json` and `icons.font.json` for SDK provider synchronization.
+
+### Changed
+- Stable release version 1.0.0.
+- `generate` command now supports background processing for large collection encoding.
+
 ## [0.2.0] - 2026-03-12
 
 ### Added

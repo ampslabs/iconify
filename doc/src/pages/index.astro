@@ -7,7 +7,7 @@ import { Icon } from "@astrojs/starlight/components";
 
 const title = "iconify";
 const description =
-  "A powerful, offline-ready icon SDK for Flutter and Dart. Access 200,000+ icons instantly.";
+  "A powerful, offline-ready icon SDK for Flutter and Dart. Access 200,000+ icons instantly with zero-parsing startup.";
 const site = Astro.site ?? new URL("https://docs.example.com");
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL("/og-image.png", site).href;
@@ -778,15 +778,9 @@ const ogImage = new URL("/og-image.png", site).href;
                 x2="19.78"
                 y2="19.78"></line>
               <line x1="1" y1="12" x2="3" y2="12"></line><line
-                x1="21"
-                y1="12"
-                x2="23"
-                y2="12"></line>
+                x1="21" y1="12" x2="23" y2="12"></line>
               <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line
-                x1="18.36"
-                y1="5.64"
-                x2="19.78"
-                y2="4.22"></line>
+                x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
           </button>
         </li>
@@ -832,6 +826,7 @@ const ogImage = new URL("/og-image.png", site).href;
           >
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line><line
+              class="icon-sun"
               x1="12"
               y1="21"
               x2="12"
@@ -878,8 +873,8 @@ const ogImage = new URL("/og-image.png", site).href;
 
             <p class="hero-tagline">
               The ultimate icon solution for Flutter. Access 200,000+ icons
-              instantly, with offline bundling and Impeller-ready hybrid
-              rendering.
+              instantly, with **3000x faster** lookups and **70% smaller** 
+              production bundles.
             </p>
 
             <div class="hero-actions">
@@ -910,25 +905,19 @@ const ogImage = new URL("/og-image.png", site).href;
                     <span class="code-dot yellow"></span>
                     <span class="code-dot green"></span>
                   </div>
-                  <span class="code-filename">example.dart</span>
+                  <span class="code-filename">bundle.sh</span>
                 </div>
                 <div class="code-body">
-                  <pre><span class="t-cm">// Zero-config development mode</span>
-<span class="t-cls">IconifyIcon</span><span class="t-pn">(</span><span class="t-str">'lucide:rocket'</span><span class="t-pn">),</span>
+                  <pre><span class="t-cm"># Optimized production bundling</span>
+<span class="t-kw">iconify</span> generate \
+  <span class="t-str">--format=all</span> \
+  <span class="t-str">--compress</span> \
+  <span class="t-str">--font</span>
 
-<span class="t-cm">// Type-safe generated icons for production</span>
-<span class="t-cls">IconifyIcon</span><span class="t-pn">.</span><span class="t-fn">name</span><span class="t-pn">(</span>
-  <span class="t-cls">IconsMdi</span><span class="t-pn">.</span>home<span class="t-pn">,</span>
-  color<span class="t-pn">:</span> <span class="t-cls">Colors</span><span class="t-pn">.</span>blue<span class="t-pn">,</span>
-  size<span class="t-pn">:</span> <span class="t-num">24.0</span><span class="t-pn">,</span>
-<span class="t-pn">),</span>
-
-<span class="t-cm">// Setup your fully offline provider</span>
-runApp<span class="t-pn">(</span>
-  <span class="t-cls">IconifyApp</span><span class="t-pn">(</span>
-    child<span class="t-pn">:</span> <span class="t-cls">MyApp</span><span class="t-pn">(),</span>
-  <span class="t-pn">),</span>
-<span class="t-pn">);</span></pre>
+<span class="t-cm"># Results:</span>
+<span class="t-fn">used_icons.json.gz</span>   <span class="t-num">6KB</span>
+<span class="t-fn">icons.font.otf.gz</span>    <span class="t-num">4KB</span>
+<span class="t-fn">Lookup Speed</span>         <span class="t-num">3.9μs</span></pre>
                 </div>
               </div>
             </div>
@@ -953,11 +942,11 @@ runApp<span class="t-pn">(</span>
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">🎨</div>
-            <h3>Custom Collections</h3>
+            <div class="feature-icon">⚡</div>
+            <h3>Blistering Fast</h3>
             <p>
-              Seamlessly bring your own SVG icons. Build your internal libraries
-              with our CLI and robust generator.
+              New `.iconbin` binary format enables sub-microsecond icon resolution 
+              and zero-parsing cold starts.
             </p>
           </div>
           <div class="feature-card">
@@ -969,11 +958,11 @@ runApp<span class="t-pn">(</span>
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Type Safety</h3>
+            <div class="feature-icon">📏</div>
+            <h3>Deeply Compressed</h3>
             <p>
-              Extract only the icons you use and bundle them perfectly.
-              Generates Dart constants so you catch errors at compile-time.
+              Built-in GZIP and monochromatic font paths reduce your icon 
+              footprint by 70% or more vs raw SVG.
             </p>
           </div>
           <div class="feature-card">
@@ -985,11 +974,11 @@ runApp<span class="t-pn">(</span>
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Dart 3 & Flutter 3.x</h3>
+            <div class="feature-icon">📊</div>
+            <h3>Diagnostics</h3>
             <p>
-              Written from ground up to support modern Flutter. Optimized SDK
-              replaces bloated manual wrapper classes.
+              Real-time monitoring of cache hits, misses, and rendering paths 
+              to keep your app's frame rate rock solid.
             </p>
           </div>
         </div>

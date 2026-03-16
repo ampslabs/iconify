@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0] - 2026-03-16
+
+### Changed
+- Stable release version 1.0.0.
+- SDK optimizations.
+
 ## [0.2.0] - 2026-03-12
 
 ### Added

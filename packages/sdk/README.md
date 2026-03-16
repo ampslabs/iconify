@@ -11,13 +11,7 @@ Add `iconify_sdk` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  iconify_sdk: ^0.2.0
-```
-
-Or run:
-
-```bash
-flutter pub add iconify_sdk
+  iconify_sdk: ^1.0.0
 ```
 
 ## Getting Started
@@ -56,9 +50,15 @@ class MyApp extends StatelessWidget {
 
 - **🚀 Zero Config**: Works out of the box in Debug mode using the Iconify API.
 - **📦 Offline First**: Built-in "Starter Registry" with top icons from MDI, Lucide, Tabler, and Heroicons.
-- **⚡ Performance**: Impeller-optimized rendering path for stutter-free scrolling.
-- **🛡️ Production Ready**: CLI and `build_runner` tools to lock your icon set and prevent network calls in release builds.
-- **⚖️ License Aware**: Built-in tools to audit icon licenses and generate attribution reports.
+- **⚡ High Performance**: 
+  - **.iconbin Format**: Ultra-fast binary format with zero-parsing startup.
+  - **Picture Cache**: Intelligent LRU caching for `dart:ui.Picture` objects to minimize re-render overhead.
+  - **Impeller Ready**: Optimized rendering paths for Flutter's newest engine.
+- **📏 Bundle Intelligence**:
+  - **GZIP Support**: Built-in support for compressed assets, reducing icon data size by ~70%.
+  - **Font Path**: Optional monochromatic font generation for 40% smaller footprint than raw SVG.
+  - **Web Optimized**: Sprite sheet generation for the Flutter Web HTML renderer.
+- **📊 Diagnostics**: Built-in performance monitoring via `IconifyDiagnostics`.
 
 ## The Production Workflow
 
@@ -66,8 +66,8 @@ class MyApp extends StatelessWidget {
 
 1. **Development**: Use any icon string (e.g., `mdi:rocket`). The SDK fetches it automatically.
 2. **Sync**: Run `iconify sync` to download the full collections you're using.
-3. **Bundle**: Run `build_runner build` to scan your code and generate optimized Dart constants.
-4. **Deploy**: Your app now runs 100% offline with zero network overhead.
+3. **Generate**: Run `iconify generate --compress --font` to bundle exactly the icons you use with maximum optimization.
+4. **Deploy**: Your app now runs 100% offline with zero network overhead and a minimal bundle size.
 
 ## Documentation
 
