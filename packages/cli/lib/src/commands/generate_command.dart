@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
@@ -22,6 +23,13 @@ class GenerateCommand extends Command<int> {
       abbr: 'a',
       help: 'Path to generate ICON_ATTRIBUTION.md.',
       defaultsTo: 'ICON_ATTRIBUTION.md',
+    );
+    argParser.addOption(
+      'format',
+      abbr: 'f',
+      help: 'Output format for icon data.',
+      allowed: ['dart', 'binary', 'sprite', 'all'],
+      defaultsTo: 'dart',
     );
   }
 
@@ -125,29 +133,86 @@ class GenerateCommand extends Command<int> {
       }
     }
 
-    progress.update('Generating code...');
+    final format = argResults?['format'] as String;
+    final bool generateDart = format == 'dart' || format == 'all';
+    final bool generateBinary = format == 'binary' || format == 'all';
+    final bool generateSprite = format == 'sprite' || format == 'all';
 
-    // 4. Generate Dart code
-    final outputContent = IconCodeGenerator.generate(
-      usedIconNames: usedIcons,
-      iconDataMap: iconDataMap,
-    );
+    if (generateDart) {
+      progress.update('Generating Dart code...');
+      final outputContent = IconCodeGenerator.generate(
+        usedIconNames: usedIcons,
+        iconDataMap: iconDataMap,
+      );
 
-    if (argResults?['dry-run'] == true) {
-      progress.complete(
-          'Dry run: Code generation would produce ${iconDataMap.length} icons.');
-      _logger.info('\n--- PREVIEW ---');
-      _logger.info(outputContent.split('\n').take(20).join('\n'));
-      _logger.info('...');
-      return ExitCode.success.code;
+      if (argResults?['dry-run'] == true) {
+        _logger.info('\n--- DART PREVIEW ---');
+        _logger.info(outputContent.split('\n').take(10).join('\n'));
+        _logger.info('...');
+      } else {
+        final outputFile = File(config.output);
+        if (!outputFile.parent.existsSync()) {
+          outputFile.parent.createSync(recursive: true);
+        }
+        await outputFile.writeAsString(outputContent);
+      }
     }
 
-    // 5. Write to disk
-    final outputFile = File(config.output);
-    if (!outputFile.parent.existsSync()) {
-      outputFile.parent.createSync(recursive: true);
+    if (generateBinary) {
+      progress.update('Generating Binary files...');
+      for (final entry in collections.entries) {
+        final prefix = entry.key;
+        final collection = entry.value;
+        final encoded = BinaryIconFormat.encode(collection);
+
+        if (argResults?['dry-run'] == true) {
+          _logger.info(
+              'Dry run: Would write $prefix.iconbin (${encoded.length} bytes)');
+        } else {
+          final binaryFile = File('${config.dataDir}/$prefix.iconbin');
+          await binaryFile.writeAsBytes(encoded);
+          _logger.info('✅ Generated ${binaryFile.path}');
+        }
+      }
     }
-    await outputFile.writeAsString(outputContent);
+
+    if (generateSprite) {
+      progress.update('Generating SVG Sprite Sheet...');
+      final buffer = StringBuffer();
+      buffer.writeln(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="display:none;">');
+
+      final sortedKeys = iconDataMap.keys.toList()..sort();
+      for (final fullName in sortedKeys) {
+        final data = iconDataMap[fullName]!;
+        final id = fullName.replaceAll(':', '-');
+        buffer.writeln(
+            '  <symbol id="$id" viewBox="0 0 ${data.width} ${data.height}">');
+        buffer.writeln('    ${data.body}');
+        buffer.writeln('  </symbol>');
+      }
+      buffer.writeln('</svg>');
+
+      if (argResults?['dry-run'] == true) {
+        _logger.info(
+            'Dry run: Would write icons.sprite.svg (${buffer.length} bytes)');
+      } else {
+        final spriteFile = File('${config.dataDir}/icons.sprite.svg');
+        await spriteFile.writeAsString(buffer.toString());
+        _logger.info('✅ Generated ${spriteFile.path}');
+
+        // Generate manifest for SpriteIconifyProvider
+        final manifest = {
+          'icons': iconDataMap.map((key, value) => MapEntry(key, {
+                'width': value.width,
+                'height': value.height,
+              })),
+        };
+        final manifestFile = File('${config.dataDir}/icons.sprite.json');
+        await manifestFile.writeAsString(jsonEncode(manifest));
+        _logger.info('✅ Generated ${manifestFile.path}');
+      }
+    }
 
     // 6. Generate Attribution File
     if (attributionRequired.isNotEmpty) {
@@ -172,12 +237,13 @@ class GenerateCommand extends Command<int> {
         }
         buffer.writeln();
       }
-      await attributionFile.writeAsString(buffer.toString());
-      _logger.info('✅ Generated $attributionPath');
+      if (argResults?['dry-run'] != true) {
+        await attributionFile.writeAsString(buffer.toString());
+        _logger.info('✅ Generated $attributionPath');
+      }
     }
 
-    progress.complete(
-        'Successfully generated ${iconDataMap.length} icons into ${config.output}');
+    progress.complete('Successfully generated icon data ($format)');
     return ExitCode.success.code;
   }
 }

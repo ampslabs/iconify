@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import '../config/iconify_scope.dart';
 import '../render/iconify_rasterizer.dart';
 import '../render/render_resolver.dart';
+import 'cached_svg_iconify_widget.dart';
 import 'iconify_error_widget.dart';
 
 /// A widget that renders an Iconify icon by its [prefix:name] identifier.
@@ -170,14 +170,14 @@ class _IconifyIconState extends State<IconifyIcon> {
       );
     }
 
-    // Default: svgDirect
-    return SvgPicture.string(
-      data.toSvgString(
-        color: color != null ? _colorToHex(color) : null,
-      ),
-      width: effectiveSize,
-      height: effectiveSize,
-      semanticsLabel: widget.semanticLabel,
+    // Default: use cached SVG widget
+    return CachedSvgIconifyWidget(
+      name: widget.name,
+      data: data,
+      size: widget.size,
+      color: color,
+      opacity: widget.opacity,
+      semanticLabel: widget.semanticLabel,
     );
   }
 

@@ -20,7 +20,7 @@ class StarterRegistry {
   /// Initializes the starter registry and injects it into the provider chain.
   ///
   /// This is called automatically by [IconifyApp].
-  Future<void> initialize() async {
+  Future<void> initialize({List<String> preloadPrefixes = const []}) async {
     if (_initialized) return;
 
     if (kDebugMode && !kIsWeb) {
@@ -33,7 +33,10 @@ class StarterRegistry {
         if (packagePath != null) {
           final starterPath =
               p.join(packagePath, 'assets', 'iconify', 'starter');
-          _provider = FileSystemIconifyProvider(root: starterPath);
+          _provider = FileSystemIconifyProvider(
+            root: starterPath,
+            preloadPrefixes: preloadPrefixes,
+          );
         }
       } catch (e) {
         // Fallback to asset bundle if resolver fails

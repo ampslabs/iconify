@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import '../errors/iconify_exception.dart';
 import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
@@ -24,16 +25,17 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   FileSystemIconifyProvider({
     required this.root,
     bool preload = false,
+    this.preloadPrefixes,
     this.sanitizer = const SvgSanitizer(mode: SanitizerMode.lenient),
   }) : _root = Directory(root) {
-    if (preload) {
-      // Fire and forget; load will happen on first access otherwise
+    if (preload || (preloadPrefixes?.isNotEmpty ?? false)) {
       _preloadAll();
     }
   }
 
   final String root;
   final Directory _root;
+  final List<String>? preloadPrefixes;
   final _cache = <String, Map<String, dynamic>>{};
 
   /// Optional sanitizer to apply to icons loaded from the file system.
@@ -43,11 +45,46 @@ final class FileSystemIconifyProvider extends IconifyProvider {
 
   Future<void> _preloadAll() async {
     if (!_root.existsSync()) return;
-    await for (final entity in _root.list()) {
-      if (entity is File && entity.path.endsWith('.json')) {
-        final prefix = entity.uri.pathSegments.last.replaceAll('.json', '');
-        await _loadCollection(prefix);
+
+    final prefixes = <String>[];
+    if (preloadPrefixes != null) {
+      prefixes.addAll(preloadPrefixes!);
+    } else {
+      await for (final entity in _root.list()) {
+        if (entity is File && entity.path.endsWith('.json')) {
+          final prefix = entity.uri.pathSegments.last.replaceAll('.json', '');
+          // used_icons.json is usually in this dir but shouldn't be preloaded as a collection
+          if (prefix != 'used_icons') {
+            prefixes.add(prefix);
+          }
+        }
       }
+    }
+
+    // Parallel load using Isolate.run for parsing large JSONs if supported (Dart 2.19+)
+    final results = await Future.wait(prefixes.map((p) => _loadInIsolate(p)));
+    for (var i = 0; i < prefixes.length; i++) {
+      if (results[i] != null) {
+        _cache[prefixes[i]] = results[i]!;
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadInIsolate(String prefix) async {
+    final path = '${_root.path}/$prefix.json';
+    final file = File(path);
+    if (!file.existsSync()) return null;
+
+    try {
+      final content = await file.readAsString();
+      // Offload JSON decoding to a background isolate to avoid blocking the main thread
+      return await Isolate.run(
+          () => jsonDecode(content) as Map<String, dynamic>);
+    } catch (e) {
+      // Diagnostic logging for developers.
+      // ignore: avoid_print
+      print('Iconify SDK [LOCAL]: Failed to preload $prefix.json: $e');
+      return null;
     }
   }
 
@@ -99,6 +136,7 @@ final class FileSystemIconifyProvider extends IconifyProvider {
 
   @override
   Future<bool> hasCollection(String prefix) async {
+    if (_cache.containsKey(prefix)) return true;
     return File('${_root.path}/$prefix.json').existsSync();
   }
 }
