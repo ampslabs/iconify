@@ -31,6 +31,20 @@ This document tracks performance benchmarks for the Iconify SDK v2.
 - **PictureCache Eviction Overhead**: Negligible (<1ms for 100 evictions)
 - **Parallel Preloading**: 7ms (Parallel) vs 22ms (Sequential) for 5 collections — **3.1x Speedup**
 
-### 2026-03-15
+## Bundle Size Optimization (Phase D)
+
+Targeting ≤ 15KB for a real-world app with 50 icons.
+
+### GZIP Compression (50 MDI Icons)
+
+| Format | Raw Size | GZIP Size | Reduction |
+|---|---|---|---|
+| **JSON** | 21.5 KB | 5.5 KB | **74%** |
+| **Binary (.iconbin)** | 21.3 KB | 6.7 KB | **68%** |
+
+*Note: JSON compresses slightly better because GZIP thrives on the repetitive structure of text-based JSON, but Binary still offers significant savings and much faster lookup speeds.*
+
+### 2026-03-16
+
 - Initial benchmark of `BinaryIconFormat` v1.
 - Results confirmed 3x faster full parse and extremely fast random access.

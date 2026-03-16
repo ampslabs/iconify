@@ -11,6 +11,7 @@ final class IconifyConfig {
     this.cacheMaxEntries = 500,
     this.remoteApiBase,
     this.preloadPrefixes = const [],
+    this.compress = false,
   });
 
   /// The operational mode for icon resolution.
@@ -31,6 +32,9 @@ final class IconifyConfig {
   /// This is only supported by [FileSystemIconifyProvider] (standard dev mode).
   final List<String> preloadPrefixes;
 
+  /// Whether to use GZIP compression for icon data files.
+  final bool compress;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -39,9 +43,10 @@ final class IconifyConfig {
           mode == other.mode &&
           cacheMaxEntries == other.cacheMaxEntries &&
           remoteApiBase == other.remoteApiBase &&
-          preloadPrefixes == other.preloadPrefixes;
+          preloadPrefixes == other.preloadPrefixes &&
+          compress == other.compress;
 
   @override
-  int get hashCode =>
-      Object.hash(mode, cacheMaxEntries, remoteApiBase, preloadPrefixes);
+  int get hashCode => Object.hash(
+      mode, cacheMaxEntries, remoteApiBase, preloadPrefixes, compress);
 }

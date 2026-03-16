@@ -50,15 +50,21 @@ final class FileSystemIconifyProvider extends IconifyProvider {
     if (preloadPrefixes != null) {
       prefixes.addAll(preloadPrefixes!);
     } else {
+      final discoveredPrefixes = <String>{};
       await for (final entity in _root.list()) {
-        if (entity is File && entity.path.endsWith('.json')) {
-          final prefix = entity.uri.pathSegments.last.replaceAll('.json', '');
-          // used_icons.json is usually in this dir but shouldn't be preloaded as a collection
-          if (prefix != 'used_icons') {
-            prefixes.add(prefix);
+        if (entity is File) {
+          final path = entity.path;
+          if (path.endsWith('.json') || path.endsWith('.json.gz')) {
+            final fileName = entity.uri.pathSegments.last;
+            final prefix = fileName.split('.').first;
+            // used_icons.json is usually in this dir but shouldn't be preloaded as a collection
+            if (prefix != 'used_icons') {
+              discoveredPrefixes.add(prefix);
+            }
           }
         }
       }
+      prefixes.addAll(discoveredPrefixes);
     }
 
     // Parallel load using Isolate.run for parsing large JSONs if supported (Dart 2.19+)
@@ -71,19 +77,29 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   }
 
   Future<Map<String, dynamic>?> _loadInIsolate(String prefix) async {
-    final path = '${_root.path}/$prefix.json';
-    final file = File(path);
+    final jsonPath = '${_root.path}/$prefix.json';
+    final gzPath = '$jsonPath.gz';
+
+    File file = File(gzPath);
+    bool isGzipped = true;
+    if (!file.existsSync()) {
+      file = File(jsonPath);
+      isGzipped = false;
+    }
+
     if (!file.existsSync()) return null;
 
     try {
-      final content = await file.readAsString();
-      // Offload JSON decoding to a background isolate to avoid blocking the main thread
-      return await Isolate.run(
-          () => jsonDecode(content) as Map<String, dynamic>);
+      final bytes = await file.readAsBytes();
+      // Offload JSON decoding (and decompression) to a background isolate
+      return await Isolate.run(() {
+        final data = isGzipped ? gzip.decode(bytes) : bytes;
+        return jsonDecode(utf8.decode(data)) as Map<String, dynamic>;
+      });
     } catch (e) {
       // Diagnostic logging for developers.
       // ignore: avoid_print
-      print('Iconify SDK [LOCAL]: Failed to preload $prefix.json: $e');
+      print('Iconify SDK [LOCAL]: Failed to preload $prefix: $e');
       return null;
     }
   }
@@ -91,17 +107,27 @@ final class FileSystemIconifyProvider extends IconifyProvider {
   Future<Map<String, dynamic>?> _loadCollection(String prefix) async {
     if (_cache.containsKey(prefix)) return _cache[prefix];
 
-    final file = File('${_root.path}/$prefix.json');
+    final jsonPath = '${_root.path}/$prefix.json';
+    final gzPath = '$jsonPath.gz';
+
+    File file = File(gzPath);
+    bool isGzipped = true;
+    if (!file.existsSync()) {
+      file = File(jsonPath);
+      isGzipped = false;
+    }
+
     if (!file.existsSync()) return null;
 
     try {
-      final content = await file.readAsString();
-      final json = jsonDecode(content) as Map<String, dynamic>;
+      final bytes = await file.readAsBytes();
+      final data = isGzipped ? gzip.decode(bytes) : bytes;
+      final json = jsonDecode(utf8.decode(data)) as Map<String, dynamic>;
       _cache[prefix] = json;
       return json;
     } catch (e) {
       throw IconifyParseException(
-        message: 'Failed to parse $prefix.json: $e',
+        message: 'Failed to parse $prefix: $e',
         field: 'file',
         rawValue: file.path,
       );

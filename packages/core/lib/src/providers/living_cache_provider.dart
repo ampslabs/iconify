@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
 import '../models/iconify_name.dart';
@@ -10,19 +11,19 @@ import 'iconify_provider.dart';
 /// This allows [LivingCacheProvider] to work in both Flutter (via rootBundle/assets)
 /// and CLI (via dart:io).
 abstract interface class LivingCacheStorage {
-  /// Reads the content of the living cache file.
+  /// Reads the content of the living cache file as bytes.
   ///
   /// Returns null if the file does not exist.
-  Future<String?> read();
+  Future<Uint8List?> readBytes();
 
-  /// Writes the content of the living cache file.
-  Future<void> write(String content);
+  /// Writes the content of the living cache file as bytes.
+  Future<void> writeBytes(Uint8List bytes);
 }
 
 /// A provider that manages a "living cache" of icons used by the application.
 ///
 /// This provider serves two purposes:
-/// 1. **Production Bundle:** It reads from `assets/iconify/used_icons.json`,
+/// 1. **Production Bundle:** It reads from `assets/iconify/used_icons.json` (or .gz),
 ///    which contains exactly the icons needed by the app, eliminating the
 ///    need for large starter assets in production.
 /// 2. **Development Write-back:** In development, it can be updated with
@@ -32,10 +33,17 @@ final class LivingCacheProvider extends IconifyProvider {
   LivingCacheProvider({
     required this.storage,
     this.debounceDuration = const Duration(milliseconds: 500),
+    this.compress = false,
   });
 
   final LivingCacheStorage storage;
   final Duration debounceDuration;
+
+  /// Whether to compress the cache when writing.
+  ///
+  /// This is typically handled by the storage implementation
+  /// based on file extension, but this flag allows forcing it.
+  final bool compress;
 
   bool _loaded = false;
   int _schemaVersion = 1;
@@ -49,8 +57,9 @@ final class LivingCacheProvider extends IconifyProvider {
     if (_loaded) return;
 
     try {
-      final content = await storage.read();
-      if (content != null && content.isNotEmpty) {
+      final bytes = await storage.readBytes();
+      if (bytes != null && bytes.isNotEmpty) {
+        final content = utf8.decode(bytes);
         final json = jsonDecode(content) as Map<String, dynamic>;
         _schemaVersion = json['schemaVersion'] as int? ?? 1;
 
@@ -158,7 +167,8 @@ final class LivingCacheProvider extends IconifyProvider {
     };
 
     final content = const JsonEncoder.withIndent('  ').convert(json);
-    await storage.write(content);
+    final bytes = Uint8List.fromList(utf8.encode(content));
+    await storage.writeBytes(bytes);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import '../render/gzip_utils.dart';
 
 /// An [IconifyProvider] that uses SVG Sprite Sheets for optimized web rendering.
 ///
@@ -10,10 +11,12 @@ final class SpriteIconifyProvider extends IconifyProvider {
   SpriteIconifyProvider({
     this.assetPath = 'assets/iconify/icons.sprite.svg',
     this.manifestPath = 'assets/iconify/icons.sprite.json',
+    this.compress = false,
   });
 
   final String assetPath;
   final String manifestPath;
+  final bool compress;
 
   bool _initialized = false;
   Map<String, dynamic>? _manifest;
@@ -21,7 +24,18 @@ final class SpriteIconifyProvider extends IconifyProvider {
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
     try {
-      final manifestContent = await rootBundle.loadString(manifestPath);
+      final actualManifestPath = compress ? '$manifestPath.gz' : manifestPath;
+      final byteData = await rootBundle.load(actualManifestPath);
+      final bytes = byteData.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      );
+
+      final decompressed = actualManifestPath.endsWith('.gz')
+          ? await decompressGZip(bytes)
+          : bytes;
+
+      final manifestContent = utf8.decode(decompressed);
       final decoded = jsonDecode(manifestContent) as Map<String, dynamic>;
       _manifest = decoded['icons'] as Map<String, dynamic>?;
     } catch (_) {
@@ -40,11 +54,12 @@ final class SpriteIconifyProvider extends IconifyProvider {
 
     final iconInfo = _manifest![fullName] as Map<String, dynamic>;
     final id = '${name.prefix}-${name.iconName}';
+    final actualAssetPath = compress ? '$assetPath.gz' : assetPath;
 
     return IconifyIconData(
       // The HTML renderer can render this <use> tag efficiently
       // when it points to an external SVG file in the assets.
-      body: '<use href="$assetPath#$id" />',
+      body: '<use href="$actualAssetPath#$id" />',
       width: (iconInfo['width'] as num?)?.toDouble() ?? 24.0,
       height: (iconInfo['height'] as num?)?.toDouble() ?? 24.0,
     );

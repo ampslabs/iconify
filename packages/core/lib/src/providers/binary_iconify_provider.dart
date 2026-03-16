@@ -44,13 +44,18 @@ final class BinaryIconifyProvider extends IconifyProvider {
     if (preloadPrefixes != null) {
       prefixes.addAll(preloadPrefixes!);
     } else {
+      final discoveredPrefixes = <String>{};
       await for (final entity in _root.list()) {
-        if (entity is File && entity.path.endsWith('.iconbin')) {
-          final prefix =
-              entity.uri.pathSegments.last.replaceAll('.iconbin', '');
-          prefixes.add(prefix);
+        if (entity is File) {
+          final path = entity.path;
+          if (path.endsWith('.iconbin') || path.endsWith('.iconbin.gz')) {
+            final fileName = entity.uri.pathSegments.last;
+            final prefix = fileName.split('.').first;
+            discoveredPrefixes.add(prefix);
+          }
         }
       }
+      prefixes.addAll(discoveredPrefixes);
     }
 
     // Parallel load using Isolate.run for reading files off-thread
@@ -63,17 +68,28 @@ final class BinaryIconifyProvider extends IconifyProvider {
   }
 
   Future<Uint8List?> _loadInIsolate(String prefix) async {
-    final path = '${_root.path}/$prefix.iconbin';
-    final file = File(path);
+    final binPath = '${_root.path}/$prefix.iconbin';
+    final gzPath = '$binPath.gz';
+
+    File file = File(gzPath);
+    bool isGzipped = true;
+    if (!file.existsSync()) {
+      file = File(binPath);
+      isGzipped = false;
+    }
+
     if (!file.existsSync()) return null;
 
     try {
-      // For large .iconbin files (like MDI), reading as bytes can still be heavy
-      return await Isolate.run(() => file.readAsBytesSync());
+      final bytes = await Isolate.run(() => file.readAsBytesSync());
+      if (isGzipped) {
+        return await Isolate.run(() => Uint8List.fromList(gzip.decode(bytes)));
+      }
+      return bytes;
     } catch (e) {
       // Diagnostic logging for developers.
       // ignore: avoid_print
-      print('Iconify SDK [BINARY]: Failed to preload $prefix.iconbin: $e');
+      print('Iconify SDK [BINARY]: Failed to preload $prefix: $e');
       return null;
     }
   }
@@ -81,17 +97,28 @@ final class BinaryIconifyProvider extends IconifyProvider {
   Future<Uint8List?> _loadCollectionBytes(String prefix) async {
     if (_cache.containsKey(prefix)) return _cache[prefix];
 
-    final file = File('${_root.path}/$prefix.iconbin');
+    final binPath = '${_root.path}/$prefix.iconbin';
+    final gzPath = '$binPath.gz';
+
+    File file = File(gzPath);
+    bool isGzipped = true;
+    if (!file.existsSync()) {
+      file = File(binPath);
+      isGzipped = false;
+    }
+
     if (!file.existsSync()) return null;
 
     try {
       final bytes = await file.readAsBytes();
-      _cache[prefix] = bytes;
-      return bytes;
+      final decodedBytes =
+          isGzipped ? Uint8List.fromList(gzip.decode(bytes)) : bytes;
+      _cache[prefix] = decodedBytes;
+      return decodedBytes;
     } catch (e) {
       // BinaryIconifyProvider uses print for developer diagnostics.
       // ignore: avoid_print
-      print('Iconify SDK [BINARY]: Failed to read $prefix.iconbin: $e');
+      print('Iconify SDK [BINARY]: Failed to read $prefix: $e');
       return null;
     }
   }

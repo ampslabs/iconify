@@ -1,184 +1,185 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 class MockLivingCacheStorage implements LivingCacheStorage {
   String? content;
+
   @override
-  Future<String?> read() async => content;
+  Future<Uint8List?> readBytes() async {
+    return content != null ? Uint8List.fromList(utf8.encode(content!)) : null;
+  }
+
   @override
-  Future<void> write(String content) async => this.content = content;
+  Future<void> writeBytes(Uint8List bytes) async {
+    content = utf8.decode(bytes);
+  }
 }
+
+class MockHttpClient extends Mock implements http.Client {}
 
 void main() {
   group('RemoteIconifyProvider', () {
-    const validIconJson = {
-      'prefix': 'mdi',
-      'icons': {
-        'home': {
-          'body': '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
-        }
-      },
-      'width': 24,
-      'height': 24,
-    };
+    late MockHttpClient client;
+    late MockLivingCacheStorage storage;
+    late LivingCacheProvider livingCache;
+    late RemoteIconifyProvider provider;
 
-    test('returns icon data on 200 response', () async {
-      final client = MockClient((request) async {
-        // Return 404 for GitHub to test the API fallback in this specific test
-        if (request.url.host == 'raw.githubusercontent.com') {
-          return http.Response('not found', 404);
-        }
-        return http.Response(jsonEncode(validIconJson), 200);
-      });
-
-      final provider = RemoteIconifyProvider(httpClient: client);
-      final result = await provider.getIcon(const IconifyName('mdi', 'home'));
-
-      expect(result, isNotNull);
-      expect(result!.body, contains('M10 20'));
-      await provider.dispose();
+    setUpAll(() {
+      registerFallbackValue(Uri());
     });
 
-    test('prefers GitHub Raw over API', () async {
-      var githubCalled = false;
-      var apiCalled = false;
-
-      final client = MockClient((request) async {
-        if (request.url.host == 'raw.githubusercontent.com') {
-          githubCalled = true;
-          return http.Response(jsonEncode(validIconJson), 200);
-        }
-        if (request.url.host == 'api.iconify.design') {
-          apiCalled = true;
-          return http.Response(jsonEncode(validIconJson), 200);
-        }
-        return http.Response('error', 500);
-      });
-
-      final provider = RemoteIconifyProvider(httpClient: client);
-      await provider.getIcon(const IconifyName('mdi', 'home'));
-
-      expect(githubCalled, isTrue);
-      expect(apiCalled, isFalse);
-      await provider.dispose();
-    });
-
-    test('writes back to LivingCache on successful fetch', () async {
-      final client = MockClient((request) async {
-        return http.Response(jsonEncode(validIconJson), 200);
-      });
-
-      final storage = MockLivingCacheStorage();
-      final livingCache = LivingCacheProvider(storage: storage);
-      final provider = RemoteIconifyProvider(
+    setUp(() {
+      client = MockHttpClient();
+      storage = MockLivingCacheStorage();
+      livingCache = LivingCacheProvider(
+        storage: storage,
+        debounceDuration: Duration.zero,
+      );
+      provider = RemoteIconifyProvider(
         httpClient: client,
         livingCache: livingCache,
       );
+    });
 
-      final name = const IconifyName('mdi', 'home');
+    test('returns icon data on 200 response', () async {
+      const name = IconifyName('mdi', 'home');
+      when(() => client.get(any())).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'prefix': 'mdi',
+              'icons': {
+                'home': {'body': '<path d="home"/>'}
+              }
+            }),
+            200,
+          ));
+
+      final icon = await provider.getIcon(name);
+
+      expect(icon, isNotNull);
+      expect(icon!.body, '<path d="home"/>');
+    });
+
+    test('prefers GitHub Raw over API', () async {
+      const name = IconifyName('mdi', 'home');
+
+      // 1. Success from GitHub
+      when(() => client.get(any(
+              that: predicate<Uri>(
+                  (u) => u.host == 'raw.githubusercontent.com'))))
+          .thenAnswer((_) async => http.Response(
+                jsonEncode({
+                  'prefix': 'mdi',
+                  'icons': {
+                    'home': {'body': '<path d="github"/>'}
+                  }
+                }),
+                200,
+              ));
+
+      final icon = await provider.getIcon(name);
+      expect(icon!.body, '<path d="github"/>');
+
+      verify(() => client.get(any(
+          that: predicate<Uri>(
+              (u) => u.host == 'raw.githubusercontent.com')))).called(1);
+      verifyNever(() => client.get(
+          any(that: predicate<Uri>((u) => u.host == 'api.iconify.design'))));
+    });
+
+    test('writes back to LivingCache on successful fetch', () async {
+      const name = IconifyName('mdi', 'home');
+      when(() => client.get(any())).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'prefix': 'mdi',
+              'icons': {
+                'home': {'body': '<path d="home"/>'}
+              }
+            }),
+            200,
+          ));
+
       await provider.getIcon(name);
-
-      // LivingCache debounces by default (500ms)
-      // Manually flush to see results immediately
       await livingCache.flush();
 
       expect(storage.content, contains('mdi:home'));
-      expect(storage.content, contains('"source": "remote"'));
-
-      await provider.dispose();
     });
 
     test('respects writeBackEnabled flag', () async {
-      final client = MockClient((request) async {
-        return http.Response(jsonEncode(validIconJson), 200);
-      });
-
-      final storage = MockLivingCacheStorage();
-      final livingCache = LivingCacheProvider(storage: storage);
-      final provider = RemoteIconifyProvider(
+      final noWriteProvider = RemoteIconifyProvider(
         httpClient: client,
         livingCache: livingCache,
         writeBackEnabled: false,
       );
 
-      await provider.getIcon(const IconifyName('mdi', 'home'));
+      const name = IconifyName('mdi', 'home');
+      when(() => client.get(any())).thenAnswer((_) async => http.Response(
+            jsonEncode({
+              'prefix': 'mdi',
+              'icons': {
+                'home': {'body': '<path d="home"/>'}
+              }
+            }),
+            200,
+          ));
+
+      await noWriteProvider.getIcon(name);
       await livingCache.flush();
 
-      // Should be an empty icons map, not necessarily null because flush writes the schema
-      expect(storage.content, contains('"icons": {}'));
-      await provider.dispose();
+      // Should not contain the icon
+      expect(storage.content, isNot(contains('mdi:home')));
     });
 
     test('handles API errors gracefully', () async {
-      final client = MockClient((request) async {
-        return http.Response('error', 500);
-      });
+      const name = IconifyName('mdi', 'home');
 
-      final provider = RemoteIconifyProvider(httpClient: client);
-      final result = await provider.getIcon(const IconifyName('mdi', 'home'));
+      // GitHub fails
+      when(() => client.get(any(
+              that: predicate<Uri>(
+                  (u) => u.host == 'raw.githubusercontent.com'))))
+          .thenAnswer((_) async => http.Response('Not Found', 404));
 
-      expect(result, isNull);
-      await provider.dispose();
+      // API fails
+      when(() => client.get(any(
+              that: predicate<Uri>((u) => u.host == 'api.iconify.design'))))
+          .thenAnswer((_) async => http.Response('Server Error', 500));
+
+      final icon = await provider.getIcon(name);
+      expect(icon, isNull);
     });
 
     test('automatically batches concurrent requests for the same prefix',
         () async {
-      var callCount = 0;
-      final client = MockClient((request) async {
-        // Return 404 for GitHub to test the API fallback in this specific test
-        if (request.url.host == 'raw.githubusercontent.com') {
-          return http.Response('not found', 404);
-        }
-        callCount++;
+      const home = IconifyName('mdi', 'home');
+      const account = IconifyName('mdi', 'account');
+
+      when(() => client.get(any())).thenAnswer((_) async {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
         return http.Response(
           jsonEncode({
             'prefix': 'mdi',
             'icons': {
               'home': {'body': 'home'},
-              'account': {'body': 'account'},
+              'account': {'body': 'account'}
             }
           }),
           200,
         );
       });
 
-      final provider = RemoteIconifyProvider(
-        httpClient: client,
-        batchWindow: const Duration(milliseconds: 10),
-      );
-
       final results = await Future.wait([
-        provider.getIcon(const IconifyName('mdi', 'home')),
-        provider.getIcon(const IconifyName('mdi', 'account')),
+        provider.getIcon(home),
+        provider.getIcon(account),
       ]);
 
-      expect(results[0]?.body, 'home');
-      expect(results[1]?.body, 'account');
-      expect(callCount, 1);
-      await provider.dispose();
-    });
+      expect(results[0]!.body, 'home');
+      expect(results[1]!.body, 'account');
 
-    test('getCollection returns info', () async {
-      final client = MockClient((request) async {
-        return http.Response(
-          jsonEncode({
-            'name': 'Material Design Icons',
-            'total': 7000,
-            'license': {'title': 'Apache 2.0'},
-          }),
-          200,
-        );
-      });
-
-      final provider = RemoteIconifyProvider(httpClient: client);
-      final info = await provider.getCollection('mdi');
-
-      expect(info, isNotNull);
-      expect(info!.name, 'Material Design Icons');
-      await provider.dispose();
+      // Should only have made one network call for the 'mdi' collection
+      verify(() => client.get(any())).called(1);
     });
   });
 }

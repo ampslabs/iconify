@@ -1,9 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import 'package:iconify_sdk_core/iconify_sdk_core.dart'
+    show
+        BinaryIconifyProvider,
+        FileSystemIconifyProvider,
+        IconifyProvider,
+        PubCachePathResolver;
 import 'package:path/path.dart' as p;
+
 import '../config/provider_chain_builder.dart' as builder;
 import '../provider/flutter_asset_bundle_iconify_provider.dart';
-import '../widget/iconify_app.dart';
+import '../widget/iconify_app.dart' show IconifyApp;
 
 /// Manages the embedded starter icon registry.
 ///
@@ -33,10 +41,22 @@ class StarterRegistry {
         if (packagePath != null) {
           final starterPath =
               p.join(packagePath, 'assets', 'iconify', 'starter');
-          _provider = FileSystemIconifyProvider(
-            root: starterPath,
-            preloadPrefixes: preloadPrefixes,
-          );
+
+          // Check for binary format first (with compression support)
+          final binExists = Directory(starterPath).listSync().any((e) =>
+              e.path.endsWith('.iconbin') || e.path.endsWith('.iconbin.gz'));
+
+          if (binExists) {
+            _provider = BinaryIconifyProvider(
+              root: starterPath,
+              preloadPrefixes: preloadPrefixes,
+            );
+          } else {
+            _provider = FileSystemIconifyProvider(
+              root: starterPath,
+              preloadPrefixes: preloadPrefixes,
+            );
+          }
         }
       } catch (e) {
         // Fallback to asset bundle if resolver fails
@@ -46,6 +66,7 @@ class StarterRegistry {
     if (_provider == null) {
       // Fallback for Release mode or Web: Use the bundled assets.
       const prefix = 'packages/iconify_sdk/assets/iconify/starter';
+      // AssetBundleIconifyProvider also needs to support compression
       _provider = FlutterAssetBundleIconifyProvider(
         assetPrefix: prefix,
       );

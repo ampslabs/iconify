@@ -3,6 +3,8 @@
 // ignore_for_file: unawaited_futures
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import '../guard/svg_sanitizer.dart';
 import '../models/iconify_collection_info.dart';
 import '../models/iconify_icon_data.dart';
@@ -13,7 +15,7 @@ import 'iconify_provider.dart';
 /// Abstract base for providers that read from a Flutter asset bundle.
 ///
 /// The concrete implementation (`FlutterAssetBundleIconifyProvider`)
-/// lives in the `iconify_flutter` package which has a Flutter dependency.
+/// lives in the `iconify_sdk` package which has a Flutter dependency.
 ///
 /// This abstract class exists in core so that `iconify_sdk_core`
 /// can reference asset-bundle providers in composite chains without
@@ -40,9 +42,9 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
   /// Tracks active loading operations to prevent redundant I/O for concurrent requests.
   final _loading = <String, Future<ParsedCollection?>>{};
 
-  /// Reads the raw string of an asset at [path].
+  /// Reads the raw bytes of an asset at [path].
   /// Implemented by platform-specific subclasses (e.g. using `rootBundle`).
-  Future<String> loadAssetString(String path);
+  Future<Uint8List> loadAssetBytes(String path);
 
   @override
   Future<IconifyIconData?> getIcon(IconifyName name) async {
@@ -84,8 +86,23 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
 
   Future<ParsedCollection?> _load(String prefix) async {
     try {
-      final path = '$assetPrefix/$prefix.json';
-      final jsonString = await loadAssetString(path);
+      final jsonPath = '$assetPrefix/$prefix.json';
+      final gzPath = '$jsonPath.gz';
+
+      Uint8List bytes;
+      try {
+        bytes = await loadAssetBytes(gzPath);
+      } catch (_) {
+        bytes = await loadAssetBytes(jsonPath);
+      }
+
+      // Decompression is handled by subclasses if they support it,
+      // but if the bytes are still gzipped (e.g. core doesn't know how to decompress),
+      // we might fail here. In practice, FlutterAssetBundleIconifyProvider
+      // will handle the decompression before returning bytes if needed,
+      // or core will use a utility.
+
+      final jsonString = utf8.decode(bytes);
       final collection = IconifyJsonParser.parseCollectionString(
         jsonString,
         sanitizer: sanitizer,

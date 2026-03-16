@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
+import '../render/gzip_utils.dart';
 
 /// A [LivingCacheStorage] implementation that reads from the Flutter [AssetBundle].
 ///
@@ -15,17 +16,26 @@ class AssetBundleLivingCacheStorage implements LivingCacheStorage {
   final String path;
 
   @override
-  Future<String?> read() async {
+  Future<Uint8List?> readBytes() async {
     try {
       final actualBundle = bundle ?? rootBundle;
-      return await actualBundle.loadString(path);
+      final byteData = await actualBundle.load(path);
+      final bytes = byteData.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      );
+
+      if (path.endsWith('.gz')) {
+        return await decompressGZip(bytes);
+      }
+      return bytes;
     } catch (e) {
       return null;
     }
   }
 
   @override
-  Future<void> write(String content) async {
+  Future<void> writeBytes(Uint8List bytes) async {
     // Assets are read-only at runtime.
     // In development, FileSystemLivingCacheStorage should be used instead.
     throw UnsupportedError('Cannot write to AssetBundle at runtime.');

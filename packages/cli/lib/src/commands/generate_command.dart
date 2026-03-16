@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:args/command_runner.dart';
 import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
@@ -30,6 +31,12 @@ class GenerateCommand extends Command<int> {
       help: 'Output format for icon data.',
       allowed: ['dart', 'binary', 'sprite', 'all'],
       defaultsTo: 'dart',
+    );
+    argParser.addFlag(
+      'compress',
+      abbr: 'c',
+      help: 'Use GZIP compression for output files.',
+      negatable: false,
     );
   }
 
@@ -134,6 +141,7 @@ class GenerateCommand extends Command<int> {
     }
 
     final format = argResults?['format'] as String;
+    final compress = argResults?['compress'] as bool;
     final bool generateDart = format == 'dart' || format == 'all';
     final bool generateBinary = format == 'binary' || format == 'all';
     final bool generateSprite = format == 'sprite' || format == 'all';
@@ -155,6 +163,34 @@ class GenerateCommand extends Command<int> {
           outputFile.parent.createSync(recursive: true);
         }
         await outputFile.writeAsString(outputContent);
+        _logger.info('✅ Generated ${outputFile.path}');
+      }
+
+      // Also generate used_icons.json for LivingCacheProvider
+      progress.update('Generating used_icons.json...');
+      final json = {
+        'schemaVersion': 1,
+        'generated': DateTime.now().toUtc().toIso8601String(),
+        'icons': iconDataMap.map((key, value) => MapEntry(key, value.toJson())),
+      };
+      final jsonStr = jsonEncode(json);
+      final jsonFileName = compress ? 'used_icons.json.gz' : 'used_icons.json';
+      final jsonFile = File('${config.dataDir}/$jsonFileName');
+
+      if (argResults?['dry-run'] == true) {
+        _logger.info(
+            'Dry run: Would write $jsonFileName (${jsonStr.length} bytes raw)');
+      } else {
+        if (!jsonFile.parent.existsSync()) {
+          jsonFile.parent.createSync(recursive: true);
+        }
+        if (compress) {
+          final bytes = Uint8List.fromList(utf8.encode(jsonStr));
+          await jsonFile.writeAsBytes(gzip.encode(bytes));
+        } else {
+          await jsonFile.writeAsString(jsonStr);
+        }
+        _logger.info('✅ Generated ${jsonFile.path}');
       }
     }
 
@@ -165,12 +201,21 @@ class GenerateCommand extends Command<int> {
         final collection = entry.value;
         final encoded = BinaryIconFormat.encode(collection);
 
+        final fileName = compress ? '$prefix.iconbin.gz' : '$prefix.iconbin';
+        final binaryFile = File('${config.dataDir}/$fileName');
+
         if (argResults?['dry-run'] == true) {
           _logger.info(
-              'Dry run: Would write $prefix.iconbin (${encoded.length} bytes)');
+              'Dry run: Would write $fileName (${encoded.length} bytes raw)');
         } else {
-          final binaryFile = File('${config.dataDir}/$prefix.iconbin');
-          await binaryFile.writeAsBytes(encoded);
+          if (!binaryFile.parent.existsSync()) {
+            binaryFile.parent.createSync(recursive: true);
+          }
+          if (compress) {
+            await binaryFile.writeAsBytes(gzip.encode(encoded));
+          } else {
+            await binaryFile.writeAsBytes(encoded);
+          }
           _logger.info('✅ Generated ${binaryFile.path}');
         }
       }
@@ -193,12 +238,21 @@ class GenerateCommand extends Command<int> {
       }
       buffer.writeln('</svg>');
 
+      final spriteContent = buffer.toString();
+      final spriteFileName =
+          compress ? 'icons.sprite.svg.gz' : 'icons.sprite.svg';
+      final spriteFile = File('${config.dataDir}/$spriteFileName');
+
       if (argResults?['dry-run'] == true) {
         _logger.info(
-            'Dry run: Would write icons.sprite.svg (${buffer.length} bytes)');
+            'Dry run: Would write $spriteFileName (${spriteContent.length} bytes raw)');
       } else {
-        final spriteFile = File('${config.dataDir}/icons.sprite.svg');
-        await spriteFile.writeAsString(buffer.toString());
+        if (compress) {
+          final bytes = Uint8List.fromList(utf8.encode(spriteContent));
+          await spriteFile.writeAsBytes(gzip.encode(bytes));
+        } else {
+          await spriteFile.writeAsString(spriteContent);
+        }
         _logger.info('✅ Generated ${spriteFile.path}');
 
         // Generate manifest for SpriteIconifyProvider
@@ -208,8 +262,17 @@ class GenerateCommand extends Command<int> {
                 'height': value.height,
               })),
         };
-        final manifestFile = File('${config.dataDir}/icons.sprite.json');
-        await manifestFile.writeAsString(jsonEncode(manifest));
+        final manifestStr = jsonEncode(manifest);
+        final manifestFileName =
+            compress ? 'icons.sprite.json.gz' : 'icons.sprite.json';
+        final manifestFile = File('${config.dataDir}/$manifestFileName');
+
+        if (compress) {
+          final bytes = Uint8List.fromList(utf8.encode(manifestStr));
+          await manifestFile.writeAsBytes(gzip.encode(bytes));
+        } else {
+          await manifestFile.writeAsString(manifestStr);
+        }
         _logger.info('✅ Generated ${manifestFile.path}');
       }
     }

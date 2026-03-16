@@ -30,12 +30,12 @@ IconifyProvider buildProviderChain(IconifyConfig config) {
   // 2. Sprite Provider (Web HTML optimized)
   // This is highest priority for Web HTML because individual SVG rendering is slow.
   if (WebRendererDetector.isHtmlRenderer) {
-    providers.add(SpriteIconifyProvider());
+    providers.add(SpriteIconifyProvider(compress: config.compress));
   }
 
   // 3. Living Cache (L2) - Optimization for production bundle size
   // and development write-back.
-  final livingCache = _createLivingCacheProvider();
+  final livingCache = _createLivingCacheProvider(config.compress);
   providers.add(livingCache);
 
   // 3. In-memory cache (standard performance optimization)
@@ -61,22 +61,25 @@ IconifyProvider buildProviderChain(IconifyConfig config) {
   );
 }
 
-LivingCacheProvider _createLivingCacheProvider() {
+LivingCacheProvider _createLivingCacheProvider(bool compress) {
   LivingCacheStorage storage;
+  final fileName = compress ? 'used_icons.json.gz' : 'used_icons.json';
 
   if (kDebugMode && !kIsWeb) {
     // In development, we use FileSystem storage to allow write-back.
     // We point it to the project's local assets directory.
     storage = FileSystemLivingCacheStorage(
-      path: 'assets/iconify/used_icons.json',
+      path: 'assets/iconify/$fileName',
     );
   } else {
     // In Release or Web, we use the read-only AssetBundle storage.
     // This file MUST be registered in the project's pubspec.yaml assets.
-    storage = AssetBundleLivingCacheStorage();
+    storage = AssetBundleLivingCacheStorage(
+      path: 'assets/iconify/$fileName',
+    );
   }
 
-  return LivingCacheProvider(storage: storage);
+  return LivingCacheProvider(storage: storage, compress: compress);
 }
 
 void _addAutoModeProviders(List<IconifyProvider> providers,

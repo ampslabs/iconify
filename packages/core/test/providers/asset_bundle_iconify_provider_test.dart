@@ -1,47 +1,46 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
-class TestAssetBundleProvider extends AssetBundleIconifyProvider {
-  TestAssetBundleProvider({required super.assetPrefix, required this.assets});
+class MockAssetBundleProvider extends AssetBundleIconifyProvider {
+  MockAssetBundleProvider({required super.assetPrefix});
 
-  final Map<String, String> assets;
+  final Map<String, String> assets = {};
 
   @override
-  Future<String> loadAssetString(String path) async {
-    final content = assets[path];
-    if (content == null) throw Exception('Asset not found');
-    return content;
+  Future<Uint8List> loadAssetBytes(String path) async {
+    if (assets.containsKey(path)) {
+      return Uint8List.fromList(utf8.encode(assets[path]!));
+    }
+    throw Exception('Asset not found');
   }
 }
 
 void main() {
   group('AssetBundleIconifyProvider', () {
-    const json = '''
-    {
-      "prefix": "test",
-      "icons": {
-        "home": { "body": "<path/>" }
-      }
-    }
-    ''';
-
-    late TestAssetBundleProvider provider;
+    late MockAssetBundleProvider provider;
 
     setUp(() {
-      provider = TestAssetBundleProvider(
-        assetPrefix: 'assets',
-        assets: {'assets/test.json': json},
-      );
+      provider = MockAssetBundleProvider(assetPrefix: 'assets');
+      provider.assets['assets/test.json'] = jsonEncode({
+        'prefix': 'test',
+        'icons': {
+          'home': {'body': '<path d="home"/>'}
+        }
+      });
     });
 
     test('getIcon loads from asset string', () async {
       final icon = await provider.getIcon(const IconifyName('test', 'home'));
       expect(icon, isNotNull);
+      expect(icon!.body, '<path d="home"/>');
     });
 
     test('getCollection loads from asset string', () async {
-      final collection = await provider.getCollection('test');
-      expect(collection?.prefix, 'test');
+      final info = await provider.getCollection('test');
+      expect(info, isNotNull);
+      expect(info!.prefix, 'test');
     });
 
     test('hasIcon returns true for existing asset', () async {
@@ -53,7 +52,8 @@ void main() {
     });
 
     test('returns null on failure', () async {
-      expect(await provider.getCollection('missing'), isNull);
+      final icon = await provider.getIcon(const IconifyName('missing', 'icon'));
+      expect(icon, isNull);
     });
   });
 }
