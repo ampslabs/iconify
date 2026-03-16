@@ -1,0 +1,43 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+
+const features = [
+  {
+    title: 'Easy to use',
+    description: 'Just use IconifyIcon giving it the prefix:name and you are good to go. No complex setup required.',
+    icon: 'setting',
+  },
+  {
+    title: 'Fully Customizable',
+    description: 'Support custom SVG bundles. Create your own icon collections or use pre-built ones.',
+    icon: 'add-document',
+  },
+  {
+    title: 'High Performance',
+    description: 'Optimized for large numbers of icons with zero layout jank and high-performance SVG rendering via Impeller.',
+    icon: 'rocket',
+  },
+  {
+    title: 'Multi-Platform',
+    description: 'Works seamlessly everywhere Flutter works — iOS, Android, Web, and Desktop.',
+    icon: 'laptop',
+  },
+];
+---
+
+<div class="features-container" style="padding-top: 10rem;">
+  <span class="section-label">Capabilities</span>
+  <h2 class="section-title">Everything you need to build complete icon experiences.</h2>
+  
+  <div class="features-grid">
+    {features.map((feature) => (
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <Icon name={feature.icon} size="1.5rem" />
+        </div>
+        <h3>{feature.title}</h3>
+        <p>{feature.description}</p>
+      </div>
+    ))}
+  </div>
+</div>
