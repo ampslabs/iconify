@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:args/command_runner.dart';
 import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
-import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 class AuditCommand extends Command<int> {
@@ -14,7 +13,8 @@ class AuditCommand extends Command<int> {
   String get name => 'audit';
 
   @override
-  String get description => 'Analyze icon bundle size and identify optimization opportunities.';
+  String get description =>
+      'Analyze icon bundle size and identify optimization opportunities.';
 
   final Logger _logger;
 
@@ -36,7 +36,7 @@ class AuditCommand extends Command<int> {
 
     final jsonFile = File('${config.dataDir}/used_icons.json');
     final gzFile = File('${config.dataDir}/used_icons.json.gz');
-    
+
     File? activeFile;
     if (gzFile.existsSync()) {
       activeFile = gzFile;
@@ -45,12 +45,13 @@ class AuditCommand extends Command<int> {
     }
 
     if (activeFile == null) {
-      _logger.err('used_icons.json not found in ${config.dataDir}. Run "iconify generate" first.');
+      _logger.err(
+          'used_icons.json not found in ${config.dataDir}. Run "iconify generate" first.');
       return ExitCode.noInput.code;
     }
 
     final progress = _logger.progress('Analyzing ${activeFile.path}...');
-    
+
     try {
       final bytes = await activeFile.readAsBytes();
       final Uint8List rawBytes;
@@ -62,19 +63,21 @@ class AuditCommand extends Command<int> {
 
       final json = jsonDecode(utf8.decode(rawBytes)) as Map<String, dynamic>;
       final icons = json['icons'] as Map<String, dynamic>? ?? {};
-      
+
       progress.complete('Audit complete.');
       _logger.info('');
       _logger.info(lightBlue.wrap('📦 Bundle Summary'));
       _logger.info('----------------------------------------');
       _logger.info('Total Icons:      ${icons.length}');
       _logger.info('Raw JSON Size:    ${_formatSize(rawBytes.length)}');
-      
+
       if (activeFile.path.endsWith('.gz')) {
-        _logger.info('Compressed Size:  ${_formatSize(bytes.length)} (${((bytes.length / rawBytes.length) * 100).toStringAsFixed(1)}%)');
+        _logger.info(
+            'Compressed Size:  ${_formatSize(bytes.length)} (${((bytes.length / rawBytes.length) * 100).toStringAsFixed(1)}%)');
       } else {
         final gzipped = gzip.encode(rawBytes);
-        _logger.info('Potential GZIP:   ${_formatSize(gzipped.length)} (${((gzipped.length / rawBytes.length) * 100).toStringAsFixed(1)}%)');
+        _logger.info(
+            'Potential GZIP:   ${_formatSize(gzipped.length)} (${((gzipped.length / rawBytes.length) * 100).toStringAsFixed(1)}%)');
       }
 
       // Analysis
@@ -83,9 +86,10 @@ class AuditCommand extends Command<int> {
       final heavyIcons = <String, int>{};
 
       icons.forEach((key, value) {
-        final body = value['body'] as String? ?? '';
+        final iconData = value as Map<String, dynamic>;
+        final body = iconData['body'] as String? ?? '';
         final size = utf8.encode(jsonEncode(value)).length;
-        
+
         if (body.contains('currentColor')) {
           monoCount++;
         } else {
@@ -102,9 +106,10 @@ class AuditCommand extends Command<int> {
       _logger.info('----------------------------------------');
       _logger.info('Monochrome:       $monoCount icons');
       _logger.info('Multi-color:      $multiCount icons');
-      
+
       if (multiCount == 0 && monoCount > 0) {
-        _logger.info(green.wrap('💡 Optimization Tip: Your bundle is 100% monochrome. Use "--font" for native rendering.'));
+        _logger.info(green.wrap(
+            '💡 Optimization Tip: Your bundle is 100% monochrome. Use "--font" for native rendering.'));
       }
 
       if (heavyIcons.isNotEmpty) {
@@ -112,9 +117,10 @@ class AuditCommand extends Command<int> {
         _logger.warn('⚠️  Heavy Icons (>1KB raw):');
         final sortedHeavy = heavyIcons.entries.toList()
           ..sort((a, b) => b.value.compareTo(a.value));
-        
+
         for (final entry in sortedHeavy.take(5)) {
-          _logger.info('   - ${entry.key.padRight(30)} ${_formatSize(entry.value)}');
+          _logger.info(
+              '   - ${entry.key.padRight(30)} ${_formatSize(entry.value)}');
         }
       }
 
@@ -122,8 +128,9 @@ class AuditCommand extends Command<int> {
       _logger.info(lightBlue.wrap('🚀 Estimated Format Efficiency'));
       _logger.info('----------------------------------------');
       _logger.info('JSON (Raw):       ${_formatSize(rawBytes.length)}');
-      _logger.info('JSON (GZIP):      ${_formatSize(gzip.encode(rawBytes).length)}');
-      
+      _logger.info(
+          'JSON (GZIP):      ${_formatSize(gzip.encode(rawBytes).length)}');
+
       // Rough estimates based on benchmarks
       final estBinary = (rawBytes.length * 0.88).toInt();
       final estBinaryGz = (rawBytes.length * 0.31).toInt();

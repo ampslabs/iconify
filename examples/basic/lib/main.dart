@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'Living Cache (used_icons.json.gz) or the Icon Font.',
             ),
             const SizedBox(height: 16),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _IconColumn('mdi:home', 'MDI Home'),
@@ -155,7 +155,8 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
             _StatRow('Cache Size', '${stats.length} / ${stats.maxEntries}'),
             _StatRow('Hits', '${stats.hits}'),
             _StatRow('Misses', '${stats.misses}'),
-            _StatRow('Hit Rate', '${(stats.hitRate * 100).toStringAsFixed(1)}%'),
+            _StatRow(
+                'Hit Rate', '${(stats.hitRate * 100).toStringAsFixed(1)}%'),
             const Divider(),
             const Text(
               'Hint: Scroll or interact to see cache hits increase.',

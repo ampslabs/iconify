@@ -18,6 +18,10 @@ melos:
   name: iconify_sdk
   packages:
     - packages/*
+  scripts:
+    test:
+      run: melos exec --dir-exists="test" -- "flutter test || dart test"
+      description: "Run tests for all packages."
 
 dev_dependencies:
   melos: ^7.4.0

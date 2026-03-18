@@ -8,10 +8,7 @@ import 'package:iconify_sdk/iconify_sdk.dart';
 void main() {
   runApp(
     IconifyApp(
-      config: const IconifyConfig(
-        mode: IconifyMode.auto,
-        compress: true,
-      ),
+      config: const IconifyConfig(mode: IconifyMode.auto, compress: true),
       child: const IconifyAtlasApp(),
     ),
   );
@@ -510,8 +507,10 @@ class _DiagnosticsPageState extends State<DiagnosticsPage> {
             child: TextButton.icon(
               onPressed: () => IconifyDiagnostics.reset(),
               icon: const Icon(Icons.refresh, color: Colors.redAccent),
-              label: const Text('RESET ALL CACHES',
-                  style: TextStyle(color: Colors.redAccent)),
+              label: const Text(
+                'RESET ALL CACHES',
+                style: TextStyle(color: Colors.redAccent),
+              ),
             ),
           ),
         ],
@@ -727,28 +726,28 @@ class _IconCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-          onTap: onTap,
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: AnimatedContainer(
+        duration: 300.ms,
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          color: isSelected ? color.withAlpha(30) : const Color(0xFF1E293B),
           borderRadius: BorderRadius.circular(24),
-          child: AnimatedContainer(
-            duration: 300.ms,
-            curve: Curves.easeOutCubic,
-            decoration: BoxDecoration(
-              color: isSelected ? color.withAlpha(30) : const Color(0xFF1E293B),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: isSelected ? color : Colors.white.withAlpha(10),
-                width: isSelected ? 2 : 1,
-              ),
-            ),
-            child: Center(
-              child: IconifyIcon(
-                name,
-                size: 32,
-                color: isSelected ? color : Colors.white,
-              ),
-            ),
+          border: Border.all(
+            color: isSelected ? color : Colors.white.withAlpha(10),
+            width: isSelected ? 2 : 1,
           ),
-        )
+        ),
+        child: Center(
+          child: IconifyIcon(
+            name,
+            size: 32,
+            color: isSelected ? color : Colors.white,
+          ),
+        ),
+      ),
+    )
         .animate(target: isSelected ? 1 : 0)
         .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05));
   }
@@ -931,23 +930,11 @@ class _GlassNavbar extends StatelessWidget {
                 color: const Color(0xFF38BDF8),
               ),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              IconifyIcon(
-                'lucide:search',
-                size: 20,
-                color: Colors.white54,
-              ),
+              IconifyIcon('lucide:search', size: 20, color: Colors.white54),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              IconifyIcon(
-                'lucide:bell',
-                size: 20,
-                color: Colors.white54,
-              ),
+              IconifyIcon('lucide:bell', size: 20, color: Colors.white54),
               SizedBox(width: isSmallScreen ? 16 : 32),
-              IconifyIcon(
-                'lucide:user',
-                size: 20,
-                color: Colors.white54,
-              ),
+              IconifyIcon('lucide:user', size: 20, color: Colors.white54),
             ],
           ),
         ),
@@ -1020,8 +1007,7 @@ class _ModernButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color:
-            color ??
+        color: color ??
             (isPrimary ? const Color(0xFF38BDF8) : const Color(0xFF1E293B)),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(

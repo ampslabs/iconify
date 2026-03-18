@@ -324,7 +324,8 @@ class GenerateCommand extends Command<int> {
 
           final fontFileBytes =
               OTFWriter().write(result.font).buffer.asUint8List();
-          final fontFileName = compress ? 'icons.font.otf.gz' : 'icons.font.otf';
+          final fontFileName =
+              compress ? 'icons.font.otf.gz' : 'icons.font.otf';
           final fontFile = File('${config.dataDir}/$fontFileName');
 
           if (compress) {
@@ -332,7 +333,6 @@ class GenerateCommand extends Command<int> {
           } else {
             await fontFile.writeAsBytes(fontFileBytes);
           }
-
 
           // Create mapping
           for (var i = 0; i < result.glyphList.length; i++) {

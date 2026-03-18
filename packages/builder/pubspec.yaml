@@ -14,7 +14,7 @@ environment:
 dependencies:
   build: ^4.0.4
   source_gen: ^4.2.0
-  iconify_sdk_core: ^0.2.0
+  iconify_sdk_core: ^1.0.0
   yaml: ^3.1.2
   analyzer: ^10.0.1
   glob: ^2.1.2

@@ -78,7 +78,7 @@ class VerifyCommand extends Command<int> {
             'https://api.github.com/repos/iconify/icon-sets/commits/master'),
         headers: {
           'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'iconify_sdk_cli/0.2.0',
+          'User-Agent': 'iconify_sdk_cli/1.0.0',
         },
       );
 
