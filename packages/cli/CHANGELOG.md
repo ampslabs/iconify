@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1] - 2026-03-18
+
+### Added
+- **Zero-Friction DX**:
+  - The `iconify` command now defaults to `generate` when run without arguments.
+  - **Auto-Init**: All commands now proactively offer to initialize `iconify.yaml` if it's missing.
+  - **JIT Syncing**: The `generate` command automatically detects icons in source code that lack local snapshots and offers to sync them immediately.
+- **Enhanced Testing**: Added new integration tests for Auto-Init and JIT Sync workflows.
+
+### Changed
+- Refactored CLI architecture to use a unified `BaseCommand` for consistent setup and syncing logic.
+
 ## [1.0.0] - 2026-03-16
 
 ### Added

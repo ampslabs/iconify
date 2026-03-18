@@ -19,10 +19,10 @@ The definitive Flutter SDK for Iconify. Access 200,000+ open-source icons from 1
 
 | Package | Version | Description |
 |---|---|---|
-| [**iconify_sdk**](packages/sdk) | `1.0.0` | The primary Flutter package with the `IconifyIcon` widget. |
-| [**iconify_sdk_core**](packages/core) | `1.0.0` | Pure Dart engine for Iconify (models, providers, binary format). |
-| [**iconify_sdk_cli**](packages/cli) | `1.0.0` | Command-line tool for syncing, bundling, and auditing icons. |
-| [**iconify_sdk_builder**](packages/builder) | `1.0.0` | `build_runner` integration for automated icon bundling. |
+| [**iconify_sdk**](packages/sdk) | `1.0.1` | The primary Flutter package with the `IconifyIcon` widget. |
+| [**iconify_sdk_core**](packages/core) | `1.0.1` | Pure Dart engine for Iconify (models, providers, binary format). |
+| [**iconify_sdk_cli**](packages/cli) | `1.0.1` | Command-line tool for syncing, bundling, and auditing icons. |
+| [**iconify_sdk_builder**](packages/builder) | `1.0.1` | `build_runner` integration for automated icon bundling. |
 
 ## 🏁 Quick Start
 
@@ -51,14 +51,13 @@ IconifyIcon('mdi:rocket', color: Colors.blue, size: 32)
 
 Iconify SDK is designed to be frictionless in development and rigid in production.
 
-1. **Sync**: Download full collections for local development.
-2. **Scan**: Automatically detect icons used in your source code.
-3. **Bundle**: Produce highly optimized binary or font-based assets.
-4. **Deploy**: Your app runs 100% offline with zero network overhead.
+1. **Install CLI**: `dart pub global activate iconify_sdk_cli`
+2. **Build**: Just run `iconify` in your project root.
+3. **Result**: The tool scans your code, downloads missing data, and bundles optimized assets.
 
 ```bash
-# Example production bundling command
-iconify generate --format=all --compress --font
+# One-command optimization
+iconify
 ```
 
 ## 📊 Performance Baseline

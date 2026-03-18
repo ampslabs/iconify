@@ -41,6 +41,12 @@ class IconifyCommandRunner extends CommandRunner<int> {
       if (argResults['verbose'] == true) {
         _logger.level = Level.verbose;
       }
+
+      // If no command is provided, default to 'generate'
+      if (argResults.command == null && args.isEmpty) {
+        return await runCommand(parse(['generate']));
+      }
+
       return await runCommand(argResults);
     } on FormatException catch (e) {
       _logger.err(e.message);

@@ -1,6 +1,6 @@
 # iconify_sdk_cli
 
-Command-line interface for the Iconify SDK. Manage, synchronize, and bundle icons for production with ease.
+Command-line interface for the Iconify SDK. Manage, synchronize, and bundle icons for production with zero-friction.
 
 [![Pub Version](https://img.shields.io/pub/v/iconify_sdk_cli)](https://pub.dev/packages/iconify_sdk_cli)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
@@ -9,6 +9,20 @@ Command-line interface for the Iconify SDK. Manage, synchronize, and bundle icon
 
 ```bash
 dart pub global activate iconify_sdk_cli
+```
+
+## Usage
+
+Just run `iconify` in your Flutter project root. The tool will intelligently handle everything:
+
+1.  **Auto-Init**: Prompts to create `iconify.yaml` if missing.
+2.  **Auto-Scan**: Scans your `lib/` directory for icon usages.
+3.  **JIT Sync**: Proactively downloads missing icon collections.
+4.  **Optimized Bundle**: Generates binary, font, and JSON assets.
+
+```bash
+# One-command optimization
+iconify
 ```
 
 ## Commands

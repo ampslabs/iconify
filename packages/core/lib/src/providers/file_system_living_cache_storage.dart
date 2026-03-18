@@ -11,6 +11,9 @@ class FileSystemLivingCacheStorage implements LivingCacheStorage {
   final String path;
 
   @override
+  bool get isReadOnly => false;
+
+  @override
   Future<Uint8List?> readBytes() async {
     final file = File(path);
     if (!file.existsSync()) return null;

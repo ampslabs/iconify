@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:args/command_runner.dart';
 import 'package:http/http.dart' as http;
-import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 
-class AddCommand extends Command<int> {
-  AddCommand({required Logger logger}) : _logger = logger {
+import 'base_command.dart';
+
+class AddCommand extends BaseCommand {
+  AddCommand({required super.logger}) {
     argParser.addOption(
       'collection',
       abbr: 'c',
@@ -27,24 +27,10 @@ class AddCommand extends Command<int> {
   @override
   String get invocation => 'iconify add <prefix:name> [<prefix:name>...]';
 
-  final Logger _logger;
-
   @override
   Future<int> run() async {
-    final configFile = File('iconify.yaml');
-    if (!configFile.existsSync()) {
-      _logger.err('iconify.yaml not found. Run "iconify init" first.');
-      return ExitCode.config.code;
-    }
-
-    final IconifyBuildConfig config;
-    try {
-      final content = await configFile.readAsString();
-      config = IconifyBuildConfig.fromYaml(content);
-    } catch (e) {
-      _logger.err('Error parsing iconify.yaml: $e');
-      return ExitCode.software.code;
-    }
+    final config = await ensureConfig();
+    if (config == null) return ExitCode.config.code;
 
     final cachePath = p.join(config.dataDir, 'used_icons.json');
     final cacheFile = File(cachePath);
@@ -64,7 +50,7 @@ class AddCommand extends Command<int> {
           cacheJson = _createEmptyCache();
         }
       } catch (e) {
-        _logger.err('Failed to parse used_icons.json: $e');
+        logger.err('Failed to parse used_icons.json: $e');
         return ExitCode.software.code;
       }
     } else {
@@ -81,7 +67,7 @@ class AddCommand extends Command<int> {
     if (collectionOption != null) {
       final snapshotFile = File('${config.dataDir}/$collectionOption.json');
       if (!snapshotFile.existsSync()) {
-        _logger.err(
+        logger.err(
             'Snapshot for "$collectionOption" not found. Run "iconify sync" first.');
         return ExitCode.noInput.code;
       }
@@ -94,7 +80,7 @@ class AddCommand extends Command<int> {
           collections[collectionOption] = collection;
         }
       } catch (e) {
-        _logger.err('Failed to parse snapshot for "$collectionOption": $e');
+        logger.err('Failed to parse snapshot for "$collectionOption": $e');
         return ExitCode.software.code;
       }
     }
@@ -102,11 +88,11 @@ class AddCommand extends Command<int> {
     iconsToAdd.addAll(argResults?.rest ?? []);
 
     if (iconsToAdd.isEmpty) {
-      _logger.err('No icons specified. Usage: iconify add <prefix:name>');
+      logger.err('No icons specified. Usage: iconify add <prefix:name>');
       return ExitCode.usage.code;
     }
 
-    final progress = _logger.progress('Adding ${iconsToAdd.length} icons...');
+    final progress = logger.progress('Adding ${iconsToAdd.length} icons...');
     var addedCount = 0;
 
     final httpClient = http.Client();
@@ -117,7 +103,7 @@ class AddCommand extends Command<int> {
 
         final parts = fullName.split(':');
         if (parts.length < 2) {
-          _logger.warn('  ⚠️ Invalid icon name: $fullName');
+          logger.warn('  ⚠️ Invalid icon name: $fullName');
           continue;
         }
 
@@ -158,7 +144,7 @@ class AddCommand extends Command<int> {
           iconsJson[fullName] = json;
           addedCount++;
         } else {
-          _logger.warn('  ⚠️ Could not find data for "$fullName"');
+          logger.warn('  ⚠️ Could not find data for "$fullName"');
         }
       }
     } finally {

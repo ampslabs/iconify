@@ -144,14 +144,15 @@ class _IconifyIconState extends State<IconifyIcon> {
 
     // 1. Font-based rendering (highest efficiency for monochrome)
     if (data.fontFamily != null) {
-      return Icon(
-        IconData(
-          data.body.codeUnitAt(0),
+      return Text(
+        data.body, // For fonts, body contains the character/codepoint string
+        style: TextStyle(
+          inherit: false,
+          color: color,
+          fontSize: effectiveSize,
           fontFamily: data.fontFamily,
         ),
-        size: effectiveSize,
-        color: color,
-        semanticLabel: widget.semanticLabel,
+        semanticsLabel: widget.semanticLabel,
       );
     }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.1] - 2026-03-18
+
+### Changed
+- Version alignment with SDK 1.0.1.
+
 ## [1.0.0] - 2026-03-16
 
 ### Changed

@@ -11,6 +11,11 @@ import 'iconify_provider.dart';
 /// This allows [LivingCacheProvider] to work in both Flutter (via rootBundle/assets)
 /// and CLI (via dart:io).
 abstract interface class LivingCacheStorage {
+  /// Whether the storage is read-only.
+  ///
+  /// If true, [LivingCacheProvider] will skip write-back operations.
+  bool get isReadOnly;
+
   /// Reads the content of the living cache file as bytes.
   ///
   /// Returns null if the file does not exist.
@@ -132,6 +137,8 @@ final class LivingCacheProvider extends IconifyProvider {
   }
 
   void _scheduleFlush() {
+    if (storage.isReadOnly) return;
+
     _flushTimer?.cancel();
     _flushCompleter ??= Completer<void>();
 
@@ -150,6 +157,8 @@ final class LivingCacheProvider extends IconifyProvider {
 
   /// Forces a write of the current cache to storage.
   Future<void> flush() async {
+    if (storage.isReadOnly) return;
+
     final iconsJson = <String, Map<String, dynamic>>{};
 
     _icons.forEach((key, data) {

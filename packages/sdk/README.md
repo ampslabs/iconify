@@ -11,7 +11,7 @@ Add `iconify_sdk` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  iconify_sdk: ^1.0.0
+  iconify_sdk: ^1.0.1
 ```
 
 ## Getting Started

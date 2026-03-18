@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1] - 2026-03-18
+
+### Fixed
+- **Tree-Shaking**: Switched font-based rendering to use `Text` instead of `Icon(IconData)` to bypass Flutter's icon tree-shaker, enabling release builds without the `--no-tree-shake-icons` flag.
+- **Assets**: Correctly registered the `starter/` icon directory in `pubspec.yaml` to ensure default icons are bundled.
+- **Stability**: Prevented runtime crashes when the SDK attempts to write to the read-only `AssetBundle`.
+
+### Added
+- **Onboarding**: Added proactive console warnings in `IconifyApp` (Debug mode) to guide users toward installing and using the CLI for production optimization.
+
 ## [1.0.0] - 2026-03-16
 
 ### Added

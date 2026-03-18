@@ -2,14 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:args/command_runner.dart';
 import 'package:icon_font_generator/icon_font_generator.dart';
 import 'package:iconify_sdk_builder/iconify_sdk_builder.dart';
 import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:mason_logger/mason_logger.dart';
 
-class GenerateCommand extends Command<int> {
-  GenerateCommand({required Logger logger}) : _logger = logger {
+import 'base_command.dart';
+
+class GenerateCommand extends BaseCommand {
+  GenerateCommand({required super.logger}) {
     argParser.addFlag(
       'dry-run',
       help: 'Show what would be generated without writing to disk.',
@@ -52,25 +53,12 @@ class GenerateCommand extends Command<int> {
   @override
   String get description => 'Manually generate icons.g.dart from source code.';
 
-  final Logger _logger;
-
   @override
   Future<int> run() async {
-    final configFile = File('iconify.yaml');
-    if (!configFile.existsSync()) {
-      _logger.err('iconify.yaml not found. Run "iconify init" first.');
-      return ExitCode.config.code;
-    }
+    final config = await ensureConfig();
+    if (config == null) return ExitCode.config.code;
 
-    final IconifyBuildConfig config;
-    try {
-      config = IconifyBuildConfig.fromYaml(await configFile.readAsString());
-    } catch (e) {
-      _logger.err('Error parsing iconify.yaml: $e');
-      return ExitCode.config.code;
-    }
-
-    final progress = _logger.progress('Scanning source code...');
+    final progress = logger.progress('Scanning source code...');
     final usedIcons = <String>{};
 
     // 1. Scan lib/ directory
@@ -97,7 +85,15 @@ class GenerateCommand extends Command<int> {
 
     progress.update('Resolving data for ${usedIcons.length} icons...');
 
-    // 2. Resolve data from local snapshots
+    // 2. Ensure all needed collections are synced
+    final neededPrefixes = usedIcons.map((e) => e.split(':').first).toSet();
+    final syncSuccess = await ensureSynced(config, neededPrefixes);
+    if (!syncSuccess) {
+      progress.fail('Could not resolve all icon collections.');
+      return ExitCode.unavailable.code;
+    }
+
+    // 3. Resolve data from local snapshots
     final iconDataMap = <String, IconifyIconData>{};
     final collections = <String, ParsedCollection>{};
     final attributionRequired = <String, IconifyCollectionInfo>{};
@@ -137,7 +133,7 @@ class GenerateCommand extends Command<int> {
             attributionRequired[prefix] = collection.info;
           }
         } else {
-          _logger.warn('Snapshot missing for $prefix at ${dataFile.path}');
+          logger.warn('Snapshot missing for $prefix at ${dataFile.path}');
           continue;
         }
       }
@@ -150,9 +146,9 @@ class GenerateCommand extends Command<int> {
 
     // 3. License Enforcement
     if (attributionRequired.isNotEmpty) {
-      _logger.warn('⚠️  Some used icons require attribution:');
+      logger.warn('⚠️  Some used icons require attribution:');
       for (final info in attributionRequired.values) {
-        _logger.info(
+        logger.info(
             '   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}');
       }
 
@@ -178,16 +174,16 @@ class GenerateCommand extends Command<int> {
       );
 
       if (argResults?['dry-run'] == true) {
-        _logger.info('\n--- DART PREVIEW ---');
-        _logger.info(outputContent.split('\n').take(10).join('\n'));
-        _logger.info('...');
+        logger.info('\n--- DART PREVIEW ---');
+        logger.info(outputContent.split('\n').take(10).join('\n'));
+        logger.info('...');
       } else {
         final outputFile = File(config.output);
         if (!outputFile.parent.existsSync()) {
           outputFile.parent.createSync(recursive: true);
         }
         await outputFile.writeAsString(outputContent);
-        _logger.info('✅ Generated ${outputFile.path}');
+        logger.info('✅ Generated ${outputFile.path}');
       }
 
       // Also generate used_icons.json for LivingCacheProvider
@@ -202,7 +198,7 @@ class GenerateCommand extends Command<int> {
       final jsonFile = File('${config.dataDir}/$jsonFileName');
 
       if (argResults?['dry-run'] == true) {
-        _logger.info(
+        logger.info(
             'Dry run: Would write $jsonFileName (${jsonStr.length} bytes raw)');
       } else {
         if (!jsonFile.parent.existsSync()) {
@@ -214,7 +210,7 @@ class GenerateCommand extends Command<int> {
         } else {
           await jsonFile.writeAsString(jsonStr);
         }
-        _logger.info('✅ Generated ${jsonFile.path}');
+        logger.info('✅ Generated ${jsonFile.path}');
       }
     }
 
@@ -229,7 +225,7 @@ class GenerateCommand extends Command<int> {
         final binaryFile = File('${config.dataDir}/$fileName');
 
         if (argResults?['dry-run'] == true) {
-          _logger.info(
+          logger.info(
               'Dry run: Would write $fileName (${encoded.length} bytes raw)');
         } else {
           if (!binaryFile.parent.existsSync()) {
@@ -240,7 +236,7 @@ class GenerateCommand extends Command<int> {
           } else {
             await binaryFile.writeAsBytes(encoded);
           }
-          _logger.info('✅ Generated ${binaryFile.path}');
+          logger.info('✅ Generated ${binaryFile.path}');
         }
       }
     }
@@ -268,7 +264,7 @@ class GenerateCommand extends Command<int> {
       final spriteFile = File('${config.dataDir}/$spriteFileName');
 
       if (argResults?['dry-run'] == true) {
-        _logger.info(
+        logger.info(
             'Dry run: Would write $spriteFileName (${spriteContent.length} bytes raw)');
       } else {
         if (compress) {
@@ -277,7 +273,7 @@ class GenerateCommand extends Command<int> {
         } else {
           await spriteFile.writeAsString(spriteContent);
         }
-        _logger.info('✅ Generated ${spriteFile.path}');
+        logger.info('✅ Generated ${spriteFile.path}');
 
         // Generate manifest for SpriteIconifyProvider
         final manifest = {
@@ -297,7 +293,7 @@ class GenerateCommand extends Command<int> {
         } else {
           await manifestFile.writeAsString(manifestStr);
         }
-        _logger.info('✅ Generated ${manifestFile.path}');
+        logger.info('✅ Generated ${manifestFile.path}');
       }
     }
 
@@ -314,7 +310,7 @@ class GenerateCommand extends Command<int> {
       }
 
       if (monoIcons.isEmpty) {
-        _logger.warn('No monochrome icons found. Skipping font generation.');
+        logger.warn('No monochrome icons found. Skipping font generation.');
       } else {
         try {
           final result = svgToOtf(
@@ -359,10 +355,10 @@ class GenerateCommand extends Command<int> {
             await mappingFile.writeAsString(mappingStr);
           }
 
-          _logger.info('✅ Generated ${fontFile.path}');
-          _logger.info('✅ Generated ${mappingFile.path}');
+          logger.info('✅ Generated ${fontFile.path}');
+          logger.info('✅ Generated ${mappingFile.path}');
         } catch (e) {
-          _logger.err('Failed to generate icon font: $e');
+          logger.err('Failed to generate icon font: $e');
         }
       }
     }
@@ -392,7 +388,7 @@ class GenerateCommand extends Command<int> {
       }
       if (argResults?['dry-run'] != true) {
         await attributionFile.writeAsString(buffer.toString());
-        _logger.info('✅ Generated $attributionPath');
+        logger.info('✅ Generated $attributionPath');
       }
     }
 

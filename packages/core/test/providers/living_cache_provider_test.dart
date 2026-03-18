@@ -7,6 +7,9 @@ class MockLivingCacheStorage implements LivingCacheStorage {
   String? content;
 
   @override
+  bool get isReadOnly => false;
+
+  @override
   Future<Uint8List?> readBytes() async {
     return content != null ? Uint8List.fromList(utf8.encode(content!)) : null;
   }

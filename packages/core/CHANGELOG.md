@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-03-18
+
+### Fixed
+- **LivingCacheProvider**: Added protection against write attempts on read-only storages (like `AssetBundle`).
+- **LivingCacheStorage**: Added `isReadOnly` getter to allow providers to skip persistence when not supported.
+
 ## [1.0.0] - 2026-03-16
 
 ### Added

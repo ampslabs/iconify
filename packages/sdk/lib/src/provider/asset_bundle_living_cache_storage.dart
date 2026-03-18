@@ -16,6 +16,9 @@ class AssetBundleLivingCacheStorage implements LivingCacheStorage {
   final String path;
 
   @override
+  bool get isReadOnly => true;
+
+  @override
   Future<Uint8List?> readBytes() async {
     try {
       final actualBundle = bundle ?? rootBundle;
