@@ -53,6 +53,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failure-artifacts-${{ matrix.sdk }}
+          name: failure-artifacts-${{ matrix.name }}
           path: "**/failures/"
           retention-days: 4
