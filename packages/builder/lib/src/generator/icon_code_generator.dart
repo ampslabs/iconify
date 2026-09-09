@@ -11,7 +11,8 @@ class IconCodeGenerator {
 
     buffer.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
     buffer.writeln(
-        '// ignore_for_file: constant_identifier_names, library_private_types_in_public_api');
+      '// ignore_for_file: constant_identifier_names, library_private_types_in_public_api',
+    );
     buffer.writeln();
     buffer.writeln("import 'package:iconify_sdk/iconify_sdk.dart';");
     buffer.writeln();
@@ -53,7 +54,8 @@ class IconCodeGenerator {
 
     // 2. Generate the initializer function
     buffer.writeln(
-        '/// Injects all generated icons into a [MemoryIconifyProvider].');
+      '/// Injects all generated icons into a [MemoryIconifyProvider].',
+    );
     buffer.writeln('void initGeneratedIcons(MemoryIconifyProvider provider) {');
     for (final fullName in usedIconNames) {
       final parts = fullName.split(':');
@@ -64,7 +66,8 @@ class IconCodeGenerator {
 
       if (iconDataMap.containsKey(fullName)) {
         buffer.writeln(
-            "  provider.putIcon(const IconifyName('$prefix', '$iconName'), $className.$varName);");
+          "  provider.putIcon(const IconifyName('$prefix', '$iconName'), $className.$varName);",
+        );
       }
     }
     buffer.writeln('}');

@@ -20,8 +20,10 @@ void main() {
 
     test('strict mode throws on <script> tags', () {
       final input = readCorpus('xss_script_tag.svg');
-      expect(() => strictSanitizer.sanitize(input),
-          throwsA(isA<SvgSanitizationException>()));
+      expect(
+        () => strictSanitizer.sanitize(input),
+        throwsA(isA<SvgSanitizationException>()),
+      );
     });
 
     test('strips event handlers (on*)', () {

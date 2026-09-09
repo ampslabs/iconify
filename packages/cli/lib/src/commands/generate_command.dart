@@ -149,12 +149,14 @@ class GenerateCommand extends BaseCommand {
       logger.warn('⚠️  Some used icons require attribution:');
       for (final info in attributionRequired.values) {
         logger.info(
-            '   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}');
+          '   - ${info.name} (${info.prefix}): ${info.license?.title ?? 'Custom'}',
+        );
       }
 
       if (argResults?['strict-licenses'] == true) {
         progress.fail(
-            'Strict license check failed: Attribution-required icons detected.');
+          'Strict license check failed: Attribution-required icons detected.',
+        );
         return ExitCode.software.code;
       }
     }
@@ -199,7 +201,8 @@ class GenerateCommand extends BaseCommand {
 
       if (argResults?['dry-run'] == true) {
         logger.info(
-            'Dry run: Would write $jsonFileName (${jsonStr.length} bytes raw)');
+          'Dry run: Would write $jsonFileName (${jsonStr.length} bytes raw)',
+        );
       } else {
         if (!jsonFile.parent.existsSync()) {
           jsonFile.parent.createSync(recursive: true);
@@ -226,7 +229,8 @@ class GenerateCommand extends BaseCommand {
 
         if (argResults?['dry-run'] == true) {
           logger.info(
-              'Dry run: Would write $fileName (${encoded.length} bytes raw)');
+            'Dry run: Would write $fileName (${encoded.length} bytes raw)',
+          );
         } else {
           if (!binaryFile.parent.existsSync()) {
             binaryFile.parent.createSync(recursive: true);
@@ -245,27 +249,31 @@ class GenerateCommand extends BaseCommand {
       progress.update('Generating SVG Sprite Sheet...');
       final buffer = StringBuffer();
       buffer.writeln(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="display:none;">');
+        '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="display:none;">',
+      );
 
       final sortedKeys = iconDataMap.keys.toList()..sort();
       for (final fullName in sortedKeys) {
         final data = iconDataMap[fullName]!;
         final id = fullName.replaceAll(':', '-');
         buffer.writeln(
-            '  <symbol id="$id" viewBox="0 0 ${data.width} ${data.height}">');
+          '  <symbol id="$id" viewBox="0 0 ${data.width} ${data.height}">',
+        );
         buffer.writeln('    ${data.body}');
         buffer.writeln('  </symbol>');
       }
       buffer.writeln('</svg>');
 
       final spriteContent = buffer.toString();
-      final spriteFileName =
-          compress ? 'icons.sprite.svg.gz' : 'icons.sprite.svg';
+      final spriteFileName = compress
+          ? 'icons.sprite.svg.gz'
+          : 'icons.sprite.svg';
       final spriteFile = File('${config.dataDir}/$spriteFileName');
 
       if (argResults?['dry-run'] == true) {
         logger.info(
-            'Dry run: Would write $spriteFileName (${spriteContent.length} bytes raw)');
+          'Dry run: Would write $spriteFileName (${spriteContent.length} bytes raw)',
+        );
       } else {
         if (compress) {
           final bytes = Uint8List.fromList(utf8.encode(spriteContent));
@@ -277,14 +285,15 @@ class GenerateCommand extends BaseCommand {
 
         // Generate manifest for SpriteIconifyProvider
         final manifest = {
-          'icons': iconDataMap.map((key, value) => MapEntry(key, {
-                'width': value.width,
-                'height': value.height,
-              })),
+          'icons': iconDataMap.map(
+            (key, value) =>
+                MapEntry(key, {'width': value.width, 'height': value.height}),
+          ),
         };
         final manifestStr = jsonEncode(manifest);
-        final manifestFileName =
-            compress ? 'icons.sprite.json.gz' : 'icons.sprite.json';
+        final manifestFileName = compress
+            ? 'icons.sprite.json.gz'
+            : 'icons.sprite.json';
         final manifestFile = File('${config.dataDir}/$manifestFileName');
 
         if (compress) {
@@ -313,15 +322,15 @@ class GenerateCommand extends BaseCommand {
         logger.warn('No monochrome icons found. Skipping font generation.');
       } else {
         try {
-          final result = svgToOtf(
-            svgMap: monoIcons,
-            fontName: 'IconifyIcons',
-          );
+          final result = svgToOtf(svgMap: monoIcons, fontName: 'IconifyIcons');
 
-          final fontFileBytes =
-              OTFWriter().write(result.font).buffer.asUint8List();
-          final fontFileName =
-              compress ? 'icons.font.otf.gz' : 'icons.font.otf';
+          final fontFileBytes = OTFWriter()
+              .write(result.font)
+              .buffer
+              .asUint8List();
+          final fontFileName = compress
+              ? 'icons.font.otf.gz'
+              : 'icons.font.otf';
           final fontFile = File('${config.dataDir}/$fontFileName');
 
           if (compress) {
@@ -339,18 +348,17 @@ class GenerateCommand extends BaseCommand {
             }
           }
 
-          final mapping = {
-            'fontFamily': 'IconifyIcons',
-            'icons': fontMapping,
-          };
+          final mapping = {'fontFamily': 'IconifyIcons', 'icons': fontMapping};
           final mappingStr = jsonEncode(mapping);
-          final mappingFileName =
-              compress ? 'icons.font.json.gz' : 'icons.font.json';
+          final mappingFileName = compress
+              ? 'icons.font.json.gz'
+              : 'icons.font.json';
           final mappingFile = File('${config.dataDir}/$mappingFileName');
 
           if (compress) {
-            await mappingFile
-                .writeAsBytes(gzip.encode(utf8.encode(mappingStr)));
+            await mappingFile.writeAsBytes(
+              gzip.encode(utf8.encode(mappingStr)),
+            );
           } else {
             await mappingFile.writeAsString(mappingStr);
           }
@@ -371,7 +379,8 @@ class GenerateCommand extends BaseCommand {
       buffer.writeln('# Icon Attribution');
       buffer.writeln();
       buffer.writeln(
-          'The following icon collections used in this project require attribution:');
+        'The following icon collections used in this project require attribution:',
+      );
       buffer.writeln();
       for (final info in attributionRequired.values) {
         buffer.writeln('## ${info.name}');
@@ -380,7 +389,8 @@ class GenerateCommand extends BaseCommand {
           buffer.writeln('- **Author**: ${info.author}');
         }
         buffer.writeln(
-            '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
+          '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})',
+        );
         if (info.license?.url != null) {
           buffer.writeln('- **License URL**: ${info.license?.url}');
         }

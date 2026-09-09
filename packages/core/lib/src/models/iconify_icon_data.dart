@@ -21,8 +21,10 @@ final class IconifyIconData {
     this.raw = const {},
   });
 
-  factory IconifyIconData.fromJson(Map<String, dynamic> json,
-      {SvgSanitizer? sanitizer}) {
+  factory IconifyIconData.fromJson(
+    Map<String, dynamic> json, {
+    SvgSanitizer? sanitizer,
+  }) {
     final body = json['body'] as String;
     return IconifyIconData(
       body: (json['fontFamily'] == null && sanitizer != null)
@@ -30,7 +32,8 @@ final class IconifyIconData {
           : body,
       width: (json['width'] as num?)?.toDouble() ?? 24.0,
       height: (json['height'] as num?)?.toDouble() ?? 24.0,
-      aliases: (json['aliases'] as List<dynamic>?)
+      aliases:
+          (json['aliases'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
@@ -108,31 +111,30 @@ final class IconifyIconData {
     bool? vFlip,
     String? fontFamily,
     Map<String, dynamic>? raw,
-  }) =>
-      IconifyIconData(
-        body: body ?? this.body,
-        width: width ?? this.width,
-        height: height ?? this.height,
-        aliases: aliases ?? this.aliases,
-        hidden: hidden ?? this.hidden,
-        rotate: rotate ?? this.rotate,
-        hFlip: hFlip ?? this.hFlip,
-        vFlip: vFlip ?? this.vFlip,
-        fontFamily: fontFamily ?? this.fontFamily,
-        raw: raw ?? this.raw,
-      );
+  }) => IconifyIconData(
+    body: body ?? this.body,
+    width: width ?? this.width,
+    height: height ?? this.height,
+    aliases: aliases ?? this.aliases,
+    hidden: hidden ?? this.hidden,
+    rotate: rotate ?? this.rotate,
+    hFlip: hFlip ?? this.hFlip,
+    vFlip: vFlip ?? this.vFlip,
+    fontFamily: fontFamily ?? this.fontFamily,
+    raw: raw ?? this.raw,
+  );
 
   Map<String, dynamic> toJson() => {
-        'body': body,
-        'width': width,
-        'height': height,
-        if (aliases.isNotEmpty) 'aliases': aliases,
-        if (hidden) 'hidden': hidden,
-        if (rotate != 0) 'rotate': rotate,
-        if (hFlip) 'hFlip': hFlip,
-        if (vFlip) 'vFlip': vFlip,
-        if (fontFamily != null) 'fontFamily': fontFamily,
-      };
+    'body': body,
+    'width': width,
+    'height': height,
+    if (aliases.isNotEmpty) 'aliases': aliases,
+    if (hidden) 'hidden': hidden,
+    if (rotate != 0) 'rotate': rotate,
+    if (hFlip) 'hFlip': hFlip,
+    if (vFlip) 'vFlip': vFlip,
+    if (fontFamily != null) 'fontFamily': fontFamily,
+  };
 
   @override
   bool operator ==(Object other) =>

@@ -73,33 +73,34 @@ LivingCacheProvider _createLivingCacheProvider(bool compress) {
   if (kDebugMode && !kIsWeb) {
     // In development, we use FileSystem storage to allow write-back.
     // We point it to the project's local assets directory.
-    storage = FileSystemLivingCacheStorage(
-      path: 'assets/iconify/$fileName',
-    );
+    storage = FileSystemLivingCacheStorage(path: 'assets/iconify/$fileName');
   } else {
     // In Release or Web, we use the read-only AssetBundle storage.
     // This file MUST be registered in the project's pubspec.yaml assets.
-    storage = AssetBundleLivingCacheStorage(
-      path: 'assets/iconify/$fileName',
-    );
+    storage = AssetBundleLivingCacheStorage(path: 'assets/iconify/$fileName');
   }
 
   return LivingCacheProvider(storage: storage, compress: compress);
 }
 
-void _addAutoModeProviders(List<IconifyProvider> providers,
-    IconifyConfig config, LivingCacheProvider livingCache) {
+void _addAutoModeProviders(
+  List<IconifyProvider> providers,
+  IconifyConfig config,
+  LivingCacheProvider livingCache,
+) {
   if (kDebugMode || kIsWeb) {
     // Development/Web: Include starter registry and remote fallback
     if (_starterProvider != null) {
       providers.add(_starterProvider!);
     }
 
-    providers.add(RemoteIconifyProvider(
-      apiBase: config.remoteApiBase,
-      livingCache: livingCache,
-      writeBackEnabled: kDebugMode,
-    ));
+    providers.add(
+      RemoteIconifyProvider(
+        apiBase: config.remoteApiBase,
+        livingCache: livingCache,
+        writeBackEnabled: kDebugMode,
+      ),
+    );
   } else {
     // Release mode: Starter and Remote are ELIMINATED.
     // Icons must be in LivingCache or Generated.
@@ -107,7 +108,9 @@ void _addAutoModeProviders(List<IconifyProvider> providers,
 }
 
 void _addOfflineModeProviders(
-    List<IconifyProvider> providers, LivingCacheProvider livingCache) {
+  List<IconifyProvider> providers,
+  LivingCacheProvider livingCache,
+) {
   if (kDebugMode || kIsWeb) {
     if (_starterProvider != null) {
       providers.add(_starterProvider!);
@@ -120,8 +123,11 @@ void _addGeneratedModeProviders(List<IconifyProvider> providers) {
   // Generated mode only uses generated icons
 }
 
-void _addRemoteAllowedModeProviders(List<IconifyProvider> providers,
-    IconifyConfig config, LivingCacheProvider livingCache) {
+void _addRemoteAllowedModeProviders(
+  List<IconifyProvider> providers,
+  IconifyConfig config,
+  LivingCacheProvider livingCache,
+) {
   if (kDebugMode || kIsWeb) {
     if (_starterProvider != null) {
       providers.add(_starterProvider!);
@@ -129,10 +135,12 @@ void _addRemoteAllowedModeProviders(List<IconifyProvider> providers,
   }
 
   // Force allow remote fetching
-  providers.add(RemoteIconifyProvider(
-    apiBase: config.remoteApiBase,
-    allowInRelease: true,
-    livingCache: livingCache,
-    writeBackEnabled: kDebugMode,
-  ));
+  providers.add(
+    RemoteIconifyProvider(
+      apiBase: config.remoteApiBase,
+      allowInRelease: true,
+      livingCache: livingCache,
+      writeBackEnabled: kDebugMode,
+    ),
+  );
 }

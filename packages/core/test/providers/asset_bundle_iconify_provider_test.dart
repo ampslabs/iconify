@@ -26,8 +26,8 @@ void main() {
       provider.assets['assets/test.json'] = jsonEncode({
         'prefix': 'test',
         'icons': {
-          'home': {'body': '<path d="home"/>'}
-        }
+          'home': {'body': '<path d="home"/>'},
+        },
       });
     });
 

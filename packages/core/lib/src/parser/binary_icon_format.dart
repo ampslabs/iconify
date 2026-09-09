@@ -70,8 +70,9 @@ class BinaryIconFormat {
     builder.addUint32(stringTable.indexOf(collection.info.name));
     builder.addUint32(collection.info.totalIcons);
     builder.addUint32(stringTable.indexOf(collection.info.author ?? ''));
-    builder
-        .addUint32(stringTable.indexOf(collection.info.license?.title ?? ''));
+    builder.addUint32(
+      stringTable.indexOf(collection.info.license?.title ?? ''),
+    );
     builder.addUint32(stringTable.indexOf(collection.info.license?.spdx ?? ''));
     builder.addUint32(stringTable.indexOf(collection.info.license?.url ?? ''));
     builder.addUint8(collection.info.requiresAttribution ? 1 : 0);
@@ -168,11 +169,13 @@ class BinaryIconFormat {
     final data = ByteData.view(bytes.buffer, bytes.offsetInBytes, bytes.length);
     if (data.getUint32(0) != _magic) {
       throw const FormatException(
-          'Invalid .iconbin format: Magic bytes mismatch');
+        'Invalid .iconbin format: Magic bytes mismatch',
+      );
     }
     if (data.getUint8(4) != _version) {
       throw FormatException(
-          'Unsupported .iconbin version: ${data.getUint8(4)}');
+        'Unsupported .iconbin version: ${data.getUint8(4)}',
+      );
     }
 
     final iconCount = data.getUint16(6);
@@ -190,8 +193,11 @@ class BinaryIconFormat {
         final offsetToOffset = stringTableOffset + (index * 4);
         final sOffset = data.getUint32(offsetToOffset);
         final len = data.getUint32(sOffset);
-        final bytesView =
-            Uint8List.view(data.buffer, data.offsetInBytes + sOffset + 4, len);
+        final bytesView = Uint8List.view(
+          data.buffer,
+          data.offsetInBytes + sOffset + 4,
+          len,
+        );
         return utf8.decode(bytesView);
       });
     }
@@ -312,8 +318,11 @@ class BinaryIconFormat {
       final offsetToOffset = stringTableOffset + (index * 4);
       final sOffset = data.getUint32(offsetToOffset);
       final len = data.getUint32(sOffset);
-      final sBytes =
-          Uint8List.view(data.buffer, data.offsetInBytes + sOffset + 4, len);
+      final sBytes = Uint8List.view(
+        data.buffer,
+        data.offsetInBytes + sOffset + 4,
+        len,
+      );
       return utf8.decode(sBytes);
     }
 
@@ -400,22 +409,31 @@ class _BytesBuilder {
 
   void addUint16(int value) {
     _ensure(2);
-    ByteData.view(_buffer.buffer, _buffer.offsetInBytes + _length, 2)
-        .setUint16(0, value);
+    ByteData.view(
+      _buffer.buffer,
+      _buffer.offsetInBytes + _length,
+      2,
+    ).setUint16(0, value);
     _length += 2;
   }
 
   void addUint32(int value) {
     _ensure(4);
-    ByteData.view(_buffer.buffer, _buffer.offsetInBytes + _length, 4)
-        .setUint32(0, value);
+    ByteData.view(
+      _buffer.buffer,
+      _buffer.offsetInBytes + _length,
+      4,
+    ).setUint32(0, value);
     _length += 4;
   }
 
   void addFloat32(double value) {
     _ensure(4);
-    ByteData.view(_buffer.buffer, _buffer.offsetInBytes + _length, 4)
-        .setFloat32(0, value);
+    ByteData.view(
+      _buffer.buffer,
+      _buffer.offsetInBytes + _length,
+      4,
+    ).setFloat32(0, value);
     _length += 4;
   }
 
@@ -426,8 +444,11 @@ class _BytesBuilder {
   }
 
   void setUint32(int offset, int value) {
-    ByteData.view(_buffer.buffer, _buffer.offsetInBytes + offset, 4)
-        .setUint32(0, value);
+    ByteData.view(
+      _buffer.buffer,
+      _buffer.offsetInBytes + offset,
+      4,
+    ).setUint32(0, value);
   }
 
   Uint8List toBytes() => Uint8List.fromList(_buffer.sublist(0, _length));

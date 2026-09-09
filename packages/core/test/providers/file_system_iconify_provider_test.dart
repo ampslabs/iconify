@@ -11,15 +11,17 @@ void main() {
     setUp(() async {
       tempDir = await Directory.systemTemp.createTemp('iconify_test');
       final mdiFile = File('${tempDir.path}/mdi.json');
-      await mdiFile.writeAsString(jsonEncode({
-        'prefix': 'mdi',
-        'icons': {
-          'home': {'body': '<path d="home"/>'}
-        },
-        'total': 1,
-        'width': 24,
-        'height': 24
-      }));
+      await mdiFile.writeAsString(
+        jsonEncode({
+          'prefix': 'mdi',
+          'icons': {
+            'home': {'body': '<path d="home"/>'},
+          },
+          'total': 1,
+          'width': 24,
+          'height': 24,
+        }),
+      );
       provider = FileSystemIconifyProvider(root: tempDir.path);
     });
 
@@ -62,11 +64,14 @@ void main() {
     });
 
     test('preloadAll loads files into cache', () async {
-      final preloadedProvider =
-          FileSystemIconifyProvider(root: tempDir.path, preload: true);
+      final preloadedProvider = FileSystemIconifyProvider(
+        root: tempDir.path,
+        preload: true,
+      );
       // We can't easily check private cache, but we can verify it works instantly
-      final icon =
-          await preloadedProvider.getIcon(const IconifyName('mdi', 'home'));
+      final icon = await preloadedProvider.getIcon(
+        const IconifyName('mdi', 'home'),
+      );
       expect(icon, isNotNull);
     });
 

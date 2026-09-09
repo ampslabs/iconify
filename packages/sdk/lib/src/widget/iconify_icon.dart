@@ -60,7 +60,7 @@ class IconifyIcon extends StatefulWidget {
 
   /// Widget to show if icon loading fails.
   final Widget Function(BuildContext context, IconifyException error)?
-      errorBuilder;
+  errorBuilder;
 
   /// Widget to show while the icon is loading.
   final Widget Function(BuildContext context)? loadingBuilder;
@@ -120,7 +120,10 @@ class _IconifyIconState extends State<IconifyIcon> {
               : IconifyParseException(message: snapshot.error.toString());
           return widget.errorBuilder?.call(context, error) ??
               IconifyErrorWidget(
-                  name: widget.name, error: error, size: widget.size);
+                name: widget.name,
+                error: error,
+                size: widget.size,
+              );
         }
 
         final data = snapshot.data;
@@ -131,7 +134,10 @@ class _IconifyIconState extends State<IconifyIcon> {
           );
           return widget.errorBuilder?.call(context, error) ??
               IconifyErrorWidget(
-                  name: widget.name, error: error, size: widget.size);
+                name: widget.name,
+                error: error,
+                size: widget.size,
+              );
         }
 
         return _buildIcon(context, data, effectiveColor);

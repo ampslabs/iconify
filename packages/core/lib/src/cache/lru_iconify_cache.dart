@@ -9,9 +9,8 @@ import 'iconify_cache.dart';
 ///
 /// This cache is not thread-safe. Do not use from concurrent isolates.
 final class LruIconifyCache implements IconifyCache {
-  LruIconifyCache({
-    this.maxEntries = 500,
-  }) : assert(maxEntries > 0, 'maxEntries must be positive');
+  LruIconifyCache({this.maxEntries = 500})
+    : assert(maxEntries > 0, 'maxEntries must be positive');
 
   /// Maximum number of entries before LRU eviction occurs.
   final int maxEntries;
@@ -60,10 +59,7 @@ final class LruIconifyCache implements IconifyCache {
 
   /// Returns cache statistics for diagnostics.
   LruCacheStats get stats {
-    return LruCacheStats(
-      currentSize: _store.length,
-      maxSize: maxEntries,
-    );
+    return LruCacheStats(currentSize: _store.length, maxSize: maxEntries);
   }
 }
 
@@ -75,10 +71,7 @@ final class _CacheEntry {
 
 /// Diagnostic statistics for [LruIconifyCache].
 final class LruCacheStats {
-  const LruCacheStats({
-    required this.currentSize,
-    required this.maxSize,
-  });
+  const LruCacheStats({required this.currentSize, required this.maxSize});
 
   final int currentSize;
   final int maxSize;

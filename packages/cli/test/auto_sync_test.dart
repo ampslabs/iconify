@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 class MockLogger extends Mock implements Logger {}
+
 class MockProgress extends Mock implements Progress {}
 
 void main() {
@@ -17,13 +18,16 @@ void main() {
 
     setUp(() async {
       originalCwd = Directory.current.path;
-      tempDir = await Directory.systemTemp.createTemp('iconify_auto_sync_test_');
+      tempDir = await Directory.systemTemp.createTemp(
+        'iconify_auto_sync_test_',
+      );
       logger = MockLogger();
-      
-      when(() => logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
-          .thenReturn(true);
+
+      when(
+        () => logger.confirm(any(), defaultValue: any(named: 'defaultValue')),
+      ).thenReturn(true);
       when(() => logger.progress(any())).thenReturn(MockProgress());
-      
+
       runner = IconifyCommandRunner(logger: logger);
       Directory.current = tempDir;
     });
@@ -46,7 +50,9 @@ output: lib/icons.g.dart
 ''');
 
       Directory('lib').createSync();
-      await File('lib/main.dart').writeAsString("const widget = IconifyIcon('heroicons:bolt');");
+      await File(
+        'lib/main.dart',
+      ).writeAsString("const widget = IconifyIcon('heroicons:bolt');");
 
       final snapshotFile = File('assets/iconify/heroicons.json');
       expect(snapshotFile.existsSync(), isFalse);
@@ -57,8 +63,17 @@ output: lib/icons.g.dart
       await runner.run(['generate']);
 
       // 3. Verify sync prompt was called for the missing collection
-      verify(() => logger.info(any(that: contains('Missing snapshots for: heroicons')))).called(1);
-      verify(() => logger.confirm(any(that: contains('sync them now')), defaultValue: true)).called(1);
+      verify(
+        () => logger.info(
+          any(that: contains('Missing snapshots for: heroicons')),
+        ),
+      ).called(1);
+      verify(
+        () => logger.confirm(
+          any(that: contains('sync them now')),
+          defaultValue: true,
+        ),
+      ).called(1);
     });
   });
 }

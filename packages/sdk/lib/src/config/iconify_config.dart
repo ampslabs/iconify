@@ -48,5 +48,10 @@ final class IconifyConfig {
 
   @override
   int get hashCode => Object.hash(
-      mode, cacheMaxEntries, remoteApiBase, preloadPrefixes, compress);
+    mode,
+    cacheMaxEntries,
+    remoteApiBase,
+    preloadPrefixes,
+    compress,
+  );
 }

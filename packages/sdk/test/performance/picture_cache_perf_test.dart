@@ -41,7 +41,8 @@ void main() {
       // Benchmarks are expected to print to console.
       // ignore: avoid_print
       print(
-          'PictureCache Put with Eviction (100 iterations): ${sw.elapsedMilliseconds}ms');
+        'PictureCache Put with Eviction (100 iterations): ${sw.elapsedMilliseconds}ms',
+      );
     });
   });
 }

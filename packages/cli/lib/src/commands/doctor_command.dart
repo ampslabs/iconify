@@ -36,7 +36,8 @@ class DoctorCommand extends BaseCommand {
     final dataDir = Directory(config.dataDir);
     if (!dataDir.existsSync()) {
       logger.err(
-          '  ❌ data_dir "${config.dataDir}" not found. Run "iconify sync" to fix.');
+        '  ❌ data_dir "${config.dataDir}" not found. Run "iconify sync" to fix.',
+      );
       hasIssues = true;
     } else {
       logger.success('  ✅ data_dir found.');
@@ -47,14 +48,14 @@ class DoctorCommand extends BaseCommand {
         final file = File('${config.dataDir}/$prefix.json');
         if (!file.existsSync()) {
           logger.warn(
-              '  ⚠️ Missing snapshot for "$prefix". Run "iconify sync" to download.');
+            '  ⚠️ Missing snapshot for "$prefix". Run "iconify sync" to download.',
+          );
           hasWarnings = true;
         } else {
           // 4. Check License / Attribution
           try {
             final jsonStr = await file.readAsString();
-            final collection =
-                IconifyJsonParser.parseCollectionString(jsonStr);
+            final collection = IconifyJsonParser.parseCollectionString(jsonStr);
             if (collection.info.requiresAttribution) {
               logger.warn('  ⚠️ Collection "$prefix" requires attribution.');
               hasWarnings = true;
@@ -71,8 +72,9 @@ class DoctorCommand extends BaseCommand {
       try {
         final cacheJson =
             jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
-        final cachedIcons =
-            (cacheJson['icons'] as Map<String, dynamic>? ?? {}).keys.toSet();
+        final cachedIcons = (cacheJson['icons'] as Map<String, dynamic>? ?? {})
+            .keys
+            .toSet();
 
         if (cachedIcons.isNotEmpty) {
           // Quick scan for stale icons
@@ -92,11 +94,13 @@ class DoctorCommand extends BaseCommand {
             final staleIcons = cachedIcons.difference(usedIcons);
             if (staleIcons.isNotEmpty) {
               logger.warn(
-                  '  ⚠️ Found ${staleIcons.length} stale icons in used_icons.json. Run "iconify prune" to clean up.');
+                '  ⚠️ Found ${staleIcons.length} stale icons in used_icons.json. Run "iconify prune" to clean up.',
+              );
               hasWarnings = true;
             } else {
               logger.success(
-                  '  ✅ used_icons.json is healthy (${cachedIcons.length} icons).');
+                '  ✅ used_icons.json is healthy (${cachedIcons.length} icons).',
+              );
             }
           }
         }

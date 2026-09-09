@@ -18,7 +18,9 @@ final class IconifyCollectionInfo {
   });
 
   factory IconifyCollectionInfo.fromJson(
-      String prefix, Map<String, dynamic> json) {
+    String prefix,
+    Map<String, dynamic> json,
+  ) {
     final info = json['info'] as Map<String, dynamic>? ?? json;
     final licenseJson = info['license'] as Map<String, dynamic>?;
 
@@ -27,13 +29,16 @@ final class IconifyCollectionInfo {
       name: info['name'] as String? ?? prefix,
       totalIcons: info['total'] as int? ?? 0,
       author: _extractAuthor(info['author']),
-      license:
-          licenseJson != null ? IconifyLicense.fromJson(licenseJson) : null,
-      samples: (info['samples'] as List<dynamic>?)
+      license: licenseJson != null
+          ? IconifyLicense.fromJson(licenseJson)
+          : null,
+      samples:
+          (info['samples'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      categories: (info['categories'] as List<dynamic>?)
+      categories:
+          (info['categories'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
@@ -80,15 +85,15 @@ final class IconifyCollectionInfo {
       license?.isKnownCommercialFriendly ?? false;
 
   Map<String, dynamic> toJson() => {
-        'prefix': prefix,
-        'name': name,
-        'totalIcons': totalIcons,
-        if (author != null) 'author': author,
-        if (license != null) 'license': license!.toJson(),
-        if (samples.isNotEmpty) 'samples': samples,
-        if (categories.isNotEmpty) 'categories': categories,
-        if (version != null) 'version': version,
-      };
+    'prefix': prefix,
+    'name': name,
+    'totalIcons': totalIcons,
+    if (author != null) 'author': author,
+    if (license != null) 'license': license!.toJson(),
+    if (samples.isNotEmpty) 'samples': samples,
+    if (categories.isNotEmpty) 'categories': categories,
+    if (version != null) 'version': version,
+  };
 
   static String? _extractAuthor(dynamic author) {
     if (author == null) return null;

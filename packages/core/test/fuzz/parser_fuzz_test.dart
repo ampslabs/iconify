@@ -57,12 +57,12 @@ void main() {
       const json = {
         'prefix': 'test',
         'icons': {
-          'base': {'body': '<path/>'}
+          'base': {'body': '<path/>'},
         },
         'aliases': {
           'a': {'parent': 'b'},
           'b': {'parent': 'a'},
-        }
+        },
       };
 
       final collection = IconifyJsonParser.parseCollection(json);
@@ -76,7 +76,7 @@ void main() {
 
     test('handles extremely large number of aliases', () {
       final icons = {
-        'base': {'body': '<path/>'}
+        'base': {'body': '<path/>'},
       };
       final aliases = <String, dynamic>{};
 
@@ -84,11 +84,7 @@ void main() {
         aliases['alias-$i'] = {'parent': 'base'};
       }
 
-      final json = {
-        'prefix': 'test',
-        'icons': icons,
-        'aliases': aliases,
-      };
+      final json = {'prefix': 'test', 'icons': icons, 'aliases': aliases};
 
       final collection = IconifyJsonParser.parseCollection(json);
       expect(collection.aliasCount, 1000);

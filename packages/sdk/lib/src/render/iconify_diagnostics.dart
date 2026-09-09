@@ -6,11 +6,11 @@ final class IconifyDiagnostics {
 
   /// Returns information about the [IconifyPictureCache].
   static PictureCacheStats get pictureCacheStats => PictureCacheStats(
-        length: IconifyPictureCache.instance.length,
-        maxEntries: IconifyPictureCache.instance.maxEntries,
-        hits: IconifyPictureCache.instance.hits,
-        misses: IconifyPictureCache.instance.misses,
-      );
+    length: IconifyPictureCache.instance.length,
+    maxEntries: IconifyPictureCache.instance.maxEntries,
+    hits: IconifyPictureCache.instance.hits,
+    misses: IconifyPictureCache.instance.misses,
+  );
 
   /// Resets all diagnostic counters and clears caches.
   static void reset() {

@@ -41,9 +41,9 @@ final class IconifyRasterizer {
 
     canvas.drawPicture(pictureInfo.picture);
     final ui.Image image = await recorder.endRecording().toImage(
-          dimension.ceil(),
-          dimension.ceil(),
-        );
+      dimension.ceil(),
+      dimension.ceil(),
+    );
 
     if (cacheKey != null) {
       _cache[cacheKey] = image;
@@ -79,7 +79,8 @@ class RasterizedIconifyImageProvider
 
   @override
   Future<RasterizedIconifyImageKey> obtainKey(
-      ImageConfiguration configuration) {
+    ImageConfiguration configuration,
+  ) {
     return SynchronousFuture<RasterizedIconifyImageKey>(
       RasterizedIconifyImageKey(cacheKey, pixelRatio),
     );
@@ -90,9 +91,7 @@ class RasterizedIconifyImageProvider
     RasterizedIconifyImageKey key,
     ImageDecoderCallback decode,
   ) {
-    return OneFrameImageStreamCompleter(
-      _loadAsync(key),
-    );
+    return OneFrameImageStreamCompleter(_loadAsync(key));
   }
 
   Future<ImageInfo> _loadAsync(RasterizedIconifyImageKey key) async {

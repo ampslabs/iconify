@@ -31,15 +31,15 @@ final class IconifyJsonParser {
   /// Parses a raw JSON string into a [ParsedCollection].
   ///
   /// Throws [IconifyParseException] on malformed input.
-  static ParsedCollection parseCollectionString(String jsonString,
-      {SvgSanitizer? sanitizer}) {
+  static ParsedCollection parseCollectionString(
+    String jsonString, {
+    SvgSanitizer? sanitizer,
+  }) {
     final Map<String, dynamic> json;
     try {
       json = jsonDecode(jsonString) as Map<String, dynamic>;
     } catch (e) {
-      throw IconifyParseException(
-        message: 'Invalid JSON: $e',
-      );
+      throw IconifyParseException(message: 'Invalid JSON: $e');
     }
     return parseCollection(json, sanitizer: sanitizer);
   }
@@ -47,8 +47,10 @@ final class IconifyJsonParser {
   /// Parses a decoded JSON map into a [ParsedCollection].
   ///
   /// Throws [IconifyParseException] on schema violations.
-  static ParsedCollection parseCollection(Map<String, dynamic> json,
-      {SvgSanitizer? sanitizer}) {
+  static ParsedCollection parseCollection(
+    Map<String, dynamic> json, {
+    SvgSanitizer? sanitizer,
+  }) {
     try {
       final prefix = json['prefix'] as String?;
       if (prefix == null || prefix.isEmpty) {
@@ -73,12 +75,15 @@ final class IconifyJsonParser {
       final icons = <String, IconifyIconData>{};
       for (final entry in rawIcons.entries) {
         try {
-          final iconJson =
-              Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
+          final iconJson = Map<String, dynamic>.from(
+            entry.value as Map<String, dynamic>,
+          );
           iconJson.putIfAbsent('width', () => defaultWidth);
           iconJson.putIfAbsent('height', () => defaultHeight);
-          icons[entry.key] =
-              IconifyIconData.fromJson(iconJson, sanitizer: sanitizer);
+          icons[entry.key] = IconifyIconData.fromJson(
+            iconJson,
+            sanitizer: sanitizer,
+          );
         } catch (e) {
           throw IconifyParseException(
             message:
@@ -154,12 +159,15 @@ final class IconifyJsonParser {
       // Try alias resolution
       final icons = <String, IconifyIconData>{};
       for (final entry in rawIcons.entries) {
-        final iconJson =
-            Map<String, dynamic>.from(entry.value as Map<String, dynamic>);
+        final iconJson = Map<String, dynamic>.from(
+          entry.value as Map<String, dynamic>,
+        );
         iconJson.putIfAbsent('width', () => defaultWidth);
         iconJson.putIfAbsent('height', () => defaultHeight);
-        icons[entry.key] =
-            IconifyIconData.fromJson(iconJson, sanitizer: sanitizer);
+        icons[entry.key] = IconifyIconData.fromJson(
+          iconJson,
+          sanitizer: sanitizer,
+        );
       }
 
       final aliases = <String, AliasEntry>{};

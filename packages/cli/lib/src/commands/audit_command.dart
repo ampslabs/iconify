@@ -36,8 +36,8 @@ class AuditCommand extends BaseCommand {
     try {
       final cacheJson =
           jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
-      final usedIcons =
-          (cacheJson['icons'] as Map<String, dynamic>? ?? {}).keys.toList();
+      final usedIcons = (cacheJson['icons'] as Map<String, dynamic>? ?? {}).keys
+          .toList();
 
       if (usedIcons.isEmpty) {
         progress.complete('No icons found to audit.');
@@ -53,8 +53,9 @@ class AuditCommand extends BaseCommand {
           final snapshotFile = File('${config.dataDir}/$prefix.json');
           if (snapshotFile.existsSync()) {
             final jsonStr = await snapshotFile.readAsString();
-            collections[prefix] =
-                IconifyJsonParser.parseCollectionString(jsonStr);
+            collections[prefix] = IconifyJsonParser.parseCollectionString(
+              jsonStr,
+            );
           }
         }
 

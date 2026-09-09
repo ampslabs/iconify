@@ -139,9 +139,7 @@ void main() {
       });
 
       test('can be used in Set', () {
-        final set = {
-          const IconifyName('mdi', 'home'),
-        };
+        final set = {const IconifyName('mdi', 'home')};
         // Add another identical instance to test deduplication
         set.add(const IconifyName('mdi', 'home'));
         expect(set.length, 1);

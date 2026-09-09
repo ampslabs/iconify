@@ -1,4 +1,3 @@
-
 import 'package:mason_logger/mason_logger.dart';
 
 import 'base_command.dart';

@@ -17,7 +17,8 @@ final class IconifyLicense {
 
   factory IconifyLicense.fromJson(Map<String, dynamic> json) {
     final spdx = json['spdx'] as String?;
-    final requiresAttribution = json['requiresAttribution'] as bool? ??
+    final requiresAttribution =
+        json['requiresAttribution'] as bool? ??
         (spdx != null && !_noAttributionRequired.contains(spdx));
 
     return IconifyLicense(
@@ -69,20 +70,19 @@ final class IconifyLicense {
     String? spdx,
     String? url,
     bool? requiresAttribution,
-  }) =>
-      IconifyLicense(
-        title: title ?? this.title,
-        spdx: spdx ?? this.spdx,
-        url: url ?? this.url,
-        requiresAttribution: requiresAttribution ?? this.requiresAttribution,
-      );
+  }) => IconifyLicense(
+    title: title ?? this.title,
+    spdx: spdx ?? this.spdx,
+    url: url ?? this.url,
+    requiresAttribution: requiresAttribution ?? this.requiresAttribution,
+  );
 
   Map<String, dynamic> toJson() => {
-        if (title != null) 'title': title,
-        if (spdx != null) 'spdx': spdx,
-        if (url != null) 'url': url,
-        'requiresAttribution': requiresAttribution,
-      };
+    if (title != null) 'title': title,
+    if (spdx != null) 'spdx': spdx,
+    if (url != null) 'url': url,
+    'requiresAttribution': requiresAttribution,
+  };
 
   @override
   bool operator ==(Object other) =>

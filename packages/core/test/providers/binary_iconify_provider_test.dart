@@ -56,25 +56,31 @@ void main() {
     });
 
     test('preloadAll loads files into cache', () async {
-      final preloadedProvider =
-          BinaryIconifyProvider(root: tempDir.path, preload: true);
+      final preloadedProvider = BinaryIconifyProvider(
+        root: tempDir.path,
+        preload: true,
+      );
 
       // Wait a bit for isolate preloading to finish since it's fire-and-forget in constructor
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
-      final icon =
-          await preloadedProvider.getIcon(const IconifyName('mdi', 'home'));
+      final icon = await preloadedProvider.getIcon(
+        const IconifyName('mdi', 'home'),
+      );
       expect(icon, isNotNull);
     });
 
     test('preloadPrefixes selectively loads files', () async {
-      final preloadedProvider =
-          BinaryIconifyProvider(root: tempDir.path, preloadPrefixes: ['mdi']);
+      final preloadedProvider = BinaryIconifyProvider(
+        root: tempDir.path,
+        preloadPrefixes: ['mdi'],
+      );
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
-      final icon =
-          await preloadedProvider.getIcon(const IconifyName('mdi', 'home'));
+      final icon = await preloadedProvider.getIcon(
+        const IconifyName('mdi', 'home'),
+      );
       expect(icon, isNotNull);
     });
   });

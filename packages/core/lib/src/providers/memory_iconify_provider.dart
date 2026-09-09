@@ -16,8 +16,8 @@ final class MemoryIconifyProvider extends IconifyProvider {
   MemoryIconifyProvider({
     Map<IconifyName, IconifyIconData>? icons,
     Map<String, IconifyCollectionInfo>? collections,
-  })  : _icons = icons ?? {},
-        _collections = collections ?? {};
+  }) : _icons = icons ?? {},
+       _collections = collections ?? {};
 
   final Map<IconifyName, IconifyIconData> _icons;
   final Map<String, IconifyCollectionInfo> _collections;

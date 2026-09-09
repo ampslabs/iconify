@@ -34,7 +34,8 @@ final class IconifyName {
     if (colonIndex == -1) {
       throw InvalidIconNameException(
         input: value,
-        message: 'Expected format \'prefix:name\', got \'$value\'. '
+        message:
+            'Expected format \'prefix:name\', got \'$value\'. '
             'Did you mean to use a colon instead of a hyphen or slash?',
       );
     }
@@ -42,7 +43,8 @@ final class IconifyName {
     if (value.indexOf(':', colonIndex + 1) != -1) {
       throw InvalidIconNameException(
         input: value,
-        message: 'Expected exactly one colon in \'$value\', found multiple. '
+        message:
+            'Expected exactly one colon in \'$value\', found multiple. '
             'Format must be \'prefix:name\'.',
       );
     }
@@ -69,10 +71,12 @@ final class IconifyName {
   /// The icon name within the set, e.g., `home`, `settings`, `arrow-left`.
   final String iconName;
 
-  static final _prefixPattern =
-      RegExp(r'^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$');
-  static final _namePattern =
-      RegExp(r'^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$');
+  static final _prefixPattern = RegExp(
+    r'^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$',
+  );
+  static final _namePattern = RegExp(
+    r'^[a-z0-9][a-z0-9\-]*[a-z0-9]$|^[a-z0-9]$',
+  );
   static const _maxPartLength = 64;
 
   /// Tries to parse a string, returning `null` on failure instead of throwing.

@@ -5,11 +5,13 @@ void main() {
   group('DevModeGuard', () {
     tearDown(() => DevModeGuard.resetOverride());
 
-    test('isRemoteAllowedInCurrentBuild returns true in debug mode (test env)',
-        () {
-      // Tests run in debug mode, so asserts execute — should return true
-      expect(DevModeGuard.isRemoteAllowedInCurrentBuild(), isTrue);
-    });
+    test(
+      'isRemoteAllowedInCurrentBuild returns true in debug mode (test env)',
+      () {
+        // Tests run in debug mode, so asserts execute — should return true
+        expect(DevModeGuard.isRemoteAllowedInCurrentBuild(), isTrue);
+      },
+    );
 
     test('allowRemoteInRelease overrides to true', () {
       DevModeGuard.allowRemoteInRelease();

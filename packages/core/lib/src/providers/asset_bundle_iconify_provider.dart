@@ -112,7 +112,8 @@ abstract class AssetBundleIconifyProvider extends IconifyProvider {
         // Use print for developer diagnostic logging in the console.
         // ignore: avoid_print
         print(
-            'Iconify SDK [LOCAL]: Loaded collection $prefix (${collection.iconCount} icons) from bundle');
+          'Iconify SDK [LOCAL]: Loaded collection $prefix (${collection.iconCount} icons) from bundle',
+        );
       }
       return collection;
     } catch (e) {

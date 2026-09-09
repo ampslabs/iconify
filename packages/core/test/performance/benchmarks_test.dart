@@ -13,8 +13,11 @@ void main() {
       // Use print to output benchmark results to the console.
       // ignore: avoid_print
       print('  IconifyName.parse: ${watch.elapsedMilliseconds}ms total');
-      expect(watch.elapsedMilliseconds, lessThan(500),
-          reason: 'Should be extremely fast');
+      expect(
+        watch.elapsedMilliseconds,
+        lessThan(500),
+        reason: 'Should be extremely fast',
+      );
     });
 
     test('LruIconifyCache.get benchmark (100k iterations)', () async {
@@ -80,7 +83,8 @@ void main() {
       // Use print to output benchmark results to the console.
       // ignore: avoid_print
       print(
-          '  AliasResolver (10k depth-5 chains): ${watch.elapsedMilliseconds}ms');
+        '  AliasResolver (10k depth-5 chains): ${watch.elapsedMilliseconds}ms',
+      );
       expect(watch.elapsedMilliseconds, lessThan(500));
     });
   });

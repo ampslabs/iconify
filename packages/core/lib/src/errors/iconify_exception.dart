@@ -30,10 +30,7 @@ sealed class IconifyException implements Exception {
 ///
 /// Happens when the input does not match `prefix:name` format.
 final class InvalidIconNameException extends IconifyException {
-  const InvalidIconNameException({
-    required this.input,
-    required super.message,
-  });
+  const InvalidIconNameException({required this.input, required super.message});
 
   /// The original string that failed to parse.
   final String input;
@@ -82,10 +79,7 @@ final class IconifyNetworkException extends IconifyException {
 
 /// Thrown when license metadata is required but missing.
 final class IconifyLicenseException extends IconifyException {
-  const IconifyLicenseException({
-    required this.prefix,
-    required super.message,
-  });
+  const IconifyLicenseException({required this.prefix, required super.message});
 
   final String prefix;
 }
@@ -107,10 +101,7 @@ final class IconifyParseException extends IconifyException {
 
 /// Thrown when a circular alias chain is detected.
 final class CircularAliasException extends IconifyException {
-  const CircularAliasException({
-    required this.chain,
-    required super.message,
-  });
+  const CircularAliasException({required this.chain, required super.message});
 
   /// The full alias chain that created the cycle.
   /// Example: ['home-alias', 'home-alias2', 'home-alias']
@@ -119,17 +110,12 @@ final class CircularAliasException extends IconifyException {
 
 /// Thrown when an SVG body fails security sanitization.
 final class SvgSanitizationException extends IconifyException {
-  const SvgSanitizationException({
-    required super.message,
-  });
+  const SvgSanitizationException({required super.message});
 }
 
 /// Thrown when the local cache fails to read or write.
 final class IconifyCacheException extends IconifyException {
-  const IconifyCacheException({
-    required super.message,
-    this.cause,
-  });
+  const IconifyCacheException({required super.message, this.cause});
 
   final Object? cause;
 }

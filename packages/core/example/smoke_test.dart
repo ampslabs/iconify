@@ -38,9 +38,11 @@ Future<void> main() async {
 
   await check('IconifyName equality', () async {
     assert(
-        const IconifyName('mdi', 'home') == const IconifyName('mdi', 'home'));
-    assert(const IconifyName('mdi', 'home') !=
-        const IconifyName('mdi', 'settings'));
+      const IconifyName('mdi', 'home') == const IconifyName('mdi', 'home'),
+    );
+    assert(
+      const IconifyName('mdi', 'home') != const IconifyName('mdi', 'settings'),
+    );
   });
 
   await check('IconifyName as Map key', () async {

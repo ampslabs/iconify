@@ -43,8 +43,8 @@ class LicensesCommand extends BaseCommand {
     try {
       final cacheJson =
           jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
-      final usedIcons =
-          (cacheJson['icons'] as Map<String, dynamic>? ?? {}).keys.toList();
+      final usedIcons = (cacheJson['icons'] as Map<String, dynamic>? ?? {}).keys
+          .toList();
 
       for (final fullName in usedIcons) {
         final prefix = fullName.split(':').first;
@@ -71,7 +71,8 @@ class LicensesCommand extends BaseCommand {
       buffer.writeln('# Icon Attribution');
       buffer.writeln();
       buffer.writeln(
-          'The following icon collections used in this project require attribution:');
+        'The following icon collections used in this project require attribution:',
+      );
       buffer.writeln();
 
       for (final info in attributionRequired.values) {
@@ -81,7 +82,8 @@ class LicensesCommand extends BaseCommand {
           buffer.writeln('- **Author**: ${info.author}');
         }
         buffer.writeln(
-            '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})');
+          '- **License**: ${info.license?.title ?? 'Custom'} (${info.license?.spdx ?? 'N/A'})',
+        );
         if (info.license?.url != null) {
           buffer.writeln('- **License URL**: ${info.license?.url}');
         }
