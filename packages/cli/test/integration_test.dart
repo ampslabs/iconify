@@ -56,8 +56,9 @@ output: lib/icons.g.dart
       // 4. Generate
       // Create a dummy source file
       await Directory('lib').create();
-      await File('lib/app.dart')
-          .writeAsString("const icon = IconifyIcon('mdi:home');");
+      await File(
+        'lib/app.dart',
+      ).writeAsString("const icon = IconifyIcon('mdi:home');");
 
       final genResult = await runner.run(['generate']);
       expect(genResult, equals(ExitCode.success.code));

@@ -18,18 +18,20 @@ void main() {
         ),
       ),
       icons: {
-        'home':
-            IconifyIconData(body: '<path d="home"/>', width: 24, height: 24),
+        'home': IconifyIconData(
+          body: '<path d="home"/>',
+          width: 24,
+          height: 24,
+        ),
         'user': IconifyIconData(
-            body: '<path d="user"/>',
-            width: 20,
-            height: 20,
-            rotate: 1,
-            hFlip: true),
+          body: '<path d="user"/>',
+          width: 20,
+          height: 20,
+          rotate: 1,
+          hFlip: true,
+        ),
       },
-      aliases: {
-        'profile': AliasEntry(parent: 'user', vFlip: true),
-      },
+      aliases: {'profile': AliasEntry(parent: 'user', vFlip: true)},
       defaultWidth: 24,
       defaultHeight: 24,
     );
@@ -43,23 +45,37 @@ void main() {
       expect(decoded.info.totalIcons, equals(collection.info.totalIcons));
       expect(decoded.info.author, equals(collection.info.author));
       expect(
-          decoded.info.license?.title, equals(collection.info.license?.title));
+        decoded.info.license?.title,
+        equals(collection.info.license?.title),
+      );
 
       expect(decoded.iconCount, equals(collection.iconCount));
       expect(
-          decoded.icons['home']?.body, equals(collection.icons['home']?.body));
-      expect(decoded.icons['home']?.width,
-          equals(collection.icons['home']?.width));
-      expect(decoded.icons['user']?.rotate,
-          equals(collection.icons['user']?.rotate));
-      expect(decoded.icons['user']?.hFlip,
-          equals(collection.icons['user']?.hFlip));
+        decoded.icons['home']?.body,
+        equals(collection.icons['home']?.body),
+      );
+      expect(
+        decoded.icons['home']?.width,
+        equals(collection.icons['home']?.width),
+      );
+      expect(
+        decoded.icons['user']?.rotate,
+        equals(collection.icons['user']?.rotate),
+      );
+      expect(
+        decoded.icons['user']?.hFlip,
+        equals(collection.icons['user']?.hFlip),
+      );
 
       expect(decoded.aliasCount, equals(collection.aliasCount));
-      expect(decoded.aliases['profile']?.parent,
-          equals(collection.aliases['profile']?.parent));
-      expect(decoded.aliases['profile']?.vFlip,
-          equals(collection.aliases['profile']?.vFlip));
+      expect(
+        decoded.aliases['profile']?.parent,
+        equals(collection.aliases['profile']?.parent),
+      );
+      expect(
+        decoded.aliases['profile']?.vFlip,
+        equals(collection.aliases['profile']?.vFlip),
+      );
     });
 
     test('decodeIcon extracts single icon without full decode', () {

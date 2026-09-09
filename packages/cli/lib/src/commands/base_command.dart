@@ -19,8 +19,9 @@ abstract class BaseCommand extends Command<int> {
     if (!configFile.existsSync()) {
       logger.info('🚀 iconify.yaml not found.');
       final shouldInit = logger.confirm(
-          'Would you like to initialize Iconify in this project?',
-          defaultValue: true);
+        'Would you like to initialize Iconify in this project?',
+        defaultValue: true,
+      );
       if (!shouldInit) return null;
 
       await runInit();
@@ -93,7 +94,9 @@ abstract class BaseCommand extends Command<int> {
 
   /// Ensures specified [prefixes] are synced locally.
   Future<bool> ensureSynced(
-      IconifyBuildConfig config, Set<String> prefixes) async {
+    IconifyBuildConfig config,
+    Set<String> prefixes,
+  ) async {
     final missing = <String>[];
     for (final prefix in prefixes) {
       final file = File('${config.dataDir}/$prefix.json');
@@ -105,16 +108,20 @@ abstract class BaseCommand extends Command<int> {
     if (missing.isEmpty) return true;
 
     logger.info('📦 Missing snapshots for: ${missing.join(', ')}');
-    final shouldSync =
-        logger.confirm('Would you like to sync them now?', defaultValue: true);
+    final shouldSync = logger.confirm(
+      'Would you like to sync them now?',
+      defaultValue: true,
+    );
     if (!shouldSync) return false;
 
     return runSync(config, prefixes: missing);
   }
 
   /// Runs the sync logic for specific [prefixes].
-  Future<bool> runSync(IconifyBuildConfig config,
-      {required List<String> prefixes}) async {
+  Future<bool> runSync(
+    IconifyBuildConfig config, {
+    required List<String> prefixes,
+  }) async {
     final client = http.Client();
     final lockFile = File('iconify.lock');
     Map<String, dynamic> lockData = {};
@@ -125,14 +132,16 @@ abstract class BaseCommand extends Command<int> {
       } catch (_) {}
     }
 
-    final progress =
-        logger.progress('Syncing ${prefixes.length} collections...');
+    final progress = logger.progress(
+      'Syncing ${prefixes.length} collections...',
+    );
     var successCount = 0;
 
     try {
       for (final prefix in prefixes) {
         final uri = Uri.parse(
-            'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
+          'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json',
+        );
 
         try {
           final response = await client.get(uri);
@@ -157,8 +166,9 @@ abstract class BaseCommand extends Command<int> {
       }
     } finally {
       client.close();
-      await lockFile
-          .writeAsString(const JsonEncoder.withIndent('  ').convert(lockData));
+      await lockFile.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(lockData),
+      );
     }
 
     if (successCount > 0) {

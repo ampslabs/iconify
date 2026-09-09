@@ -16,7 +16,7 @@ The `.iconbin` format is an optimized binary representation of an Iconify icon c
 
 ---
 
-## Header (28 bytes)
+## Header (30 bytes)
 
 | Offset | Type | Description |
 |---|---|---|
@@ -30,6 +30,8 @@ The `.iconbin` format is an optimized binary representation of an Iconify icon c
 | 18 | uint32 | Icon Index Offset |
 | 22 | uint32 | Alias Index Offset |
 | 26 | uint32 | String Table Offset |
+
+The header is 30 bytes: 4 + 1 + 1 + 2 + 2 + 4 + (4 × 4) = 30.
 
 ---
 

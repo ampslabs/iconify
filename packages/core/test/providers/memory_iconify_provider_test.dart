@@ -5,7 +5,8 @@ void main() {
   final home = const IconifyName('mdi', 'home');
   final settings = const IconifyName('mdi', 'settings');
   final homeData = const IconifyIconData(
-      body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>');
+    body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
+  );
   final settingsData = const IconifyIconData(body: '<path d="M19.14 12.94"/>');
 
   group('MemoryIconifyProvider', () {
@@ -63,7 +64,10 @@ void main() {
 
     test('hasCollection returns true for present collection', () async {
       const info = IconifyCollectionInfo(
-          prefix: 'mdi', name: 'Material Design Icons', totalIcons: 100);
+        prefix: 'mdi',
+        name: 'Material Design Icons',
+        totalIcons: 100,
+      );
       provider.putCollection(info);
       expect(await provider.hasCollection('mdi'), isTrue);
     });

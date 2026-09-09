@@ -43,11 +43,35 @@ Rename `Iconify(...)` widgets to `IconifyIcon(...)`. The parameters are mostly c
 // OLD
 Iconify(Mdi.home, color: Colors.blue)
 
-// NEW (Dynamic string)
+// NEW (Dynamic string — the recommended identity)
 IconifyIcon('mdi:home', color: Colors.blue)
 
-// NEW (Type-safe bundled)
-IconifyIcon.name(IconsMdi.home, color: Colors.blue)
+// NEW (Typed identifier)
+IconifyIcon.name(const IconifyName('mdi', 'home'), color: Colors.blue)
+```
+
+### 3b. Using Bundled (Generated) Constants
+
+`build_runner` can generate compile-time icon constants plus an `initGeneratedIcons()` helper. Wire them into `IconifyApp` via a `MemoryIconifyProvider` — the widget still takes a `prefix:name` string:
+
+```dart
+// lib/icons.g.dart (generated) — provides IconsMdi.home and initGeneratedIcons()
+
+// main.dart
+void main() {
+  final memory = MemoryIconifyProvider();
+  initGeneratedIcons(memory); // Injects IconsMdi.home, IconsLucide.rocket, ...
+
+  runApp(
+    IconifyApp(
+      config: const IconifyConfig(customProviders: [memory]),
+      child: MyApp(),
+    ),
+  );
+}
+
+// iconify_icon.dart
+IconifyIcon('mdi:home', color: Colors.blue)
 ```
 
 ### 4. Adopt the CLI Workflow

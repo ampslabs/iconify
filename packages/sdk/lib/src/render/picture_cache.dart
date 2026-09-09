@@ -64,11 +64,7 @@ class IconifyPictureCache {
 
 /// A key for the [IconifyPictureCache].
 class PictureCacheKey {
-  PictureCacheKey({
-    required this.name,
-    required this.size,
-    this.color,
-  });
+  PictureCacheKey({required this.name, required this.size, this.color});
 
   final IconifyName name;
   final int? color;

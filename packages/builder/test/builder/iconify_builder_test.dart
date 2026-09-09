@@ -37,13 +37,9 @@ final icon = IconifyIcon('mdi:home');
     });
 
     test('skips when no icons detected', () async {
-      await testBuilder(
-        iconifyBuilder(BuilderOptions.empty),
-        {
-          'a|lib/main.dart': 'void main() {}',
-        },
-        outputs: {},
-      );
+      await testBuilder(iconifyBuilder(BuilderOptions.empty), {
+        'a|lib/main.dart': 'void main() {}',
+      }, outputs: {});
     });
   });
 }

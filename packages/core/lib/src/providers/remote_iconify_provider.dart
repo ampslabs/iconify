@@ -34,13 +34,13 @@ final class RemoteIconifyProvider implements IconifyProvider {
     this.livingCache,
     this.writeBackEnabled = true,
     this.sanitizer = const SvgSanitizer(mode: SanitizerMode.lenient),
-  })  : _apiBase = apiBase ?? 'https://api.iconify.design',
-        _client = httpClient ?? http.Client(),
-        _allowInRelease = allowInRelease,
-        _headers = {
-          'User-Agent': 'iconify_sdk_core/0.2.0 (Dart)',
-          ...?additionalHeaders,
-        };
+  }) : _apiBase = apiBase ?? 'https://api.iconify.design',
+       _client = httpClient ?? http.Client(),
+       _allowInRelease = allowInRelease,
+       _headers = {
+         'User-Agent': 'iconify_sdk_core/0.2.0 (Dart)',
+         ...?additionalHeaders,
+       };
 
   final String _apiBase;
   final http.Client _client;
@@ -98,9 +98,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
 
     // 2. Fallback: Use micro-batching API
     final completer = Completer<IconifyIconData?>();
-    _pending.putIfAbsent(name.prefix, () => []).add(
-          _PendingRequest(name.iconName, completer),
-        );
+    _pending
+        .putIfAbsent(name.prefix, () => [])
+        .add(_PendingRequest(name.iconName, completer));
 
     _startBatchTimer();
 
@@ -160,7 +160,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
   Future<ParsedCollection?> _fetchGitHub(String prefix) async {
     try {
       final githubUri = Uri.parse(
-          'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
+        'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json',
+      );
 
       // Use print for developer diagnostic logging in the console.
       // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
@@ -182,7 +183,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
       // Use print for developer diagnostic logging in the console.
       // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
       print(
-          'Iconify SDK [REMOTE]: GitHub fetch failed for $prefix, falling back to API: $e');
+        'Iconify SDK [REMOTE]: GitHub fetch failed for $prefix, falling back to API: $e',
+      );
       return null;
     }
   }
@@ -199,16 +201,19 @@ final class RemoteIconifyProvider implements IconifyProvider {
       final requests = entry.value;
       final iconNames = requests.map((r) => r.iconName).toSet().toList();
 
-      final uri =
-          Uri.parse('$_apiBase/$prefix.json?icons=${iconNames.join(',')}');
+      final uri = Uri.parse(
+        '$_apiBase/$prefix.json?icons=${iconNames.join(',')}',
+      );
 
       try {
         // Use print for developer diagnostic logging in the console.
         // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
         print(
-            'Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...');
-        final response =
-            await _client.get(uri, headers: _headers).timeout(requestTimeout);
+          'Iconify SDK [REMOTE]: Fetching ${iconNames.length} icons for $prefix...',
+        );
+        final response = await _client
+            .get(uri, headers: _headers)
+            .timeout(requestTimeout);
 
         if (response.statusCode == 404) {
           // Use print for developer diagnostic logging in the console.
@@ -224,7 +229,8 @@ final class RemoteIconifyProvider implements IconifyProvider {
           // Use print for developer diagnostic logging in the console.
           // ignore: avoid_print, RemoteIconifyProvider uses print for dev diagnostics.
           print(
-              'Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix');
+            'Iconify SDK [REMOTE]: HTTP ${response.statusCode} for $prefix',
+          );
           final error = IconifyNetworkException(
             message: 'HTTP ${response.statusCode} fetching batch for $prefix',
             statusCode: response.statusCode,
@@ -283,8 +289,9 @@ final class RemoteIconifyProvider implements IconifyProvider {
     final uri = Uri.parse('$_apiBase/collection?prefix=$prefix&info=1');
 
     try {
-      final response =
-          await _client.get(uri, headers: _headers).timeout(requestTimeout);
+      final response = await _client
+          .get(uri, headers: _headers)
+          .timeout(requestTimeout);
       if (response.statusCode == 404) return null;
       if (response.statusCode != 200) {
         throw IconifyNetworkException(

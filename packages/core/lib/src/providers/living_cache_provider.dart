@@ -70,8 +70,9 @@ final class LivingCacheProvider extends IconifyProvider {
 
         final iconsJson = json['icons'] as Map<String, dynamic>? ?? {};
         _icons = iconsJson.map((key, value) {
-          final iconData =
-              IconifyIconData.fromJson(value as Map<String, dynamic>);
+          final iconData = IconifyIconData.fromJson(
+            value as Map<String, dynamic>,
+          );
           // Extract source info if present in the JSON
           final source = value['source'] as String?;
           if (source != null) {
@@ -123,8 +124,11 @@ final class LivingCacheProvider extends IconifyProvider {
   /// Adds an icon to the living cache.
   ///
   /// [source] indicates where the icon came from (e.g., "remote", "starter").
-  Future<void> addIcon(IconifyName name, IconifyIconData data,
-      {String? source}) async {
+  Future<void> addIcon(
+    IconifyName name,
+    IconifyIconData data, {
+    String? source,
+  }) async {
     await _ensureLoaded();
 
     final key = name.toString();

@@ -111,8 +111,9 @@ final class BinaryIconifyProvider extends IconifyProvider {
 
     try {
       final bytes = await file.readAsBytes();
-      final decodedBytes =
-          isGzipped ? Uint8List.fromList(gzip.decode(bytes)) : bytes;
+      final decodedBytes = isGzipped
+          ? Uint8List.fromList(gzip.decode(bytes))
+          : bytes;
       _cache[prefix] = decodedBytes;
       return decodedBytes;
     } catch (e) {

@@ -59,10 +59,13 @@ class PruneCommand extends BaseCommand {
     progress.update('Reading used_icons.json...');
     final cacheJson =
         jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
-    final iconsJson =
-        Map<String, dynamic>.from(cacheJson['icons'] as Map? ?? {});
+    final iconsJson = Map<String, dynamic>.from(
+      cacheJson['icons'] as Map? ?? {},
+    );
 
-    final staleIcons = iconsJson.keys.where((k) => !usedIcons.contains(k)).toList();
+    final staleIcons = iconsJson.keys
+        .where((k) => !usedIcons.contains(k))
+        .toList();
 
     if (staleIcons.isEmpty) {
       progress.complete('No stale icons found.');
@@ -90,8 +93,9 @@ class PruneCommand extends BaseCommand {
     cacheJson['icons'] = iconsJson;
     cacheJson['generated'] = DateTime.now().toUtc().toIso8601String();
 
-    await cacheFile
-        .writeAsString(const JsonEncoder.withIndent('  ').convert(cacheJson));
+    await cacheFile.writeAsString(
+      const JsonEncoder.withIndent('  ').convert(cacheJson),
+    );
     logger.success('✅ Cleaned up used_icons.json.');
 
     return ExitCode.success.code;

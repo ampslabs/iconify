@@ -8,9 +8,15 @@ void main() {
       final names = {'mdi:home', 'lucide:rocket'};
       final data = {
         'mdi:home': const IconifyIconData(
-            body: '<path d="home"/>', width: 24, height: 24),
+          body: '<path d="home"/>',
+          width: 24,
+          height: 24,
+        ),
         'lucide:rocket': const IconifyIconData(
-            body: '<path d="rocket"/>', width: 32, height: 32),
+          body: '<path d="rocket"/>',
+          width: 32,
+          height: 32,
+        ),
       };
 
       final output = IconCodeGenerator.generate(
@@ -24,15 +30,20 @@ void main() {
       expect(output, contains('static const home = IconifyIconData'));
       expect(output, contains('static const rocket = IconifyIconData'));
       expect(output, contains('void initGeneratedIcons'));
-      expect(output,
-          contains("provider.putIcon(const IconifyName('mdi', 'home')"));
+      expect(
+        output,
+        contains("provider.putIcon(const IconifyName('mdi', 'home')"),
+      );
     });
 
     test('handles kebab-case names', () {
       final names = {'mdi:arrow-right'};
       final data = {
-        'mdi:arrow-right':
-            const IconifyIconData(body: '', width: 24, height: 24),
+        'mdi:arrow-right': const IconifyIconData(
+          body: '',
+          width: 24,
+          height: 24,
+        ),
       };
 
       final output = IconCodeGenerator.generate(

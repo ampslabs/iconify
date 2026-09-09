@@ -29,8 +29,9 @@ void main() {
       );
     }
 
-    testWidgets('renders CachedSvgIconifyWidget when icon is found',
-        (tester) async {
+    testWidgets('renders CachedSvgIconifyWidget when icon is found', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(IconifyIcon('mdi:home')));
       await tester
           .pumpAndSettle(); // Allow Future and Picture loading to resolve
@@ -40,8 +41,9 @@ void main() {
 
     testWidgets('applies color override', (tester) async {
       const targetColor = Colors.red;
-      await tester
-          .pumpWidget(wrap(IconifyIcon('mdi:home', color: targetColor)));
+      await tester.pumpWidget(
+        wrap(IconifyIcon('mdi:home', color: targetColor)),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CachedSvgIconifyWidget), findsOneWidget);
@@ -55,24 +57,28 @@ void main() {
     });
 
     testWidgets('uses custom errorBuilder', (tester) async {
-      await tester.pumpWidget(wrap(
-        IconifyIcon(
-          'mdi:missing',
-          errorBuilder: (context, error) => const Text('Custom Error'),
+      await tester.pumpWidget(
+        wrap(
+          IconifyIcon(
+            'mdi:missing',
+            errorBuilder: (context, error) => const Text('Custom Error'),
+          ),
         ),
-      ));
+      );
       await tester.pump();
 
       expect(find.text('Custom Error'), findsOneWidget);
     });
 
     testWidgets('uses custom loadingBuilder', (tester) async {
-      await tester.pumpWidget(wrap(
-        IconifyIcon(
-          'mdi:home',
-          loadingBuilder: (context) => const Text('Loading...'),
+      await tester.pumpWidget(
+        wrap(
+          IconifyIcon(
+            'mdi:home',
+            loadingBuilder: (context) => const Text('Loading...'),
+          ),
         ),
-      ));
+      );
 
       expect(find.text('Loading...'), findsOneWidget);
 
@@ -81,29 +87,29 @@ void main() {
       expect(find.byType(CachedSvgIconifyWidget), findsOneWidget);
     });
 
-    testWidgets('IconifyApp initializes with default provider chain',
-        (tester) async {
+    testWidgets('IconifyApp initializes with default provider chain', (
+      tester,
+    ) async {
       // Manually initialize the registry to ensure it's ready for the test
       // because PubCachePathResolver might behave differently in test environments.
       await tester.runAsync(() async {
         await StarterRegistry.instance.initialize();
       });
 
-      await tester.pumpWidget(IconifyApp(
-        child: MaterialApp(
-          home: Scaffold(
-            body: IconifyIcon('mdi:home'),
-          ),
+      await tester.pumpWidget(
+        IconifyApp(
+          child: MaterialApp(home: Scaffold(body: IconifyIcon('mdi:home'))),
         ),
-      ));
+      );
 
       await tester.pumpAndSettle();
 
       expect(find.byType(IconifyIcon), findsOneWidget);
     });
 
-    testWidgets('blocks remote fetching in release mode by default',
-        (tester) async {
+    testWidgets('blocks remote fetching in release mode by default', (
+      tester,
+    ) async {
       DevModeGuard.resetOverride();
       const config = IconifyConfig(mode: IconifyMode.auto);
       final chain = buildProviderChain(config);

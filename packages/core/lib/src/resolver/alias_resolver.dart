@@ -18,9 +18,7 @@ import '../models/iconify_icon_data.dart';
 /// );
 /// ```
 final class AliasResolver {
-  const AliasResolver({
-    this.maxChainDepth = 10,
-  });
+  const AliasResolver({this.maxChainDepth = 10});
 
   /// Maximum alias chain depth before throwing [CircularAliasException].
   final int maxChainDepth;
@@ -53,7 +51,8 @@ final class AliasResolver {
       if (chain.length > maxChainDepth) {
         throw CircularAliasException(
           chain: List.from(chain),
-          message: 'Alias chain exceeded maximum depth of $maxChainDepth. '
+          message:
+              'Alias chain exceeded maximum depth of $maxChainDepth. '
               'Chain: ${chain.join(' -> ')}. '
               'This indicates a circular alias or abnormally deep chain.',
         );
@@ -126,13 +125,13 @@ final class AliasEntry {
   });
 
   factory AliasEntry.fromJson(Map<String, dynamic> json) => AliasEntry(
-        parent: json['parent'] as String,
-        width: (json['width'] as num?)?.toDouble(),
-        height: (json['height'] as num?)?.toDouble(),
-        rotate: json['rotate'] as int?,
-        hFlip: json['hFlip'] as bool?,
-        vFlip: json['vFlip'] as bool?,
-      );
+    parent: json['parent'] as String,
+    width: (json['width'] as num?)?.toDouble(),
+    height: (json['height'] as num?)?.toDouble(),
+    rotate: json['rotate'] as int?,
+    hFlip: json['hFlip'] as bool?,
+    vFlip: json['vFlip'] as bool?,
+  );
 
   /// The name of the parent icon or alias (within the same collection).
   final String parent;

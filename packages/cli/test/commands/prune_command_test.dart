@@ -27,9 +27,9 @@ void main() {
       final progress = _MockProgress();
       when(() => logger.progress(any())).thenReturn(progress);
       // Mock confirmation to return true by default
-      when(() =>
-              logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
-          .thenReturn(true);
+      when(
+        () => logger.confirm(any(), defaultValue: any(named: 'defaultValue')),
+      ).thenReturn(true);
 
       // Create dummy iconify.yaml
       File(p.join(tempDir.path, 'iconify.yaml')).writeAsStringSync('''
@@ -41,21 +41,23 @@ data_dir: assets/iconify
       // Create dummy used_icons.json with one stale icon
       final dataDir = Directory(p.join(tempDir.path, 'assets', 'iconify'))
         ..createSync(recursive: true);
-      File(p.join(dataDir.path, 'used_icons.json'))
-          .writeAsStringSync(jsonEncode({
-        'icons': {
-          'mdi:home': {
-            'body': '<path/>',
-            'lastUsed': '2023-01-01T00:00:00Z',
-            'source': 'added',
-          }
-        }
-      }));
+      File(p.join(dataDir.path, 'used_icons.json')).writeAsStringSync(
+        jsonEncode({
+          'icons': {
+            'mdi:home': {
+              'body': '<path/>',
+              'lastUsed': '2023-01-01T00:00:00Z',
+              'source': 'added',
+            },
+          },
+        }),
+      );
 
       // Create a dummy lib/ file that DOES NOT use the icon
       Directory(p.join(tempDir.path, 'lib')).createSync();
-      File(p.join(tempDir.path, 'lib', 'main.dart'))
-          .writeAsStringSync('void main() {}');
+      File(
+        p.join(tempDir.path, 'lib', 'main.dart'),
+      ).writeAsStringSync('void main() {}');
 
       Directory.current = tempDir;
     });
@@ -74,9 +76,9 @@ data_dir: assets/iconify
       final result = await runner.run(['prune']);
 
       expect(result, equals(ExitCode.success.code));
-      verify(() =>
-              logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
-          .called(1);
+      verify(
+        () => logger.confirm(any(), defaultValue: any(named: 'defaultValue')),
+      ).called(1);
 
       final cacheFile = File('assets/iconify/used_icons.json');
       final data = jsonDecode(cacheFile.readAsStringSync()) as Map;

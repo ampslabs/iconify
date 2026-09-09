@@ -12,12 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [stable, beta]
+        include:
+          - name: stable
+            flutter-version: "3.47.2"
+          - name: beta
+            channel: beta
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.sdk }}
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: ${{ matrix.channel }}
 
       - name: Install Melos
         run: |
@@ -48,6 +53,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failure-artifacts-${{ matrix.sdk }}
+          name: failure-artifacts-${{ matrix.name }}
           path: "**/failures/"
           retention-days: 4

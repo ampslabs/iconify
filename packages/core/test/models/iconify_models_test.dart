@@ -55,12 +55,13 @@ void main() {
 
   group('IconifyCollectionInfo', () {
     test('fromJson handles different author formats', () {
-      final stringAuthor =
-          IconifyCollectionInfo.fromJson('test', {'author': 'John Doe'});
+      final stringAuthor = IconifyCollectionInfo.fromJson('test', {
+        'author': 'John Doe',
+      });
       expect(stringAuthor.author, 'John Doe');
 
       final mapAuthor = IconifyCollectionInfo.fromJson('test', {
-        'author': {'name': 'Jane Doe'}
+        'author': {'name': 'Jane Doe'},
       });
       expect(mapAuthor.author, 'Jane Doe');
     });
@@ -89,8 +90,11 @@ void main() {
   group('IconifySearchResult', () {
     test('stores search data', () {
       final name = const IconifyName('mdi', 'home');
-      final result =
-          IconifySearchResult(name: name, score: 0.95, matchedOn: 'exact');
+      final result = IconifySearchResult(
+        name: name,
+        score: 0.95,
+        matchedOn: 'exact',
+      );
       expect(result.name, name);
       expect(result.score, 0.95);
       expect(result.matchedOn, 'exact');

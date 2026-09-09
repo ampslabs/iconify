@@ -38,8 +38,10 @@ fail_on_missing: true
     });
 
     test('throws FormatException on invalid root', () {
-      expect(() => IconifyBuildConfig.fromYaml('just a string'),
-          throwsFormatException);
+      expect(
+        () => IconifyBuildConfig.fromYaml('just a string'),
+        throwsFormatException,
+      );
     });
   });
 }

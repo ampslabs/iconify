@@ -125,10 +125,7 @@ class _CachedSvgIconifyWidgetState extends State<CachedSvgIconifyWidget> {
     }
 
     if (widget.semanticLabel != null) {
-      child = Semantics(
-        label: widget.semanticLabel,
-        child: child,
-      );
+      child = Semantics(label: widget.semanticLabel, child: child);
     }
 
     return child;
@@ -142,9 +139,7 @@ class _PictureWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _PicturePainter(info.picture),
-    );
+    return CustomPaint(painter: _PicturePainter(info.picture));
   }
 }
 

@@ -39,12 +39,14 @@ data_dir: assets/iconify
     test('adds icons from local snapshot', () async {
       // 1. Create a "snapshot" for mdi
       final dataDir = Directory('assets/iconify')..createSync(recursive: true);
-      File(p.join(dataDir.path, 'mdi.json')).writeAsStringSync(jsonEncode({
-        'prefix': 'mdi',
-        'icons': {
-          'home': {'body': '<path d="home"/>'}
-        }
-      }));
+      File(p.join(dataDir.path, 'mdi.json')).writeAsStringSync(
+        jsonEncode({
+          'prefix': 'mdi',
+          'icons': {
+            'home': {'body': '<path d="home"/>'},
+          },
+        }),
+      );
 
       final result = await runner.run(['add', 'mdi:home']);
 
@@ -60,13 +62,15 @@ data_dir: assets/iconify
 
     test('adds whole collection via flag', () async {
       final dataDir = Directory('assets/iconify')..createSync(recursive: true);
-      File(p.join(dataDir.path, 'mdi.json')).writeAsStringSync(jsonEncode({
-        'prefix': 'mdi',
-        'icons': {
-          'home': {'body': '<path d="home"/>'},
-          'user': {'body': '<path d="user"/>'},
-        }
-      }));
+      File(p.join(dataDir.path, 'mdi.json')).writeAsStringSync(
+        jsonEncode({
+          'prefix': 'mdi',
+          'icons': {
+            'home': {'body': '<path d="home"/>'},
+            'user': {'body': '<path d="user"/>'},
+          },
+        }),
+      );
 
       final result = await runner.run(['add', '--collection', 'mdi']);
 

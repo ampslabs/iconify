@@ -74,8 +74,9 @@ class _IconifyAppState extends State<IconifyApp> {
 
   Future<void> _initialize() async {
     // 1. Ensure starter registry is ready
-    await StarterRegistry.instance
-        .initialize(preloadPrefixes: widget.config.preloadPrefixes);
+    await StarterRegistry.instance.initialize(
+      preloadPrefixes: widget.config.preloadPrefixes,
+    );
 
     // 2. Check for production bundle (Debug only)
     if (kDebugMode) {
@@ -91,8 +92,9 @@ class _IconifyAppState extends State<IconifyApp> {
   }
 
   Future<void> _checkProductionBundle() async {
-    final fileName =
-        widget.config.compress ? 'used_icons.json.gz' : 'used_icons.json';
+    final fileName = widget.config.compress
+        ? 'used_icons.json.gz'
+        : 'used_icons.json';
     final path = 'assets/iconify/$fileName';
 
     try {
@@ -101,22 +103,26 @@ class _IconifyAppState extends State<IconifyApp> {
       // Show a helpful warning in the console if the production bundle is missing.
       // ignore: avoid_print
       print(
-          '\x1B[33m[Iconify SDK] ⚠️ WARNING: No production icon bundle found at $path.\x1B[0m');
+        '\x1B[33m[Iconify SDK] ⚠️ WARNING: No production icon bundle found at $path.\x1B[0m',
+      );
       // Show installation instructions.
       // ignore: avoid_print
       print(
-          '\x1B[33m[Iconify SDK] To optimize your app and enable offline support, install the CLI:\x1B[0m');
+        '\x1B[33m[Iconify SDK] To optimize your app and enable offline support, install the CLI:\x1B[0m',
+      );
       // Show the command to activate the CLI.
       // ignore: avoid_print
       print(
-          '\x1B[33m[Iconify SDK]   dart pub global activate iconify_sdk_cli\x1B[0m');
+        '\x1B[33m[Iconify SDK]   dart pub global activate iconify_sdk_cli\x1B[0m',
+      );
       // Show the header for the next command.
       // ignore: avoid_print
       print('\x1B[33m[Iconify SDK] Then run:\x1B[0m');
       // Show the generate command.
       // ignore: avoid_print
       print(
-          '\x1B[33m[Iconify SDK]   iconify generate --compress --font\x1B[0m');
+        '\x1B[33m[Iconify SDK]   iconify generate --compress --font\x1B[0m',
+      );
     }
   }
 
@@ -136,9 +142,6 @@ class _IconifyAppState extends State<IconifyApp> {
       return const SizedBox.shrink();
     }
 
-    return IconifyScope(
-      provider: _provider!,
-      child: widget.child,
-    );
+    return IconifyScope(provider: _provider!, child: widget.child);
   }
 }

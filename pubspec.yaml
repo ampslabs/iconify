@@ -2,7 +2,7 @@ name: iconify_sdk_workspace
 publish_to: none
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.10.0 <4.0.0'
 
 workspace:
   - packages/core
@@ -23,7 +23,23 @@ melos:
       run: melos exec --dir-exists="test" -- "flutter test || dart test"
       description: "Run tests for all packages."
 
+    test:pure:
+      run: melos exec --dir-exists=test --ignore="*flutter*" --ignore="iconify_sdk" -- "dart test"
+      description: "Run pure Dart tests."
+
+    test:flutter:
+      run: melos exec --dir-exists=test --scope="iconify_sdk" -- "flutter test"
+      description: "Run Flutter tests."
+
+    analyze:
+      run: melos exec -- "dart analyze --fatal-infos"
+      description: "Run static analysis."
+
+    format:
+      run: melos exec -- "dart format --output=none --set-exit-if-changed ."
+      description: "Verify formatting."
+
 dev_dependencies:
-  melos: ^7.4.0
+  melos: ^7.8.1
   lints: any
 dependency_overrides: {}

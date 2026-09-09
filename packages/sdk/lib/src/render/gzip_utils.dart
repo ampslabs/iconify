@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-import 'gzip_utils_stub.dart' if (dart.library.js_interop) 'gzip_utils_web.dart'
+import 'gzip_utils_stub.dart'
+    if (dart.library.js_interop) 'gzip_utils_web.dart'
     as impl;
 
 /// Decompresses GZIP-encoded bytes.

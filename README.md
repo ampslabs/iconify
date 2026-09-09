@@ -9,7 +9,7 @@ The definitive Flutter SDK for Iconify. Access 200,000+ open-source icons from 1
 
 ## 🚀 Key Features
 
-- **Blistering Performance**:proprietary `.iconbin` format for zero-parsing startup and $O(\log n)$ lookup.
+- **Blistering Performance**: proprietary `.iconbin` format for zero-parsing startup and $O(\log n)$ lookup.
 - **Intelligent Bundling**: Automatic GZIP compression and monochromatic font path for minimal bundle footprint.
 - **Impeller Ready**: Hardware-accelerated rendering with intelligent raster fallbacks.
 - **Offline-First**: Built-in "Starter Registry" and "Living Cache" system.
@@ -66,7 +66,7 @@ iconify
 |---|---|---|---|
 | **Startup Parse** | 29ms | 11ms | **2.6x** |
 | **Icon Lookup** | 11.8ms | 3.9μs | **~3000x** |
-| **Bundle Size (50 icons)** | 21KB | 6KB (GZ) | **70% reduction** |
+| **Bundle Size (50 icons)** | 21.5KB (5.5KB GZ) | 21.3KB (6.7KB GZ) | **74% GZIP reduction** |
 
 For detailed metrics, see [docs/performance-baseline.md](docs/performance-baseline.md).
 

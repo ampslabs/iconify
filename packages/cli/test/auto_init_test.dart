@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 class MockLogger extends Mock implements Logger {}
+
 class MockProgress extends Mock implements Progress {}
 
 void main() {
@@ -17,16 +18,20 @@ void main() {
 
     setUp(() async {
       originalCwd = Directory.current.path;
-      tempDir = await Directory.systemTemp.createTemp('iconify_auto_init_test_');
+      tempDir = await Directory.systemTemp.createTemp(
+        'iconify_auto_init_test_',
+      );
       logger = MockLogger();
-      
+
       // Default stubbing for logger
-      when(() => logger.confirm(any(), defaultValue: any(named: 'defaultValue')))
-          .thenReturn(true);
-      when(() => logger.prompt(any(), defaultValue: any(named: 'defaultValue')))
-          .thenReturn('mdi');
+      when(
+        () => logger.confirm(any(), defaultValue: any(named: 'defaultValue')),
+      ).thenReturn(true);
+      when(
+        () => logger.prompt(any(), defaultValue: any(named: 'defaultValue')),
+      ).thenReturn('mdi');
       when(() => logger.progress(any())).thenReturn(MockProgress());
-      
+
       runner = IconifyCommandRunner(logger: logger);
       Directory.current = tempDir;
     });
@@ -46,10 +51,12 @@ void main() {
       await runner.run(['doctor']);
 
       // Verify prompt was called
-      verify(() => logger.confirm(
-            any(that: contains('initialize Iconify')),
-            defaultValue: true,
-          )).called(1);
+      verify(
+        () => logger.confirm(
+          any(that: contains('initialize Iconify')),
+          defaultValue: true,
+        ),
+      ).called(1);
 
       expect(configFile.existsSync(), isTrue);
       expect(configFile.readAsStringSync(), contains('mdi:*'));
@@ -64,10 +71,12 @@ void main() {
       // but the init should happen.
       await runner.run(['sync']);
 
-      verify(() => logger.confirm(
-            any(that: contains('initialize Iconify')),
-            defaultValue: true,
-          )).called(1);
+      verify(
+        () => logger.confirm(
+          any(that: contains('initialize Iconify')),
+          defaultValue: true,
+        ),
+      ).called(1);
 
       expect(configFile.existsSync(), isTrue);
     });

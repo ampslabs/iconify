@@ -35,16 +35,22 @@ class StarterRegistry {
       // In development (non-web), we resolve the physical path to the package
       // to avoid bundling the starter icons as Flutter assets.
       try {
-        final packagePath =
-            await PubCachePathResolver.resolvePackagePath('iconify_sdk')
-                .timeout(const Duration(seconds: 2));
+        final packagePath = await PubCachePathResolver.resolvePackagePath(
+          'iconify_sdk',
+        ).timeout(const Duration(seconds: 2));
         if (packagePath != null) {
-          final starterPath =
-              p.join(packagePath, 'assets', 'iconify', 'starter');
+          final starterPath = p.join(
+            packagePath,
+            'assets',
+            'iconify',
+            'starter',
+          );
 
           // Check for binary format first (with compression support)
-          final binExists = Directory(starterPath).listSync().any((e) =>
-              e.path.endsWith('.iconbin') || e.path.endsWith('.iconbin.gz'));
+          final binExists = Directory(starterPath).listSync().any(
+            (e) =>
+                e.path.endsWith('.iconbin') || e.path.endsWith('.iconbin.gz'),
+          );
 
           if (binExists) {
             _provider = BinaryIconifyProvider(
@@ -67,9 +73,7 @@ class StarterRegistry {
       // Fallback for Release mode or Web: Use the bundled assets.
       const prefix = 'packages/iconify_sdk/assets/iconify/starter';
       // AssetBundleIconifyProvider also needs to support compression
-      _provider = FlutterAssetBundleIconifyProvider(
-        assetPrefix: prefix,
-      );
+      _provider = FlutterAssetBundleIconifyProvider(assetPrefix: prefix);
     }
 
     builder.setStarterProvider(_provider!);
@@ -81,9 +85,7 @@ class StarterRegistry {
     if (!_initialized) {
       if (_provider == null) {
         const prefix = 'packages/iconify_sdk/assets/iconify/starter';
-        _provider = FlutterAssetBundleIconifyProvider(
-          assetPrefix: prefix,
-        );
+        _provider = FlutterAssetBundleIconifyProvider(assetPrefix: prefix);
       }
     }
     return _provider!;

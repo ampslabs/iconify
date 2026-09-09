@@ -17,10 +17,8 @@ import 'iconify_provider.dart';
 /// );
 /// ```
 final class CachingIconifyProvider implements IconifyProvider {
-  CachingIconifyProvider({
-    required this.inner,
-    IconifyCache? cache,
-  }) : _cache = cache ?? LruIconifyCache();
+  CachingIconifyProvider({required this.inner, IconifyCache? cache})
+    : _cache = cache ?? LruIconifyCache();
 
   final IconifyProvider inner;
   final IconifyCache _cache;

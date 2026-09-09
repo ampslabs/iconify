@@ -30,15 +30,17 @@ void main() {
       verify(() => inner.getIcon(home)).called(1);
     });
 
-    test('returns cached value on second call without calling inner again',
-        () async {
-      when(() => inner.getIcon(home)).thenAnswer((_) async => homeData);
+    test(
+      'returns cached value on second call without calling inner again',
+      () async {
+        when(() => inner.getIcon(home)).thenAnswer((_) async => homeData);
 
-      await provider.getIcon(home);
-      await provider.getIcon(home);
+        await provider.getIcon(home);
+        await provider.getIcon(home);
 
-      verify(() => inner.getIcon(home)).called(1); // Only called once
-    });
+        verify(() => inner.getIcon(home)).called(1); // Only called once
+      },
+    );
 
     test('tracks hit and miss counts', () async {
       when(() => inner.getIcon(home)).thenAnswer((_) async => homeData);
@@ -70,7 +72,10 @@ void main() {
 
     test('getCollection delegates to inner without caching', () async {
       final info = const IconifyCollectionInfo(
-          prefix: 'mdi', name: 'MDI', totalIcons: 1);
+        prefix: 'mdi',
+        name: 'MDI',
+        totalIcons: 1,
+      );
       when(() => inner.getCollection('mdi')).thenAnswer((_) async => info);
 
       final result = await provider.getCollection('mdi');

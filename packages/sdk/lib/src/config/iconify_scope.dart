@@ -5,11 +5,7 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 ///
 /// Use [IconifyScope.of] to retrieve the provider from descendant widgets.
 class IconifyScope extends InheritedWidget {
-  const IconifyScope({
-    required this.provider,
-    required super.child,
-    super.key,
-  });
+  const IconifyScope({required this.provider, required super.child, super.key});
 
   /// The provider used to resolve icons in this scope.
   final IconifyProvider provider;

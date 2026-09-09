@@ -22,7 +22,7 @@ These collections (often CC BY 4.0) allow commercial use but **require attributi
 
 | Prefix | Name | License (SPDX) |
 |---|---|---|
-| `fa6-free` | Font Awesome 6 Free | CC-BY-4.0 |
+| `fa6-solid` / `fa6-regular` / `fa6-brands` | Font Awesome 6 Free | CC-BY-4.0 |
 | `la` | Line Awesome | CC-BY-4.0 |
 | `icomoon-free` | IcoMoon Free | CC-BY-4.0 |
 | `entypo` | Entypo+ | CC-BY-SA-4.0 |

@@ -41,7 +41,8 @@ class SvgSanitizer {
     } on XmlException catch (e) {
       if (mode == SanitizerMode.strict) {
         throw IconifyParseException(
-            message: 'Invalid XML in SVG body: ${e.message}');
+          message: 'Invalid XML in SVG body: ${e.message}',
+        );
       }
       // In lenient mode, we might just return an empty string or the original if it's not even XML,
       // but usually, we want to at least try to be safe.
@@ -57,7 +58,8 @@ class SvgSanitizer {
         if (_isForbiddenElement(child)) {
           if (mode == SanitizerMode.strict) {
             throw SvgSanitizationException(
-                message: 'Forbidden SVG element: <${child.name.local}>');
+              message: 'Forbidden SVG element: <${child.name.local}>',
+            );
           }
           toRemove.add(child);
           continue;
@@ -93,7 +95,8 @@ class SvgSanitizer {
       if (attrName.startsWith('on')) {
         if (mode == SanitizerMode.strict) {
           throw SvgSanitizationException(
-              message: 'Forbidden event handler attribute: $attrName');
+            message: 'Forbidden event handler attribute: $attrName',
+          );
         }
         attributesToRemove.add(attribute);
         continue;
@@ -109,7 +112,8 @@ class SvgSanitizer {
         if (value.startsWith('javascript:') || value.startsWith('data:')) {
           if (mode == SanitizerMode.strict) {
             throw SvgSanitizationException(
-                message: 'Forbidden URI scheme in $attrName: $value');
+              message: 'Forbidden URI scheme in $attrName: $value',
+            );
           }
           attributesToRemove.add(attribute);
           continue;
@@ -120,7 +124,8 @@ class SvgSanitizer {
             !value.startsWith('#')) {
           if (mode == SanitizerMode.strict) {
             throw SvgSanitizationException(
-                message: 'Forbidden external reference in <use>: $value');
+              message: 'Forbidden external reference in <use>: $value',
+            );
           }
           attributesToRemove.add(attribute);
           continue;
@@ -135,7 +140,8 @@ class SvgSanitizer {
             value.contains('url(data:')) {
           if (mode == SanitizerMode.strict) {
             throw const SvgSanitizationException(
-                message: 'Forbidden CSS in style attribute');
+              message: 'Forbidden CSS in style attribute',
+            );
           }
           attributesToRemove.add(attribute);
           continue;

@@ -28,8 +28,9 @@ class PubCachePathResolver {
       // Limit search depth to prevent infinite loops in weird environments
       int depth = 0;
       while (current != null && depth < 20) {
-        final possibleFile =
-            File(p.join(current.path, '.dart_tool', 'package_config.json'));
+        final possibleFile = File(
+          p.join(current.path, '.dart_tool', 'package_config.json'),
+        );
         if (possibleFile.existsSync()) {
           configFile = possibleFile;
           break;
@@ -45,8 +46,8 @@ class PubCachePathResolver {
       // 2. Parse the config
       final content = await configFile.readAsString();
       final config = json.decode(content) as Map<String, dynamic>;
-      final packages =
-          (config['packages'] as List<dynamic>).cast<Map<String, dynamic>>();
+      final packages = (config['packages'] as List<dynamic>)
+          .cast<Map<String, dynamic>>();
 
       final packageInfo = packages.firstWhere(
         (pkg) => pkg['name'] == packageName,

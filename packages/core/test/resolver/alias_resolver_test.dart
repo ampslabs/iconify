@@ -2,12 +2,15 @@ import 'package:iconify_sdk_core/iconify_sdk_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final baseIcon =
-      const IconifyIconData(body: '<path d="M0 0"/>', width: 24, height: 24);
+  final baseIcon = const IconifyIconData(
+    body: '<path d="M0 0"/>',
+    width: 24,
+    height: 24,
+  );
 
   final icons = {
     'base': baseIcon,
-    'other': const IconifyIconData(body: '<rect/>')
+    'other': const IconifyIconData(body: '<rect/>'),
   };
 
   group('AliasResolver', () {
@@ -96,7 +99,11 @@ void main() {
     test('applies rotate, hFlip, vFlip overrides from alias', () {
       final aliases = {
         'flipped': const AliasEntry(
-            parent: 'base', rotate: 1, hFlip: true, vFlip: true),
+          parent: 'base',
+          rotate: 1,
+          hFlip: true,
+          vFlip: true,
+        ),
       };
       final result = resolver.resolve(
         iconName: 'flipped',

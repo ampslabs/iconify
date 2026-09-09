@@ -22,7 +22,7 @@ The following sets are highly recommended for any project:
 
 Some popular collections use licenses like **CC BY 4.0**, which requires you to provide credit to the author somewhere in your app (e.g., an "About" or "Legal" screen).
 
-- **Font Awesome (Free)** (`fa-solid`, `fa-regular`)
+- **Font Awesome (Free)** (`fa6-solid`, `fa6-regular`, `fa6-brands`)
 - **Ionicons** (`ion`)
 - **Line Awesome** (`la`)
 

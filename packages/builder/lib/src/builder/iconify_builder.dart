@@ -12,8 +12,8 @@ class IconifyBuilder implements Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => {
-        r'$lib$': ['icons.g.dart'],
-      };
+    r'$lib$': ['icons.g.dart'],
+  };
 
   @override
   Future<void> build(BuildStep buildStep) async {
@@ -64,14 +64,18 @@ class IconifyBuilder implements Builder {
       // Load collection if not already cached
       if (!collections.containsKey(prefix)) {
         final dataId = AssetId(
-            buildStep.inputId.package, '${config.dataDir}/$prefix.json');
+          buildStep.inputId.package,
+          '${config.dataDir}/$prefix.json',
+        );
         if (await buildStep.canRead(dataId)) {
           final jsonStr = await buildStep.readAsString(dataId);
-          collections[prefix] =
-              IconifyJsonParser.parseCollectionString(jsonStr);
+          collections[prefix] = IconifyJsonParser.parseCollectionString(
+            jsonStr,
+          );
         } else {
           log.warning(
-              'Snapshot missing for collection: $prefix (at ${dataId.path})');
+            'Snapshot missing for collection: $prefix (at ${dataId.path})',
+          );
           continue;
         }
       }
@@ -96,6 +100,7 @@ class IconifyBuilder implements Builder {
     await buildStep.writeAsString(outputId, output);
 
     log.info(
-        'Successfully bundled ${iconDataMap.length} icons into ${outputId.path}');
+      'Successfully bundled ${iconDataMap.length} icons into ${outputId.path}',
+    );
   }
 }

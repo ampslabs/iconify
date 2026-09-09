@@ -57,8 +57,9 @@ class AddCommand extends BaseCommand {
       cacheJson = _createEmptyCache();
     }
 
-    final iconsJson =
-        Map<String, dynamic>.from(cacheJson['icons'] as Map? ?? {});
+    final iconsJson = Map<String, dynamic>.from(
+      cacheJson['icons'] as Map? ?? {},
+    );
     final collections = <String, ParsedCollection>{};
 
     final iconsToAdd = <String>[];
@@ -68,7 +69,8 @@ class AddCommand extends BaseCommand {
       final snapshotFile = File('${config.dataDir}/$collectionOption.json');
       if (!snapshotFile.existsSync()) {
         logger.err(
-            'Snapshot for "$collectionOption" not found. Run "iconify sync" first.');
+          'Snapshot for "$collectionOption" not found. Run "iconify sync" first.',
+        );
         return ExitCode.noInput.code;
       }
 
@@ -115,8 +117,9 @@ class AddCommand extends BaseCommand {
           if (snapshotFile.existsSync()) {
             try {
               final jsonStr = await snapshotFile.readAsString();
-              collections[prefix] =
-                  IconifyJsonParser.parseCollectionString(jsonStr);
+              collections[prefix] = IconifyJsonParser.parseCollectionString(
+                jsonStr,
+              );
             } catch (_) {}
           }
         }
@@ -126,12 +129,15 @@ class AddCommand extends BaseCommand {
         if (data == null) {
           try {
             final uri = Uri.parse(
-                'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json');
-            final response =
-                await httpClient.get(uri).timeout(const Duration(seconds: 5));
+              'https://raw.githubusercontent.com/iconify/icon-sets/master/json/$prefix.json',
+            );
+            final response = await httpClient
+                .get(uri)
+                .timeout(const Duration(seconds: 5));
             if (response.statusCode == 200) {
-              final collection =
-                  IconifyJsonParser.parseCollectionString(response.body);
+              final collection = IconifyJsonParser.parseCollectionString(
+                response.body,
+              );
               collections[prefix] = collection;
               data = collection.getIcon(iconName);
             }
@@ -154,10 +160,12 @@ class AddCommand extends BaseCommand {
     if (addedCount > 0) {
       cacheJson['generated'] = DateTime.now().toUtc().toIso8601String();
       cacheJson['icons'] = iconsJson;
-      await cacheFile
-          .writeAsString(const JsonEncoder.withIndent('  ').convert(cacheJson));
-      progress
-          .complete('Successfully added $addedCount icons to used_icons.json');
+      await cacheFile.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(cacheJson),
+      );
+      progress.complete(
+        'Successfully added $addedCount icons to used_icons.json',
+      );
     } else {
       progress.complete('No new icons were added.');
     }

@@ -13,8 +13,8 @@ import 'commands/verify_command.dart';
 
 class IconifyCommandRunner extends CommandRunner<int> {
   IconifyCommandRunner({Logger? logger})
-      : _logger = logger ?? Logger(),
-        super('iconify', 'CLI tool for managing Iconify icons in Flutter.') {
+    : _logger = logger ?? Logger(),
+      super('iconify', 'CLI tool for managing Iconify icons in Flutter.') {
     argParser.addFlag(
       'verbose',
       abbr: 'v',
