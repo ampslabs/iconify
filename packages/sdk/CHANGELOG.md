@@ -2,6 +2,9 @@
 
 ## [1.1.0] - 2026-09-09
 
+### Added
+- **Example**: Added a runnable Flutter app under `example/` demonstrating `IconifyApp` and `IconifyIcon` with the bundled starter icon set.
+
 ### Changed
 - Bumped Dart SDK constraint to `>=3.10.0 <4.0.0` and Flutter to `>=3.38.0`.
 - Updated dependencies (`flutter_svg` 2.3.0, `vector_graphics` 1.2.3, `alchemist` 0.14.0).

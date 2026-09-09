@@ -2,6 +2,9 @@
 
 ## [1.1.0] - 2026-09-09
 
+### Added
+- **Example**: Added an `example/` directory with a ready-to-use `iconify.yaml` and command reference.
+
 ### Changed
 - Bumped Dart SDK constraint to `>=3.10.0 <4.0.0`.
 - Updated dependencies (`yaml` 3.1.4, `io` 1.1.0, `mason_logger` 0.3.5, `glob` 2.2.0, `test` 1.31.0).
