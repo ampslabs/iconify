@@ -12,12 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [3.47.2, beta]
+        include:
+          - name: stable
+            flutter-version: "3.47.2"
+          - name: beta
+            channel: beta
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ matrix.sdk }}
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: ${{ matrix.channel }}
 
       - name: Install Melos
         run: |
