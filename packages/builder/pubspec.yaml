@@ -16,7 +16,7 @@ dependencies:
   source_gen: ^4.2.0
   iconify_sdk_core: ^1.1.0
   yaml: ^3.1.4
-  analyzer: ^13.3.0
+  analyzer: ">=13.3.0 <15.0.0"
   glob: ^2.2.0
   path: ^1.9.0
 

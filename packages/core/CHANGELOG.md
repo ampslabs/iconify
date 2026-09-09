@@ -5,6 +5,7 @@
 ### Changed
 - Bumped Dart SDK constraint to `>=3.10.0 <4.0.0`.
 - Updated dev dependencies (`coverage`, `mocktail`, `test`).
+- Widened the `xml` constraint to admit 7.x (`>=6.5.0 <8.0.0`).
 - Reformatted with the current `dart format` (tall style).
 
 ## [1.0.1] - 2026-03-18
