@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          version: ${{ matrix.sdk }}
+          flutter-version: ${{ matrix.sdk }}
 
       - name: Install Melos
         run: |
