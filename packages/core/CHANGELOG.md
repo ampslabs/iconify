@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0] - 2026-09-09
+
+### Changed
+- Bumped Dart SDK constraint to `>=3.10.0 <4.0.0`.
+- Updated dev dependencies (`coverage`, `mocktail`, `test`).
+- Reformatted with the current `dart format` (tall style).
+
 ## [1.0.1] - 2026-03-18
 
 ### Fixed

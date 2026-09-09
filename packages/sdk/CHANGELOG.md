@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-09-09
+
+### Changed
+- Bumped Dart SDK constraint to `>=3.10.0 <4.0.0` and Flutter to `>=3.38.0`.
+- Updated dependencies (`flutter_svg` 2.3.0, `vector_graphics` 1.2.3, `alchemist` 0.14.0).
+- Relaxed golden image comparison to tolerate minor rendering drift across Flutter versions.
+- Reformatted with the current `dart format` (tall style).
+
 ## [1.0.1] - 2026-03-18
 
 ### Fixed

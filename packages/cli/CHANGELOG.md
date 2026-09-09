@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-09-09
+
+### Changed
+- Bumped Dart SDK constraint to `>=3.10.0 <4.0.0`.
+- Updated dependencies (`yaml` 3.1.4, `io` 1.1.0, `mason_logger` 0.3.5, `glob` 2.2.0, `test` 1.31.0).
+- Removed an unused variable in the auto-sync test.
+- Reformatted with the current `dart format` (tall style).
+
 ## [1.0.1] - 2026-03-18
 
 ### Added
