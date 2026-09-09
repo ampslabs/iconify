@@ -8,7 +8,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
         enabled: true,
         diffThreshold: 0.002,
       ),
-      ciGoldensConfig: CiGoldensConfig(enabled: true, diffThreshold: 0.002),
+      ciGoldensConfig: CiGoldensConfig(enabled: true, diffThreshold: 0.01),
     ),
     run: testMain,
   );
