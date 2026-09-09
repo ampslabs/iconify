@@ -45,7 +45,7 @@ data_dir: assets/iconify
 output: lib/icons.g.dart
 ''');
 
-      final libDir = Directory('lib')..createSync();
+      Directory('lib').createSync();
       await File('lib/main.dart').writeAsString("const widget = IconifyIcon('heroicons:bolt');");
 
       final snapshotFile = File('assets/iconify/heroicons.json');

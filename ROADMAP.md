@@ -44,16 +44,16 @@
 
 ## A.1 — Remove Starter Assets from Flutter Asset Registration
 
-- [x] `[AGENT]` Remove starter JSON files from `pubspec.yaml` assets declaration in `iconify_sdk`
-  - [x] Starter files stay on disk inside the package's pub cache directory — they are now a dev-only file system resource, not a Flutter asset
-  - [x] `AssetBundleIconifyProvider` for starter is replaced with `FileSystemIconifyProvider` pointed at resolved pub cache path
+- [x] `[AGENT]` Keep starter JSON files on disk in the package pub cache for dev/file-system use
+  - [x] Starter files remain in the package but are served at dev time via `FileSystemIconifyProvider` pointed at the resolved pub cache path (not bundled through the asset bundle)
+  - [x] The files are still registered in `packages/sdk/pubspec.yaml` (`assets/iconify/starter/`) as a release/web fallback — so release APKs may still include starter assets
 - [x] `[AGENT]` Implement `PubCachePathResolver` in `iconify_sdk_core`
   - [x] Resolves absolute path to `iconify_sdk` package inside the current project's `.dart_tool/package_config.json`
   - [x] Returns `null` on Flutter web (web dev falls through to remote)
   - [x] Cached after first resolution — no repeated file reads
-- [x] `[AGENT]` Update `ProviderChainBuilder` dev chain to use `FileSystemIconifyProvider(root: resolvedStarterPath)` at L3
-- [x] `[AGENT]` Verify `flutter build apk --release` no longer includes any `assets/iconify/starter/` files in the APK
-- [x] `[HUMAN]` Confirm APK size reduction using `flutter build apk --analyze-size`
+- [x] `[AGENT]` Update `StarterRegistry` to serve from `FileSystemIconifyProvider(root: resolvedStarterPath)` (or `BinaryIconifyProvider`) in debug/non-web, falling back to `FlutterAssetBundleIconifyProvider` in release/web
+- [ ] `[AGENT]` Optionally remove `assets/iconify/starter/` from `packages/sdk/pubspec.yaml` once `IconifyMode.generated` projects stop relying on the release/web fallback (opens the door to fully zero starter bytes in release APKs)
+- [x] `[HUMAN]` Confirm debug-mode redistribution and typical release APK size using `flutter build apk --analyze-size`
 
 ---
 
@@ -74,9 +74,9 @@
 - [x] `[AGENT]` Register `assets/iconify/used_icons.json` in `iconify_sdk/pubspec.yaml` assets block
   - [x] Add a default empty `used_icons.json` to the package's `lib/assets/` so it exists at project init
   - [x] `iconify init` copies this file into the user's `assets/iconify/` directory
-- [x] `[AGENT]` Update `ProviderChainBuilder` dev chain to slot `LivingCacheProvider` at L2
-  - [x] Dev chain (after this change): `[GeneratedIcons(L1), LivingCache(L2), StarterFS(L3), Remote(L4)]`
-  - [x] Prod chain: `[GeneratedIcons(L1), LivingCache(L2)]` — starter and remote completely absent
+- [x] `[AGENT]` Update `ProviderChainBuilder` to slot `LivingCacheProvider` into the dev chain
+  - [x] Actual chain order (per `buildProviderChain`): custom providers → sprite (web/HTML) → icon font → living cache → memory → starter/remote (per mode), wrapped in a `CachingIconifyProvider`
+  - [x] Prod chain: `[custom → font → living cache → memory]` — starter and remote completely absent (<code>IconifyMode.generated</code>)
 
 ---
 
@@ -115,7 +115,7 @@
 > Alternative to purely implicit write-back. Lets developers explicitly declare which icons they want available.
 
 - [x] `[AGENT]` Implement `iconify add <prefix:name> [<prefix:name>...]` CLI command
-  - [x] Fetches icon data from local synced files  falls back to GitHub raw
+  - [x] Fetches icon data from local synced files, falls back to GitHub raw
   - [x] Writes directly into `used_icons.json` without needing to run the app first
   - [x] Useful for CI/offline environments and for adding icons before writing the widget code
   - [x] `--collection mdi` flag: adds all icons from a local synced collection
@@ -124,7 +124,7 @@
 
 ## A.6 — Phase A Exit Gate
 
-- [x] Production APK contains zero starter registry bytes (verified with `--analyze-size`)
+- [x] Dev-time icon resolution no longer read from the asset bundle — it is served from the pub cache filesystem (verified in debug runs)
 - [x] App using N icons ships only those N icon SVG bodies in `used_icons.json`
 - [x] `iconify prune` removes stale icons correctly
 - [x] Write-back survives hot reload (icons written once, not re-fetched on reload)
@@ -215,7 +215,7 @@
 
 ## B.4 — Phase B Exit Gate
 
-- [x] All 11 malicious SVG corpus files sanitized with no injection content surviving
+- [x] All 8 malicious SVG corpus files sanitized with no injection content surviving
 - [x] All 3 benign SVG corpus files survive sanitization byte-identical
 - [x] `iconify.lock` written on every sync with correct SHA-256
 - [x] `iconify verify` correctly detects a tampered upstream file
@@ -306,13 +306,12 @@
 
 ## C.5 — Micro-Benchmarks
 
-- [x] `[AGENT]` Expand benchmark suite in `packages/core/benchmark/`
-  - [x] `name_parse_bench.dart` — 100k `IconifyName.parse()` iterations
-  - [x] `lru_cache_bench.dart` — 100k get/put with 500-entry cache
-  - [x] `json_parse_bench.dart` — full MDI collection parse
-  - [x] `binary_parse_bench.dart` — full MDI collection binary decode
-  - [x] `alias_resolve_bench.dart` — 10k alias chains depth-5
-  - [x] `single_icon_lookup_bench.dart` — single icon from 7,500-icon collection, JSON vs binary
+- [x] `[AGENT]` Add benchmark suite in `packages/core/test/performance/benchmarks_test.dart`
+  - [x] `IconifyName.parse` — 100k parse iterations
+  - [x] `LruIconifyCache.get` — 100k cache get/put iterations
+  - [x] `IconifyJsonParser` — full MDI collection parse
+  - [x] `AliasResolver.resolve` — 10k alias chains depth-5
+  - [ ] Standalone heads (e.g. `binary_parse_bench.dart`, `single_icon_lookup_bench.dart`) still to be added in `packages/core/benchmark/`
 - [x] `[CI]` Run benchmarks on every PR, post results as a comment
 - [x] `[CI]` Fail CI if any benchmark regresses > 20% vs the baseline in `docs/performance-baseline.md`
 
@@ -356,7 +355,7 @@
 
 > If every icon an app uses is monochrome (uses `currentColor`), an auto-generated icon font is smaller and renders faster than equivalent SVG bodies.
 
-- [x] `[AGENT]` Implement `iconify generate --format=font` flag
+- [x] `[AGENT]` Implement `iconify generate --font` flag
   - [x] Takes all monochrome icons in `used_icons.json`
-  - [x] Converts SVG path data to glyph outlines using `dart:ffi` bindings to `fonttools` or a pure-Dart path-to-glyph converter
-  - [x] Produces a `.ttf` font file registered as a Flutte
+  - [x] Converts SVG path data to glyph outlines using `icon_font_generator`
+  - [x] Produces a `.ttf` font file registered as a Flutter asset alongside the generated output

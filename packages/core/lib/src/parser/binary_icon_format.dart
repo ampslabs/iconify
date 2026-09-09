@@ -46,7 +46,7 @@ class BinaryIconFormat {
 
     final builder = _BytesBuilder();
 
-    // 1. Header (28 bytes)
+    // 1. Header (30 bytes)
     builder.addUint32(_magic);
     builder.addUint8(_version);
     builder.addUint8(0); // Reserved
